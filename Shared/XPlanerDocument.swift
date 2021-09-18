@@ -6,6 +6,7 @@
 //
 //
 
+import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -39,7 +40,18 @@ struct XPlanerDocument: FileDocument {
     var original_data: PlannerFileStruct
     
     init() {
-        original_data = PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "计划", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]())
+        let author = NSFullUserName()
+        
+        original_data = PlannerFileStruct(
+            fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison,
+                                        topic: "计划",
+                                        createDate: Date(),
+                                        author: author,
+                                        displayMode: .FullSquareMode,
+                                        displayCatagory: .All),
+            projectGroups: [ProjectGroupInfo](),
+            taskStatusChanges: [TaskStatusChangeRecord]()
+        )
     }
     
     static var readableContentTypes: [UTType] { [.xplaner] }
