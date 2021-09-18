@@ -47,14 +47,14 @@
 /* Begin PBXFileReference section */
 		B2E450025CCAC5CD73AC4BA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		B2E45322B6A1547BDF046C0A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		B2E4534419E7770ABFE2F361 /* XPlaner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XPlaner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2E4534419E7770ABFE2F361 /* XPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2E4538BA86B1ADA332921E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		B2E45525E7E096B5BCC4CCBA /* Tests iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2E457EBB019FEB301A017F8 /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2E458B7ED4F41CAE0543CD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B2E459439A0C8FD12B604818 /* XPlanerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XPlanerApp.swift; sourceTree = "<group>"; };
 		B2E4597EF484318231A0FD41 /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
-		B2E45A79365A3C6E4ECC7BEF /* XPlaner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XPlaner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2E45A79365A3C6E4ECC7BEF /* XPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2E45AEF8C6F90EBC61B412C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		B2E45B100FCAE1017D3465A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B2E45C89A5D9562B61F40438 /* Tests_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_iOS.swift; sourceTree = "<group>"; };
@@ -163,8 +163,8 @@
 		B2E45C189B3ECF01CFAADD38 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B2E4534419E7770ABFE2F361 /* XPlaner.app */,
-				B2E45A79365A3C6E4ECC7BEF /* XPlaner.app */,
+				B2E4534419E7770ABFE2F361 /* XPlanner.app */,
+				B2E45A79365A3C6E4ECC7BEF /* XPlanner.app */,
 				B2E45525E7E096B5BCC4CCBA /* Tests iOS.xctest */,
 				B2E457EBB019FEB301A017F8 /* Tests macOS.xctest */,
 			);
@@ -174,9 +174,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B2E4532D478C2C192D63327A /* XPlaner (iOS) */ = {
+		B2E4532D478C2C192D63327A /* XPlanner (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B2E4563D66F845A2C4C38891 /* Build configuration list for PBXNativeTarget "XPlaner (iOS)" */;
+			buildConfigurationList = B2E4563D66F845A2C4C38891 /* Build configuration list for PBXNativeTarget "XPlanner (iOS)" */;
 			buildPhases = (
 				B2E452CCBF629A947F3F2799 /* Sources */,
 				B2E454911A1322F5DA144644 /* Frameworks */,
@@ -186,16 +186,16 @@
 			);
 			dependencies = (
 			);
-			name = "XPlaner (iOS)";
+			name = "XPlanner (iOS)";
 			packageProductDependencies = (
 			);
 			productName = "XPlaner (iOS)";
-			productReference = B2E4534419E7770ABFE2F361 /* XPlaner.app */;
+			productReference = B2E4534419E7770ABFE2F361 /* XPlanner.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B2E453ECEE1D118892B84D5C /* XPlaner (macOS) */ = {
+		B2E453ECEE1D118892B84D5C /* XPlanner (macOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B2E4592B01F23C81BC0F0821 /* Build configuration list for PBXNativeTarget "XPlaner (macOS)" */;
+			buildConfigurationList = B2E4592B01F23C81BC0F0821 /* Build configuration list for PBXNativeTarget "XPlanner (macOS)" */;
 			buildPhases = (
 				B2E45E38C653959C4A628F3E /* Sources */,
 				B2E45F88A5A8C1BFED13BA71 /* Frameworks */,
@@ -205,9 +205,9 @@
 			);
 			dependencies = (
 			);
-			name = "XPlaner (macOS)";
+			name = "XPlanner (macOS)";
 			productName = "XPlaner (macOS)";
-			productReference = B2E45A79365A3C6E4ECC7BEF /* XPlaner.app */;
+			productReference = B2E45A79365A3C6E4ECC7BEF /* XPlanner.app */;
 			productType = "com.apple.product-type.application";
 		};
 		B2E456CB16DEC1F84127F5A8 /* Tests iOS */ = {
@@ -262,7 +262,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B2E452D0728633F87A40EAF4 /* Build configuration list for PBXProject "XPlaner" */;
+			buildConfigurationList = B2E452D0728633F87A40EAF4 /* Build configuration list for PBXProject "XPlanner" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -277,8 +277,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B2E4532D478C2C192D63327A /* XPlaner (iOS) */,
-				B2E453ECEE1D118892B84D5C /* XPlaner (macOS) */,
+				B2E4532D478C2C192D63327A /* XPlanner (iOS) */,
+				B2E453ECEE1D118892B84D5C /* XPlanner (macOS) */,
 				B2E456CB16DEC1F84127F5A8 /* Tests iOS */,
 				B2E457D060D64CE13D91A033 /* Tests macOS */,
 			);
@@ -368,12 +368,12 @@
 /* Begin PBXTargetDependency section */
 		B2E45955B4783118A789687E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B2E4532D478C2C192D63327A /* XPlaner (iOS) */;
+			target = B2E4532D478C2C192D63327A /* XPlanner (iOS) */;
 			targetProxy = B2E45790D67FAC3C2BB4EB74 /* PBXContainerItemProxy */;
 		};
 		B2E45B64DC0039EA20CECA37 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B2E453ECEE1D118892B84D5C /* XPlaner (macOS) */;
+			target = B2E453ECEE1D118892B84D5C /* XPlanner (macOS) */;
 			targetProxy = B2E4504996C93DCE4D2750FD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -450,7 +450,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "XCLZ-STUDIO.XPlaner";
-				PRODUCT_NAME = XPlaner;
+				PRODUCT_NAME = XPlanner;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -534,7 +534,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "XCLZ-STUDIO.XPlaner";
-				PRODUCT_NAME = XPlaner;
+				PRODUCT_NAME = XPlanner;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -555,7 +555,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "XCLZ-STUDIO.XPlaner";
-				PRODUCT_NAME = XPlaner;
+				PRODUCT_NAME = XPlanner;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
 			};
@@ -601,7 +601,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "XCLZ-STUDIO.XPlaner";
-				PRODUCT_NAME = XPlaner;
+				PRODUCT_NAME = XPlanner;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
 			};
@@ -623,7 +623,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B2E452D0728633F87A40EAF4 /* Build configuration list for PBXProject "XPlaner" */ = {
+		B2E452D0728633F87A40EAF4 /* Build configuration list for PBXProject "XPlanner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B2E450DC11DE010026BB1191 /* Debug */,
@@ -641,7 +641,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B2E4563D66F845A2C4C38891 /* Build configuration list for PBXNativeTarget "XPlaner (iOS)" */ = {
+		B2E4563D66F845A2C4C38891 /* Build configuration list for PBXNativeTarget "XPlanner (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B2E4590B35369B78988712E3 /* Debug */,
@@ -650,7 +650,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B2E4592B01F23C81BC0F0821 /* Build configuration list for PBXNativeTarget "XPlaner (macOS)" */ = {
+		B2E4592B01F23C81BC0F0821 /* Build configuration list for PBXNativeTarget "XPlanner (macOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B2E4594FE7C05984E4D9F13C /* Debug */,

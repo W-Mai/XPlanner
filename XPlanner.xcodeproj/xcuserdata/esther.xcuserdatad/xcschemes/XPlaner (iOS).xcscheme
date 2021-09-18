@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B2E4532D478C2C192D63327A"
                BuildableName = "XPlaner.app"
-               BlueprintName = "XPlaner (iOS)"
-               ReferencedContainer = "container:XPlaner.xcodeproj">
+               BlueprintName = "XPlanner (iOS)"
+               ReferencedContainer = "container:XPlanner.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,8 +46,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B2E4532D478C2C192D63327A"
             BuildableName = "XPlaner.app"
-            BlueprintName = "XPlaner (iOS)"
-            ReferencedContainer = "container:XPlaner.xcodeproj">
+            BlueprintName = "XPlanner (iOS)"
+            ReferencedContainer = "container:XPlanner.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
