@@ -202,7 +202,7 @@ struct OneProjectView: View {
                         ProgressView(value: 1)
                             .progressViewStyle(MyProgressStyle(
                                 missionsWithStatus:
-                                    [TaskInfo].init(repeating: TaskInfo(name: "", content: "" ,status: .finished, createDate: Date()), count: 4) + [TaskInfo].init(repeating: TaskInfo(name: "",content:  "" ,status: .todo, createDate: Date()), count: 3) + [TaskInfo].init(repeating: TaskInfo(name: "",content: "" ,status: .original, createDate: Date()), count: 8)
+                                    [TaskInfo].init(repeating: TaskInfo(name: "", content: "" ,status: .finished, createDate: Date(), id: UUID()), count: 4) + [TaskInfo].init(repeating: TaskInfo(name: "",content:  "" ,status: .todo, createDate: Date(), id: UUID()), count: 3) + [TaskInfo].init(repeating: TaskInfo(name: "",content: "" ,status: .original, createDate: Date(), id: UUID()), count: 8)
                             ))
                     }.padding([.horizontal])
                     .padding([.vertical], 5)

@@ -20,37 +20,36 @@ extension UTType {
         UTType(exportedAs: "com.xclz-studio.xplaner", conformingTo: .data)
     }
 }
-func extractData(from data: Data)throws -> String {
+
+func extractData(from data: Data)throws -> PlannerFileStruct {
     let decoder = JSONDecoder()
-
-    let product = try decoder.decode(GroceryProduct.self, from: data)
-
-    return product.name
-}
-struct XPlanerDocument: FileDocument {
-    var text: String
-    var original_data: Data
+    let product: PlannerFileStruct = try decoder.decode(PlannerFileStruct.self, from: data)
     
-    init(text: String="foggy?") {
-        self.text = text
-        original_data = """
-        {
-            "name": "hello",
-            "points": 12,
-            "description": "hahahah"
-        }
-        """.data(using: .utf8)!
+    return product
+}
+
+func serializeData(from data : PlannerFileStruct)throws -> Data {
+    let encoder = JSONEncoder()
+    let res = try encoder.encode(data)
+    
+    return res
+}
+
+struct XPlanerDocument: FileDocument {
+    var original_data: PlannerFileStruct
+    
+    init() {
+        original_data = PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "计划", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]())
     }
     
     static var readableContentTypes: [UTType] { [.xplaner] }
     
-
+    
     
     init(configuration: ReadConfiguration) throws {
         if let data = configuration.file.regularFileContents {
             let string = try extractData(from: data)
-            text = string
-            original_data = data
+            original_data = string
         }
         else {
             throw CocoaError(.fileReadCorruptFile)
@@ -58,7 +57,7 @@ struct XPlanerDocument: FileDocument {
     }
     
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        let data = original_data
+        let data = try serializeData(from: original_data)
         return .init(regularFileWithContents: data)
     }
     

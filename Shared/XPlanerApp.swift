@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+let CurrentFileFormatVerison = FileFormatVersion(a: 0, b: 0, c: 1)
+
 @main
 struct XPlanerApp: App {
     var body: some Scene {

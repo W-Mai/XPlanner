@@ -75,6 +75,8 @@ struct ProjectGroupInfo: Codable {
 // 文件信息详情
 struct FileInfos : Codable {
     var documentVersion : FileFormatVersion // 文件格式版本
+    
+    var topic : String                      // 主题
     var createDate: Date                    // 文件创建日期
     var author : String                     // 作者
     var displayMode : DisplayMode           // 显示模式
