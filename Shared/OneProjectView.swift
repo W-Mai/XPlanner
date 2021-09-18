@@ -167,7 +167,7 @@ struct OneProjectView: View {
                             HStack(spacing: 120){
                                 ForEach(0..<15, id: \.self){ i in
                                     GeometryReader{geoTask in
-                                        OneTaskView(title: "任务\(i)",content:"\(projectName)\(i)", index: i, isEditingMode: $isEditingMode, status: i < 4 ? .finished : i < 6 ? .todo : .original, seleted: $isSelected)
+                                        OneTaskView(title: "任务\(i) \(UUID())",content:"\(projectName)\(i)", index: i, isEditingMode: $isEditingMode, status: i < 4 ? .finished : i < 6 ? .todo : .original, seleted: $isSelected)
                                             .padding()
                                             .coordinateSpace(name: "task\(i)")
                                             .rotation3DEffect(
@@ -202,7 +202,7 @@ struct OneProjectView: View {
                         ProgressView(value: 1)
                             .progressViewStyle(MyProgressStyle(
                                 missionsWithStatus:
-                                    [TaskInfo].init(repeating: TaskInfo(name: "", status: .finished), count: 4) + [TaskInfo].init(repeating: TaskInfo(name: "", status: .todo), count: 3) + [TaskInfo].init(repeating: TaskInfo(name: "", status: .original), count: 8)
+                                    [TaskInfo].init(repeating: TaskInfo(name: "", content: "" ,status: .finished, createDate: Date()), count: 4) + [TaskInfo].init(repeating: TaskInfo(name: "",content:  "" ,status: .todo, createDate: Date()), count: 3) + [TaskInfo].init(repeating: TaskInfo(name: "",content: "" ,status: .original, createDate: Date()), count: 8)
                             ))
                     }.padding([.horizontal])
                     .padding([.vertical], 5)
