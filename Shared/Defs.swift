@@ -44,7 +44,7 @@ struct TaskStatusChangeRecord : Codable {
 }
 
 // 任务详情
-struct TaskInfo: Codable {
+struct TaskInfo: Codable, Identifiable {
     var name: String        // 任务名
     var content : String    // 内容
     var status: TaskStatus  // 任务状态
@@ -55,7 +55,7 @@ struct TaskInfo: Codable {
 }
 
 // 项目详情
-struct ProjectInfo: Codable {
+struct ProjectInfo: Codable, Identifiable {
     var name : String       // 项目名称
     var tasks : [TaskInfo]  // 所包含的任务
     
@@ -64,7 +64,7 @@ struct ProjectInfo: Codable {
 }
 
 // 项目组详情
-struct ProjectGroupInfo: Codable {
+struct ProjectGroupInfo: Codable, Identifiable {
     var name : String               // 项目组名称
     var projects : [ProjectInfo]    // 所包含的项目
     

@@ -21,6 +21,8 @@
 		EB4C17C926F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB99F92C26F4DD2200956A1A /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
 		EB99F92D26F4DD2200956A1A /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
+		EB99F92F26F6FBCA00956A1A /* PlannerDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92E26F6FBCA00956A1A /* PlannerDataManager.swift */; };
+		EB99F93026F6FBCB00956A1A /* PlannerDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92E26F6FBCA00956A1A /* PlannerDataManager.swift */; };
 		EB9F372726EAFB1F003E70F6 /* OneProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */; };
 		EB9F372826EAFB1F003E70F6 /* OneProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */; };
 		EB9FC94826F1E524005C21DD /* MyAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9FC94726F1E524005C21DD /* MyAnimations.swift */; };
@@ -62,6 +64,7 @@
 		B2E45F98F040A6EBF2ACC38D /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewTest.swift; sourceTree = "<group>"; };
 		EB99F92B26F4DD2200956A1A /* Defs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defs.swift; sourceTree = "<group>"; };
+		EB99F92E26F6FBCA00956A1A /* PlannerDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerDataManager.swift; sourceTree = "<group>"; };
 		EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneProjectView.swift; sourceTree = "<group>"; };
 		EB9FC94726F1E524005C21DD /* MyAnimations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAnimations.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -129,6 +132,7 @@
 				EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */,
 				EB9FC94726F1E524005C21DD /* MyAnimations.swift */,
 				EB99F92B26F4DD2200956A1A /* Defs.swift */,
+				EB99F92E26F6FBCA00956A1A /* PlannerDataManager.swift */,
 				B2E458B7ED4F41CAE0543CD3 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -323,6 +327,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB99F92F26F6FBCA00956A1A /* PlannerDataManager.swift in Sources */,
 				B2E45E01DE4981F43DD4C0B5 /* XPlanerApp.swift in Sources */,
 				EB99F92C26F4DD2200956A1A /* Defs.swift in Sources */,
 				B2E453B70818471470299612 /* XPlanerDocument.swift in Sources */,
@@ -353,6 +358,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB99F93026F6FBCB00956A1A /* PlannerDataManager.swift in Sources */,
 				B2E4537C976D8CD8000834D2 /* XPlanerApp.swift in Sources */,
 				EB99F92D26F4DD2200956A1A /* Defs.swift in Sources */,
 				B2E45DDC6B505061E87BF6FC /* XPlanerDocument.swift in Sources */,

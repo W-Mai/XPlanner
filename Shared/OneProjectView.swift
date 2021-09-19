@@ -14,8 +14,14 @@ struct OneTaskView: View {
     var index: Int
     @Binding var isEditingMode: Bool
     
-    var status: TaskStatus = .original
+    @Binding var status: TaskStatus
     @Binding var seleted: Bool
+    
+    let shadowOpacityMap : [TaskStatus : Double] = [
+        .finished : 0,
+        .todo : 1,
+        .original : 0.5
+    ]
     
     var body: some View {
         VStack{
@@ -57,14 +63,14 @@ struct OneTaskView: View {
         .frame(width: 100, height: 100, alignment: .center)
         .background(Color.orange)
         .cornerRadius(15)
-        .shadow(color: Color(hue: 1.0, saturation: 0.0, brightness: 0.718, opacity: status == .finished ? 0 : status == .todo ? 1 : 0.5),
-                radius: 6,
-                x: 5, y: 5)
+//        .shadow(color: Color("ShallowShadowColor").opacity(shadowOpacityMap[status]!),
+//                radius: 6,
+//                x: 5, y: 5)
         .brightness(status == .finished ? -0.2 : 0)
-        .blur(radius: status == .finished ? 2.6 : 0)
+        .blur(radius: status == .finished ? 10 : 0)
         .overlay(
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(Color.accentColor, lineWidth: status == .todo ? 1 : 0)
+                .stroke(Color.accentColor, lineWidth: status == .todo ? 3 : status == .original ? 0.5 : 0)
         )
         .overlay(
             Text(getStatusText())
@@ -125,7 +131,7 @@ struct OneTaskView: View {
 
 struct OneProjectView: View {
     var projectName: String = ""
-    var tasks: [String]
+    @Binding var tasks: [TaskInfo]
     
     @Binding var isEditingMode: Bool
     @Binding var displayMode: DisplayMode
@@ -165,9 +171,16 @@ struct OneProjectView: View {
                     ScrollView(.horizontal, showsIndicators:false){
                         ScrollViewReader{proxy in
                             HStack(spacing: 120){
-                                ForEach(0..<15, id: \.self){ i in
+                                ForEach(tasks.indices){ i in
                                     GeometryReader{geoTask in
-                                        OneTaskView(title: "任务\(i) \(UUID())",content:"\(projectName)\(i)", index: i, isEditingMode: $isEditingMode, status: i < 4 ? .finished : i < 6 ? .todo : .original, seleted: $isSelected)
+                                        OneTaskView(
+                                            title: tasks[i].name,
+                                            content: tasks[i].content,
+                                            index: i,
+                                            isEditingMode: $isEditingMode,
+                                            status: $tasks[i].status,
+                                            seleted: $isSelected
+                                        )
                                             .padding()
                                             .coordinateSpace(name: "task\(i)")
                                             .rotation3DEffect(
@@ -201,8 +214,7 @@ struct OneProjectView: View {
                     HStack{
                         ProgressView(value: 1)
                             .progressViewStyle(MyProgressStyle(
-                                missionsWithStatus:
-                                    [TaskInfo].init(repeating: TaskInfo(name: "", content: "" ,status: .finished, createDate: Date(), id: UUID()), count: 4) + [TaskInfo].init(repeating: TaskInfo(name: "",content:  "" ,status: .todo, createDate: Date(), id: UUID()), count: 3) + [TaskInfo].init(repeating: TaskInfo(name: "",content: "" ,status: .original, createDate: Date(), id: UUID()), count: 8)
+                                missionsWithStatus: tasks
                             ))
                     }.padding([.horizontal])
                     .padding([.vertical], 5)
@@ -220,18 +232,27 @@ struct OneProjectView: View {
 struct OneProjectView_Previews: PreviewProvider {
     
     @State static var isEditing = false
-    @State static var simpleMode = DisplayMode.SimpleProcessBarMode
+    @State static var simpleMode = DisplayMode.FullSquareMode
     @State static var isSelected = false
+    @State static var tasks = [TaskInfo](arrayLiteral:
+                                            TaskInfo(name: "任务1",content: "任务内容1",status: .finished,createDate: Date(), id: UUID()),
+                                          TaskInfo(name: "任务2",content: "任务内容2",status: .todo,createDate: Date(), id: UUID()),
+                                          TaskInfo(name: "任务3",content: "任务内容3",status: .original,createDate: Date(), id: UUID())
+                        )
+    
+    @State static var status1 = TaskStatus.finished
+    @State static var status2 = TaskStatus.todo
+    @State static var status3 = TaskStatus.original
     
     static var previews: some View {
-        OneProjectView(projectName: "ProjectName", tasks: [String](), isEditingMode: self.$isEditing, displayMode: $simpleMode, isSelected: $isSelected)
+        OneProjectView(projectName: "ProjectName", tasks: $tasks, isEditingMode: self.$isEditing, displayMode: $simpleMode, isSelected: $isSelected)
             .previewLayout(.sizeThatFits)
             .preferredColorScheme(.light)
             .frame(width: 1000)
         HStack {
-            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing, status: .finished, seleted: $isSelected)
-            OneTaskView(title: "TaskName",content: "✰🤣", index: 1000, isEditingMode: $isEditing, status: .todo, seleted: $isSelected)
+            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing,status: $status1,seleted: $isSelected)
+            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing, status: $status2, seleted: $isSelected)
+            OneTaskView(title: "TaskName",content: "✰🤣", index: 1000, isEditingMode: $isEditing, status: $status3, seleted: $isSelected)
         }.previewLayout(.sizeThatFits).padding()
     }
 }

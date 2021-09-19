@@ -49,7 +49,33 @@ struct XPlanerDocument: FileDocument {
                                         author: author,
                                         displayMode: .FullSquareMode,
                                         displayCatagory: .All),
-            projectGroups: [ProjectGroupInfo](),
+            projectGroups: [ProjectGroupInfo](arrayLiteral:
+                                                ProjectGroupInfo(
+                                                    name: "项目组",
+                                                    projects: [ProjectInfo](
+                                                        arrayLiteral:
+                                                            ProjectInfo(
+                                                                name: "项目",
+                                                                tasks: [TaskInfo](arrayLiteral:
+                                                                                    TaskInfo(name: "任务1",content: "任务内容1",status: .finished,createDate: Date(), id: UUID()),
+                                                                                  TaskInfo(name: "任务2",content: "任务内容2",status: .todo,createDate: Date(), id: UUID()),
+                                                                                  TaskInfo(name: "任务3",content: "任务内容3",status: .original,createDate: Date(), id: UUID())
+                                                                ),
+                                                                id: UUID())),
+                                                    id: UUID()),
+                                              ProjectGroupInfo(
+                                                  name: "项目组2",
+                                                  projects: [ProjectInfo](
+                                                      arrayLiteral:
+                                                          ProjectInfo(
+                                                              name: "项目",
+                                                              tasks: [TaskInfo](arrayLiteral:
+                                                                                  TaskInfo(name: "任务1",content: "任务内容1",status: .finished,createDate: Date(), id: UUID()),
+                                                                                TaskInfo(name: "任务2",content: "任务内容2",status: .todo,createDate: Date(), id: UUID()),
+                                                                                TaskInfo(name: "任务3",content: "任务内容3",status: .original,createDate: Date(), id: UUID())
+                                                              ),
+                                                              id: UUID())),
+                                                  id: UUID())),
             taskStatusChanges: [TaskStatusChangeRecord]()
         )
     }

@@ -47,11 +47,41 @@ struct ContentView2: View {
     
 }
 
+class Manager: ObservableObject {
+    @Published var data = [1 ,2 ,3]
+    
+    
+    func add() {
+        objectWillChange.send()
+        data.append(Int.random(in: 0..<1000))
+    }
+}
+
+struct docuitest : View {
+    @State var n = 0
+    @ObservedObject var manager = Manager()
+    
+    var body : some View{
+        VStack{
+            Button(action: {
+                manager.add()
+            }, label: {
+                Text("Add").padding()
+            })
+            
+            ForEach(manager.data.indices, id: \.self){i in
+                Text("\(manager.data[i])")
+            }
+        }
+    }
+}
 
 struct SwiftUIViewTest_Previews: PreviewProvider {
     static var previews: some View {
 //        SwiftUIViewTest()
 //        ContentView2()
-        SwiftUIViewTest()
+//        SwiftUIViewTest()
+        docuitest()
+            .previewLayout(.sizeThatFits)
     }
 }
