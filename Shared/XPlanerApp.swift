@@ -14,7 +14,7 @@ let CurrentFileFormatVerison = FileFormatVersion(a: 0, b: 0, c: 1)
 struct XPlanerApp: App {
     var body: some Scene {
         DocumentGroup(newDocument: XPlanerDocument()) { file in
-            ContentView(document: file.$document)
+            ContentView(document: file.document)
         }
     }
 }

@@ -9,6 +9,8 @@
 		<dict>
 			<key>CFBundleTypeName</key>
 			<string>xplaner</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.xclz-studio.xplaner</string>

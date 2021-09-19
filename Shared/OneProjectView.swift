@@ -14,7 +14,7 @@ struct OneTaskView: View {
     var index: Int
     @Binding var isEditingMode: Bool
     
-    @Binding var status: TaskStatus
+    var status: TaskStatus
     @Binding var seleted: Bool
     
     let shadowOpacityMap : [TaskStatus : Double] = [
@@ -131,10 +131,10 @@ struct OneTaskView: View {
 
 struct OneProjectView: View {
     var projectName: String = ""
-    @Binding var tasks: [TaskInfo]
+    var tasks: [TaskInfo]
     
     @Binding var isEditingMode: Bool
-    @Binding var displayMode: DisplayMode
+    var displayMode: DisplayMode
     @Binding var isSelected : Bool
     
     var body: some View {
@@ -178,7 +178,7 @@ struct OneProjectView: View {
                                             content: tasks[i].content,
                                             index: i,
                                             isEditingMode: $isEditingMode,
-                                            status: $tasks[i].status,
+                                            status: tasks[i].status,
                                             seleted: $isSelected
                                         )
                                             .padding()
@@ -245,14 +245,14 @@ struct OneProjectView_Previews: PreviewProvider {
     @State static var status3 = TaskStatus.original
     
     static var previews: some View {
-        OneProjectView(projectName: "ProjectName", tasks: $tasks, isEditingMode: self.$isEditing, displayMode: $simpleMode, isSelected: $isSelected)
+        OneProjectView(projectName: "ProjectName", tasks: tasks, isEditingMode: self.$isEditing, displayMode: simpleMode, isSelected: $isSelected)
             .previewLayout(.sizeThatFits)
             .preferredColorScheme(.light)
             .frame(width: 1000)
         HStack {
-            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing,status: $status1,seleted: $isSelected)
-            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing, status: $status2, seleted: $isSelected)
-            OneTaskView(title: "TaskName",content: "✰🤣", index: 1000, isEditingMode: $isEditing, status: $status3, seleted: $isSelected)
+            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing,status: status1,seleted: $isSelected)
+            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing, status: status2, seleted: $isSelected)
+            OneTaskView(title: "TaskName",content: "✰🤣", index: 1000, isEditingMode: $isEditing, status: status3, seleted: $isSelected)
         }.previewLayout(.sizeThatFits).padding()
     }
 }

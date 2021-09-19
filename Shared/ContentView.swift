@@ -9,15 +9,20 @@
 import SwiftUI
 
 struct ContentView_Previews: PreviewProvider {
+    @ObservedObject static var data = XPlanerDocument()
+    
     static var previews: some View {
-        ContentView(document: .constant(XPlanerDocument()))
+        ContentView(document: data)
     }
 }
 
 struct ContentView: View {
-    @Binding var document: XPlanerDocument
+//    @Binding var document: XPlanerDocument
+    @ObservedObject var document: XPlanerDocument
+//    @ObservedObject var manager : PlannerDataManager
     
-    @ObservedObject var manager : PlannerDataManager = PlannerDataManager(data: document.original_data)
+//    @ObservedObject var manager2 = PlannerDataManager(data: PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "hhh", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]()))
+    
     
     let courses: Array<String> = ["数学", "英语", "政治", "专业课", "测试课程"]
     let project = [["直播课", "严选题"],["阅读", "翻译", "完型"], ["徐涛课程"], ["计组", "计网"], []]
@@ -32,43 +37,54 @@ struct ContentView: View {
     var body: some View {
         ZStack{
             ScrollView(.vertical){
-                ScrollViewReader() {proxy in
-                    ExtractedMainViewView(
-                        data: $document.original_data,
-                        isEditingMode: $isEditingMode)
-                        .onAppear(){
-                            scrollProxy = proxy
-                        }
+                Button(action: {
+                    document.add()
+                }, label: {
+                    Text("Add")
+                })
+
+                ForEach(document.original_data.projectGroups, id: \.id){i in
+                    Text(i.name)
                 }
+                
+//                ScrollViewReader() {proxy in
+//                    ExtractedMainViewView(
+//                        data: $document.docData,
+//                        isEditingMode: $isEditingMode)
+//                        .onAppear(){
+//                            scrollProxy = proxy
+//                        }
+//                }
             }
-            .frame(maxHeight: .infinity)
-            .foregroundColor(.accentColor)
-            .animation(.spring(response: 0.3, dampingFraction: 0.5))
-            .toolbar {
-                ToolbarItem {
-                    Toggle(isOn: $simpleMode) {
-                    }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
-                    .onChange(of: simpleMode, perform: { value in
-                        simpleMode = isEditingMode ? false : simpleMode
-                        document.original_data.fileInformations.displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
-                    })
-                    .onAppear{
-                        simpleMode = document.original_data.fileInformations.displayMode == .SimpleProcessBarMode
-                    }
-                    .disabled(isEditingMode)
-                    
-                }
-            }
+//            .frame(maxHeight: .infinity)
+//            .foregroundColor(.accentColor)
+//            .animation(.spring(response: 0.3, dampingFraction: 0.5))
+//            .toolbar {
+//                ToolbarItem {
+//                    Toggle(isOn: $simpleMode) {
+//                    }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
+//                    .onChange(of: simpleMode, perform: { value in
+//                        simpleMode = isEditingMode ? false : simpleMode
+//                        document.manager.docData.fileInformations.displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+//                    })
+//                    .onAppear{
+//                        simpleMode = document.manager.docData.fileInformations.displayMode == .SimpleProcessBarMode
+//                    }
+//                    .disabled(isEditingMode)
+//
+//                }
+//            }
             
-            ExtractedBottomButtonGroupView(pickerSelected: $pickerSelected)
-            ExtractedTopMenuView(
-                courses: courses,
-                scrollProxy: scrollProxy,
-                projectGroups: $document.original_data.projectGroups,
-                isEditingMode: $isEditingMode,
-                displayMode: $document.original_data.fileInformations.displayMode,
-                isSelected: $isSelected
-            )
+//            ExtractedBottomButtonGroupView(pickerSelected: $pickerSelected)
+//            ExtractedTopMenuView(
+//                courses: courses,
+//                scrollProxy: scrollProxy,
+//                manager: document.manager,
+//                projectGroups: document.manager.docData.projectGroups,
+//                isEditingMode: $isEditingMode,
+//                displayMode: $document.manager.docData.fileInformations.displayMode,
+//                isSelected: $isSelected
+//            )
         }
     }
 }
@@ -111,20 +127,20 @@ struct ExtractedMainViewView: View {
     var body: some View {
         //            TextEditor(text: $document.text)
         VStack(alignment: .leading){
-            ForEach(0..<data.projectGroups.endIndex){i in
-                Text(data.projectGroups[i].name)
+            ForEach(data.projectGroups){i in
+                Text(i.name)
             }
             
-            ForEach(data.projectGroups.indices, content: {i in
+            ForEach(data.projectGroups, content: {i in
                 ExtractedMainlyContentView(
-                    projectGroupName: data.projectGroups[i].name,
-                    projects: $data.projectGroups[i].projects,
+                    projectGroupName: i.name,
+                    projects: i.projects,
                     isEditingMode: $isEditingMode,
                     pickerSelected: $pickerSeleted,
-                    displayMode: $data.fileInformations.displayMode,
+                    displayMode: data.fileInformations.displayMode,
                     isSelected: $isSelected
-                ).id(data.projectGroups[i].id)
-                if(i < data.projectGroups.endIndex){
+                ).id(i.id)
+                if(i.id != data.projectGroups.last?.id){
                     Divider().padding([.leading, .trailing])
                 }else{
                     EmptyView()
@@ -148,11 +164,11 @@ struct ExtractedMainViewView: View {
 struct ExtractedMainlyContentView: View {
     var projectGroupName: String
     
-    @Binding var projects: [ProjectInfo]
+    var projects: [ProjectInfo]
     
     @Binding var isEditingMode: Bool
     @Binding var pickerSelected: Int
-    @Binding var displayMode: DisplayMode
+    var displayMode: DisplayMode
     @Binding var isSelected : Bool
     
     var body: some View {
@@ -182,12 +198,12 @@ struct ExtractedMainlyContentView: View {
         }.padding([.top], 30)
         
         ){
-            ForEach(projects.indices){i in
+            ForEach(projects){i in
                 OneProjectView(
-                    projectName: projects[i].name,
-                    tasks: $projects[i].tasks,
+                    projectName: i.name,
+                    tasks: i.tasks,
                     isEditingMode: $isEditingMode,
-                    displayMode: $displayMode,
+                    displayMode: displayMode,
                     isSelected: $isSelected)
             }
             if isEditingMode{
@@ -209,7 +225,9 @@ struct ExtractedTopMenuView: View {
     var courses: Array<String>
     var scrollProxy: ScrollViewProxy?
     
-    @Binding var projectGroups : [ProjectGroupInfo]
+    @ObservedObject var manager : PlannerDataManager
+    
+    var projectGroups : [ProjectGroupInfo]
     @Binding var isEditingMode: Bool
     @Binding var displayMode : DisplayMode
     @Binding var isSelected : Bool
@@ -241,21 +259,16 @@ struct ExtractedTopMenuView: View {
                         }
                         
                         Menu("列表"){
-                            ForEach(projectGroups.indices){i in
+                            ForEach(projectGroups, id: \.id){i in
                                 Button(action: {
-                                    scrollProxy?.scrollTo(projectGroups[i].id, anchor: .topLeading)
+                                    scrollProxy?.scrollTo(i.id, anchor: .topLeading)
                                 }, label: {
-                                    Text(projectGroups[i].name)
+                                    Text(i.name)
                                 })
                             }
                             Divider()
                             Button(action:{
-                                
-                                projectGroups.append(ProjectGroupInfo(
-                                    name: Date().description,
-                                    projects: [ProjectInfo](),
-                                    id: UUID()
-                                ))
+                                manager.add()
                             }){
                                 Text("添加")
                                 Image(systemName: "plus.app.fill")

@@ -36,8 +36,10 @@ func serializeData(from data : PlannerFileStruct)throws -> Data {
     return res
 }
 
-struct XPlanerDocument: FileDocument {
-    var original_data: PlannerFileStruct
+class XPlanerDocument: FileDocument, ObservableObject {
+    @Published var original_data: PlannerFileStruct
+    
+//    @Published var manager : PlannerDataManager
     
     init() {
         let author = NSFullUserName()
@@ -49,33 +51,20 @@ struct XPlanerDocument: FileDocument {
                                         author: author,
                                         displayMode: .FullSquareMode,
                                         displayCatagory: .All),
-            projectGroups: [ProjectGroupInfo](arrayLiteral:
-                                                ProjectGroupInfo(
-                                                    name: "项目组",
-                                                    projects: [ProjectInfo](
-                                                        arrayLiteral:
-                                                            ProjectInfo(
-                                                                name: "项目",
-                                                                tasks: [TaskInfo](arrayLiteral:
-                                                                                    TaskInfo(name: "任务1",content: "任务内容1",status: .finished,createDate: Date(), id: UUID()),
-                                                                                  TaskInfo(name: "任务2",content: "任务内容2",status: .todo,createDate: Date(), id: UUID()),
-                                                                                  TaskInfo(name: "任务3",content: "任务内容3",status: .original,createDate: Date(), id: UUID())
-                                                                ),
-                                                                id: UUID())),
-                                                    id: UUID()),
-                                              ProjectGroupInfo(
-                                                  name: "项目组2",
-                                                  projects: [ProjectInfo](
-                                                      arrayLiteral:
-                                                          ProjectInfo(
-                                                              name: "项目",
-                                                              tasks: [TaskInfo](arrayLiteral:
-                                                                                  TaskInfo(name: "任务1",content: "任务内容1",status: .finished,createDate: Date(), id: UUID()),
-                                                                                TaskInfo(name: "任务2",content: "任务内容2",status: .todo,createDate: Date(), id: UUID()),
-                                                                                TaskInfo(name: "任务3",content: "任务内容3",status: .original,createDate: Date(), id: UUID())
-                                                              ),
-                                                              id: UUID())),
-                                                  id: UUID())),
+            projectGroups: [ProjectGroupInfo](
+                arrayLiteral:ProjectGroupInfo(
+                    name: "项目组",
+                    projects: [ProjectInfo](
+                        arrayLiteral:ProjectInfo(
+                            name: "项目",
+                            tasks: [TaskInfo](
+                                arrayLiteral:TaskInfo(name: "任务1",content: "任务内容1",status: .finished,createDate: Date(), id: UUID()),
+                                TaskInfo(name: "任务2",content: "任务内容2",status: .todo,createDate: Date(), id: UUID()),
+                                TaskInfo(name: "任务3",content: "任务内容3",status: .original,createDate: Date(), id: UUID())
+                            ),
+                            id: UUID())),
+                    id: UUID())
+            ),
             taskStatusChanges: [TaskStatusChangeRecord]()
         )
     }
@@ -84,7 +73,7 @@ struct XPlanerDocument: FileDocument {
     
     
     
-    init(configuration: ReadConfiguration) throws {
+    required init(configuration: ReadConfiguration) throws {
         if let data = configuration.file.regularFileContents {
             let string = try extractData(from: data)
             original_data = string
@@ -94,9 +83,22 @@ struct XPlanerDocument: FileDocument {
         }
     }
     
+    
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
         let data = try serializeData(from: original_data)
+        
+        
         return .init(regularFileWithContents: data)
     }
     
+    
+    func add() {
+//        objectWillChange.send()
+        original_data.projectGroups.append(
+            ProjectGroupInfo(
+            name: Date().description,
+            projects: [ProjectInfo](),
+            id: UUID()
+        ))
+    }
 }
