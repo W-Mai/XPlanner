@@ -39,6 +39,7 @@ func serializeData(from data : PlannerFileStruct)throws -> Data {
 class XPlanerDocument: FileDocument, ObservableObject {
     @Published var original_data: PlannerFileStruct
     
+    var isChanged : Bool = false
 //    @Published var manager : PlannerDataManager
     
     init() {
@@ -100,5 +101,7 @@ class XPlanerDocument: FileDocument, ObservableObject {
             projects: [ProjectInfo](),
             id: UUID()
         ))
+        
+        isChanged.toggle()
     }
 }
