@@ -19,6 +19,8 @@ struct ContentView_Previews: PreviewProvider {
 struct ContentView: View {
 //    @Binding var document: XPlanerDocument
     @ObservedObject var document: XPlanerDocument
+    @Environment(\.undoManager) var undoManager
+    
 //    @ObservedObject var manager : PlannerDataManager
     
 //    @ObservedObject var manager2 = PlannerDataManager(data: PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "hhh", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]()))
@@ -39,6 +41,9 @@ struct ContentView: View {
             ScrollView(.vertical){
                 Button(action: {
                     document.add()
+                    undoManager?.registerUndo(withTarget: document, handler: { (document) in
+                        document.original_data = document.original_data
+                                })
                 }, label: {
                     Text("Add")
                 })
@@ -269,6 +274,7 @@ struct ExtractedTopMenuView: View {
                             Divider()
                             Button(action:{
                                 manager.add()
+                                
                             }){
                                 Text("添加")
                                 Image(systemName: "plus.app.fill")

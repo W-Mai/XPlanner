@@ -36,7 +36,19 @@ func serializeData(from data : PlannerFileStruct)throws -> Data {
     return res
 }
 
-class XPlanerDocument: FileDocument, ObservableObject {
+class XPlanerDocument: ReferenceFileDocument, ObservableObject {
+    
+    func snapshot(contentType: UTType) throws -> PlannerFileStruct {
+        return self.original_data
+    }
+    
+    func fileWrapper(snapshot: PlannerFileStruct, configuration: WriteConfiguration) throws -> FileWrapper {
+        let data = try serializeData(from: snapshot)
+        
+        
+        return .init(regularFileWithContents: data)
+    }
+    
     @Published var original_data: PlannerFileStruct
     
     var isChanged : Bool = false
@@ -94,7 +106,7 @@ class XPlanerDocument: FileDocument, ObservableObject {
     
     
     func add() {
-//        objectWillChange.send()
+        objectWillChange.send()
         original_data.projectGroups.append(
             ProjectGroupInfo(
             name: Date().description,
@@ -103,5 +115,14 @@ class XPlanerDocument: FileDocument, ObservableObject {
         ))
         
         isChanged.toggle()
+    }
+    
+    func fuck() {
+//        @Environment(\.undoManager) var undoManager
+        
+        
+//        undoManager?.registerUndo(withTarget: original_data, handler: { (document) in
+//            document.text = document.text
+//                    })
     }
 }
