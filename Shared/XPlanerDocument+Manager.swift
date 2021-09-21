@@ -8,16 +8,10 @@
 import Foundation
 import SwiftUI
 
-class PlannerDataManager: ObservableObject {
-    @Published var docData : PlannerFileStruct
-    
-    init(data :inout PlannerFileStruct) {
-        docData = data
-    }
-    
+extension XPlanerDocument {
     func add() {
-//        objectWillChange.send()
-        docData.projectGroups.append(
+        objectWillChange.send()
+        plannerData.projectGroups.append(
             ProjectGroupInfo(
             name: Date().description,
             projects: [ProjectInfo](),

@@ -21,12 +21,14 @@
 		EB4C17C926F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB99F92C26F4DD2200956A1A /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
 		EB99F92D26F4DD2200956A1A /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
-		EB99F92F26F6FBCA00956A1A /* PlannerDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92E26F6FBCA00956A1A /* PlannerDataManager.swift */; };
-		EB99F93026F6FBCB00956A1A /* PlannerDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92E26F6FBCA00956A1A /* PlannerDataManager.swift */; };
+		EB99F92F26F6FBCA00956A1A /* XPlanerDocument+Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */; };
+		EB99F93026F6FBCB00956A1A /* XPlanerDocument+Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */; };
 		EB9F372726EAFB1F003E70F6 /* OneProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */; };
 		EB9F372826EAFB1F003E70F6 /* OneProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */; };
 		EB9FC94826F1E524005C21DD /* MyAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9FC94726F1E524005C21DD /* MyAnimations.swift */; };
 		EB9FC94926F1E524005C21DD /* MyAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9FC94726F1E524005C21DD /* MyAnimations.swift */; };
+		EBE9187126FB695200244137 /* MyComponentStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE9187026FB695200244137 /* MyComponentStyles.swift */; };
+		EBE9187226FB695200244137 /* MyComponentStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE9187026FB695200244137 /* MyComponentStyles.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,11 +64,14 @@
 		B2E45C89A5D9562B61F40438 /* Tests_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_iOS.swift; sourceTree = "<group>"; };
 		B2E45D4F3AB85456191AC12D /* XPlanerDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XPlanerDocument.swift; sourceTree = "<group>"; };
 		B2E45F98F040A6EBF2ACC38D /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		EB3A88AA26FA16A80017527E /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		EB3A88AB26FA16BB0017527E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewTest.swift; sourceTree = "<group>"; };
 		EB99F92B26F4DD2200956A1A /* Defs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defs.swift; sourceTree = "<group>"; };
-		EB99F92E26F6FBCA00956A1A /* PlannerDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerDataManager.swift; sourceTree = "<group>"; };
+		EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XPlanerDocument+Manager.swift"; sourceTree = "<group>"; };
 		EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneProjectView.swift; sourceTree = "<group>"; };
 		EB9FC94726F1E524005C21DD /* MyAnimations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAnimations.swift; sourceTree = "<group>"; };
+		EBE9187026FB695200244137 /* MyComponentStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyComponentStyles.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +109,7 @@
 		B2E4500A83348AAE0BCD3AD4 = {
 			isa = PBXGroup;
 			children = (
+				EB3A88AC26FA16C30017527E /* Something Else */,
 				B2E45C189B3ECF01CFAADD38 /* Products */,
 				B2E454E80D4AFEBF13F9CAC3 /* Shared */,
 				B2E45BCDEF6796D880D7899B /* iOS */,
@@ -125,14 +131,14 @@
 		B2E454E80D4AFEBF13F9CAC3 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				EBE9187326FB69AB00244137 /* Utils */,
 				B2E459439A0C8FD12B604818 /* XPlanerApp.swift */,
 				B2E45D4F3AB85456191AC12D /* XPlanerDocument.swift */,
+				EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */,
 				B2E45322B6A1547BDF046C0A /* ContentView.swift */,
 				EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */,
 				EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */,
-				EB9FC94726F1E524005C21DD /* MyAnimations.swift */,
 				EB99F92B26F4DD2200956A1A /* Defs.swift */,
-				EB99F92E26F6FBCA00956A1A /* PlannerDataManager.swift */,
 				B2E458B7ED4F41CAE0543CD3 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -173,6 +179,24 @@
 				B2E457EBB019FEB301A017F8 /* Tests macOS.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		EB3A88AC26FA16C30017527E /* Something Else */ = {
+			isa = PBXGroup;
+			children = (
+				EB3A88AB26FA16BB0017527E /* README.md */,
+				EB3A88AA26FA16A80017527E /* LICENSE */,
+			);
+			path = "Something Else";
+			sourceTree = "<group>";
+		};
+		EBE9187326FB69AB00244137 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				EB9FC94726F1E524005C21DD /* MyAnimations.swift */,
+				EBE9187026FB695200244137 /* MyComponentStyles.swift */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -327,7 +351,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB99F92F26F6FBCA00956A1A /* PlannerDataManager.swift in Sources */,
+				EBE9187126FB695200244137 /* MyComponentStyles.swift in Sources */,
+				EB99F92F26F6FBCA00956A1A /* XPlanerDocument+Manager.swift in Sources */,
 				B2E45E01DE4981F43DD4C0B5 /* XPlanerApp.swift in Sources */,
 				EB99F92C26F4DD2200956A1A /* Defs.swift in Sources */,
 				B2E453B70818471470299612 /* XPlanerDocument.swift in Sources */,
@@ -358,7 +383,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB99F93026F6FBCB00956A1A /* PlannerDataManager.swift in Sources */,
+				EBE9187226FB695200244137 /* MyComponentStyles.swift in Sources */,
+				EB99F93026F6FBCB00956A1A /* XPlanerDocument+Manager.swift in Sources */,
 				B2E4537C976D8CD8000834D2 /* XPlanerApp.swift in Sources */,
 				EB99F92D26F4DD2200956A1A /* Defs.swift in Sources */,
 				B2E45DDC6B505061E87BF6FC /* XPlanerDocument.swift in Sources */,

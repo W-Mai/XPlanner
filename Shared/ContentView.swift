@@ -9,25 +9,16 @@
 import SwiftUI
 
 struct ContentView_Previews: PreviewProvider {
-    @ObservedObject static var data = XPlanerDocument()
+    @State static var data = XPlanerDocument()
     
     static var previews: some View {
-        ContentView(document: data)
+        ContentView().environmentObject(data)
     }
 }
 
 struct ContentView: View {
-//    @Binding var document: XPlanerDocument
-    @ObservedObject var document: XPlanerDocument
+    @EnvironmentObject var document: XPlanerDocument
     @Environment(\.undoManager) var undoManager
-    
-//    @ObservedObject var manager : PlannerDataManager
-    
-//    @ObservedObject var manager2 = PlannerDataManager(data: PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "hhh", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]()))
-    
-    
-    let courses: Array<String> = ["数学", "英语", "政治", "专业课", "测试课程"]
-    let project = [["直播课", "严选题"],["阅读", "翻译", "完型"], ["徐涛课程"], ["计组", "计网"], []]
     
     @State var scrollProxy : ScrollViewProxy? = nil
     @State var isEditingMode = false
@@ -42,54 +33,54 @@ struct ContentView: View {
                 Button(action: {
                     document.add()
                     undoManager?.registerUndo(withTarget: document, handler: { (document) in
-                        document.original_data = document.original_data
+                        document.plannerData = document.plannerData
                                 })
                 }, label: {
                     Text("Add")
                 })
 
-                ForEach(document.original_data.projectGroups, id: \.id){i in
+                ForEach(document.plannerData.projectGroups, id: \.id){i in
                     Text(i.name)
                 }
                 
-//                ScrollViewReader() {proxy in
-//                    ExtractedMainViewView(
-//                        data: $document.docData,
-//                        isEditingMode: $isEditingMode)
-//                        .onAppear(){
-//                            scrollProxy = proxy
-//                        }
-//                }
+                ScrollViewReader() {proxy in
+                    ExtractedMainViewView(
+                        data: $document.fileData,
+                        isEditingMode: $isEditingMode)
+                        .onAppear(){
+                            scrollProxy = proxy
+                        }
+                }
             }
-//            .frame(maxHeight: .infinity)
-//            .foregroundColor(.accentColor)
-//            .animation(.spring(response: 0.3, dampingFraction: 0.5))
-//            .toolbar {
-//                ToolbarItem {
-//                    Toggle(isOn: $simpleMode) {
-//                    }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
-//                    .onChange(of: simpleMode, perform: { value in
-//                        simpleMode = isEditingMode ? false : simpleMode
-//                        document.manager.docData.fileInformations.displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
-//                    })
-//                    .onAppear{
-//                        simpleMode = document.manager.docData.fileInformations.displayMode == .SimpleProcessBarMode
-//                    }
-//                    .disabled(isEditingMode)
-//
-//                }
-//            }
+            .frame(maxHeight: .infinity)
+            .foregroundColor(.accentColor)
+            .animation(.spring(response: 0.3, dampingFraction: 0.5))
+            .toolbar {
+                ToolbarItem {
+                    Toggle(isOn: $simpleMode) {
+                    }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
+                    .onChange(of: simpleMode, perform: { value in
+                        simpleMode = isEditingMode ? false : simpleMode
+                        document.manager.docData.fileInformations.displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+                    })
+                    .onAppear{
+                        simpleMode = document.manager.docData.fileInformations.displayMode == .SimpleProcessBarMode
+                    }
+                    .disabled(isEditingMode)
+
+                }
+            }
             
-//            ExtractedBottomButtonGroupView(pickerSelected: $pickerSelected)
-//            ExtractedTopMenuView(
-//                courses: courses,
-//                scrollProxy: scrollProxy,
-//                manager: document.manager,
-//                projectGroups: document.manager.docData.projectGroups,
-//                isEditingMode: $isEditingMode,
-//                displayMode: $document.manager.docData.fileInformations.displayMode,
-//                isSelected: $isSelected
-//            )
+            ExtractedBottomButtonGroupView(pickerSelected: $pickerSelected)
+            ExtractedTopMenuView(
+                courses: [],
+                scrollProxy: scrollProxy,
+                manager: document.manager,
+                projectGroups: document.manager.docData.projectGroups,
+                isEditingMode: $isEditingMode,
+                displayMode: $document.manager.docData.fileInformations.displayMode,
+                isSelected: $isSelected
+            )
         }
     }
 }
@@ -230,8 +221,6 @@ struct ExtractedTopMenuView: View {
     var courses: Array<String>
     var scrollProxy: ScrollViewProxy?
     
-    @ObservedObject var manager : PlannerDataManager
-    
     var projectGroups : [ProjectGroupInfo]
     @Binding var isEditingMode: Bool
     @Binding var displayMode : DisplayMode
@@ -273,7 +262,7 @@ struct ExtractedTopMenuView: View {
                             }
                             Divider()
                             Button(action:{
-                                manager.add()
+//                                manager.add()
                                 
                             }){
                                 Text("添加")
