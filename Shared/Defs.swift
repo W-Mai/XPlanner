@@ -6,26 +6,26 @@
 //
 import SwiftUI
 
-// 任务状态
+/// 任务状态
 enum TaskStatus: String, Codable {
     case finished = "FINISHED",
          original = "ORIGINAL",
          todo = "TODO"
 }
 
-// 显示模式
+/// 显示模式
 enum DisplayMode: String, Codable {
     case FullSquareMode // 方形样式
     case SimpleProcessBarMode // 线条进度样式
 }
 
-// 显示类别
+/// 显示类别
 enum DisplayCatagory: String, Codable {
     case All    // 显示所有任务
     case Todos  // 只显示待办事项
 }
 
-// 文件结构版本号
+/// 文件结构版本号
 struct FileFormatVersion : Codable, Comparable{
     var a, b, c : Int
     
@@ -34,7 +34,7 @@ struct FileFormatVersion : Codable, Comparable{
     }
 }
 
-// 任务状态改变记录，记录任务状态改变情况，方便查看每日完成情况
+/// 任务状态改变记录，记录任务状态改变情况，方便查看每日完成情况
 struct TaskStatusChangeRecord : Codable, Equatable {
     var taskId : UUID
     var changeDate : Date
@@ -50,12 +50,12 @@ struct TaskStatusChangeRecord : Codable, Equatable {
     }
 }
 
-// 任务详情
+/// 任务详情
 struct TaskInfo: Codable, Identifiable, Equatable {
-    var name: String        // 任务名
-    var content : String    // 内容
-    var status: TaskStatus  // 任务状态
-    var createDate : Date   // 创建日期
+    var name: String        /// 任务名
+    var content : String    /// 内容
+    var status: TaskStatus  /// 任务状态
+    var createDate : Date   /// 创建日期
     
     var id : UUID
     var extra : String?
@@ -70,10 +70,10 @@ struct TaskInfo: Codable, Identifiable, Equatable {
     }
 }
 
-// 项目详情
+/// 项目详情
 struct ProjectInfo: Codable, Identifiable, Equatable {
-    var name : String       // 项目名称
-    var tasks : [TaskInfo]  // 所包含的任务
+    var name : String       /// 项目名称
+    var tasks : [TaskInfo]  /// 所包含的任务
     
     var id : UUID
     var extra : String?
@@ -86,10 +86,10 @@ struct ProjectInfo: Codable, Identifiable, Equatable {
     }
 }
 
-// 项目组详情
+/// 项目组详情
 struct ProjectGroupInfo: Codable, Identifiable, Equatable {
-    var name : String               // 项目组名称
-    var projects : [ProjectInfo]    // 所包含的项目
+    var name : String               /// 项目组名称
+    var projects : [ProjectInfo]    /// 所包含的项目
     
     var id : UUID
     var extra : String?
@@ -102,15 +102,15 @@ struct ProjectGroupInfo: Codable, Identifiable, Equatable {
     }
 }
 
-// 文件信息详情
+/// 文件信息详情
 struct FileInfos : Codable, Equatable {
-    var documentVersion : FileFormatVersion // 文件格式版本
+    var documentVersion : FileFormatVersion /// 文件格式版本
     
-    var topic : String                      // 主题
-    var createDate: Date                    // 文件创建日期
-    var author : String                     // 作者
-    var displayMode : DisplayMode           // 显示模式
-    var displayCatagory : DisplayCatagory   // 显示类别
+    var topic : String                      /// 主题
+    var createDate: Date                    /// 文件创建日期
+    var author : String                     /// 作者
+    var displayMode : DisplayMode           /// 显示模式
+    var displayCatagory : DisplayCatagory   /// 显示类别
     
     var extra : String?
     
@@ -125,11 +125,12 @@ struct FileInfos : Codable, Equatable {
     }
 }
 
-// 文件结构
+/// 文件结构
 struct PlannerFileStruct: Codable, Equatable {
-    var fileInformations : FileInfos                    // 文件信息
     
-    var projectGroups : [ProjectGroupInfo]              // 所包含的项目组
+    var fileInformations : FileInfos                    /// 文件信息
+    
+    var projectGroups : [ProjectGroupInfo]              /// 所包含的项目组
     var taskStatusChanges : [TaskStatusChangeRecord]
     
     static func == (lhs: PlannerFileStruct, rhs: PlannerFileStruct) -> Bool {
