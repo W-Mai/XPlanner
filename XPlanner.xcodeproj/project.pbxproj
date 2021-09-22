@@ -29,6 +29,8 @@
 		EB9FC94926F1E524005C21DD /* MyAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB9FC94726F1E524005C21DD /* MyAnimations.swift */; };
 		EBE9187126FB695200244137 /* MyComponentStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE9187026FB695200244137 /* MyComponentStyles.swift */; };
 		EBE9187226FB695200244137 /* MyComponentStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE9187026FB695200244137 /* MyComponentStyles.swift */; };
+		EBE9187526FB721D00244137 /* BindingCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE9187426FB721D00244137 /* BindingCollection.swift */; };
+		EBE9187626FB721D00244137 /* BindingCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE9187426FB721D00244137 /* BindingCollection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +74,7 @@
 		EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneProjectView.swift; sourceTree = "<group>"; };
 		EB9FC94726F1E524005C21DD /* MyAnimations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAnimations.swift; sourceTree = "<group>"; };
 		EBE9187026FB695200244137 /* MyComponentStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyComponentStyles.swift; sourceTree = "<group>"; };
+		EBE9187426FB721D00244137 /* BindingCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingCollection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,6 +198,7 @@
 			children = (
 				EB9FC94726F1E524005C21DD /* MyAnimations.swift */,
 				EBE9187026FB695200244137 /* MyComponentStyles.swift */,
+				EBE9187426FB721D00244137 /* BindingCollection.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -358,6 +362,7 @@
 				B2E453B70818471470299612 /* XPlanerDocument.swift in Sources */,
 				EB9FC94826F1E524005C21DD /* MyAnimations.swift in Sources */,
 				B2E45A3007E68204422C7928 /* ContentView.swift in Sources */,
+				EBE9187526FB721D00244137 /* BindingCollection.swift in Sources */,
 				EB9F372726EAFB1F003E70F6 /* OneProjectView.swift in Sources */,
 				EB4C17C826F08CA300311D8D /* SwiftUIViewTest.swift in Sources */,
 			);
@@ -390,6 +395,7 @@
 				B2E45DDC6B505061E87BF6FC /* XPlanerDocument.swift in Sources */,
 				EB9FC94926F1E524005C21DD /* MyAnimations.swift in Sources */,
 				B2E45E848C02F7EAB57EE671 /* ContentView.swift in Sources */,
+				EBE9187626FB721D00244137 /* BindingCollection.swift in Sources */,
 				EB9F372826EAFB1F003E70F6 /* OneProjectView.swift in Sources */,
 				EB4C17C926F08CA300311D8D /* SwiftUIViewTest.swift in Sources */,
 			);

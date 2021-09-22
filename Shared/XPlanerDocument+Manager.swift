@@ -9,13 +9,17 @@ import Foundation
 import SwiftUI
 
 extension XPlanerDocument {
-    func add() {
-        objectWillChange.send()
+    func add(_ undoManager : UndoManager?) {
         plannerData.projectGroups.append(
             ProjectGroupInfo(
             name: Date().description,
             projects: [ProjectInfo](),
             id: UUID()
         ))
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.plannerData.projectGroups.removeLast()
+        })
+        
     }
 }

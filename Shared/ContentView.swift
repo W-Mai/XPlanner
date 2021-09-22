@@ -30,22 +30,9 @@ struct ContentView: View {
     var body: some View {
         ZStack{
             ScrollView(.vertical){
-                Button(action: {
-                    document.add()
-                    undoManager?.registerUndo(withTarget: document, handler: { (document) in
-                        document.plannerData = document.plannerData
-                                })
-                }, label: {
-                    Text("Add")
-                })
-
-                ForEach(document.plannerData.projectGroups, id: \.id){i in
-                    Text(i.name)
-                }
-                
                 ScrollViewReader() {proxy in
                     ExtractedMainViewView(
-                        data: $document.fileData,
+                        data: $document.plannerData,
                         isEditingMode: $isEditingMode)
                         .onAppear(){
                             scrollProxy = proxy
@@ -61,10 +48,10 @@ struct ContentView: View {
                     }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
                     .onChange(of: simpleMode, perform: { value in
                         simpleMode = isEditingMode ? false : simpleMode
-                        document.manager.docData.fileInformations.displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+                        document.plannerData.fileInformations.displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
                     })
                     .onAppear{
-                        simpleMode = document.manager.docData.fileInformations.displayMode == .SimpleProcessBarMode
+                        simpleMode = document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode
                     }
                     .disabled(isEditingMode)
 
@@ -73,12 +60,10 @@ struct ContentView: View {
             
             ExtractedBottomButtonGroupView(pickerSelected: $pickerSelected)
             ExtractedTopMenuView(
-                courses: [],
                 scrollProxy: scrollProxy,
-                manager: document.manager,
-                projectGroups: document.manager.docData.projectGroups,
+                projectGroups: document.plannerData.projectGroups,
                 isEditingMode: $isEditingMode,
-                displayMode: $document.manager.docData.fileInformations.displayMode,
+                displayMode: $document.plannerData.fileInformations.displayMode,
                 isSelected: $isSelected
             )
         }
@@ -122,11 +107,7 @@ struct ExtractedMainViewView: View {
     
     var body: some View {
         //            TextEditor(text: $document.text)
-        VStack(alignment: .leading){
-            ForEach(data.projectGroups){i in
-                Text(i.name)
-            }
-            
+        VStack(alignment: .leading){            
             ForEach(data.projectGroups, content: {i in
                 ExtractedMainlyContentView(
                     projectGroupName: i.name,
@@ -217,8 +198,9 @@ struct ExtractedMainlyContentView: View {
 }
 
 struct ExtractedTopMenuView: View {
+    @EnvironmentObject var document : XPlanerDocument
+    @Environment(\.undoManager) var undoManager
     
-    var courses: Array<String>
     var scrollProxy: ScrollViewProxy?
     
     var projectGroups : [ProjectGroupInfo]
@@ -253,7 +235,7 @@ struct ExtractedTopMenuView: View {
                         }
                         
                         Menu("列表"){
-                            ForEach(projectGroups, id: \.id){i in
+                            ForEach(projectGroups){i in
                                 Button(action: {
                                     scrollProxy?.scrollTo(i.id, anchor: .topLeading)
                                 }, label: {
@@ -262,8 +244,7 @@ struct ExtractedTopMenuView: View {
                             }
                             Divider()
                             Button(action:{
-//                                manager.add()
-                                
+                                document.add(undoManager)
                             }){
                                 Text("添加")
                                 Image(systemName: "plus.app.fill")

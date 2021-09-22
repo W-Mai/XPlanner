@@ -21,17 +21,15 @@ struct ImageToggleStyle: ToggleStyle {
                 .frame(width: 51, height: 31, alignment: .center)
                 .overlay(
                     Circle()
+                        .strokeBorder()
                         .foregroundColor(.white)
                         .padding(.all, 3)
                         .overlay(
-                            Image(systemName: configuration.isOn ? onImageName : offImageName)
+                            Image(systemName: configuration.isOn ? onImageName : offImageName).scaleEffect(0.6 )
                         )
                         .offset(x: configuration.isOn ? 11 : -11, y: 0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.5))
                 ).cornerRadius(20)
-                
-                
-                //
                 .onTapGesture { configuration.isOn.toggle() }
                 .animation(.spring(response: 0.3, dampingFraction: 0.5))
         }
