@@ -6,7 +6,9 @@
 //
 import SwiftUI
 
-// MARK: - 原始数据结构定义
+// MARK: - 🔢 枚举和常量
+
+let CurrentFileFormatVerison = FileFormatVersion(a: 0, b: 0, c: 1)
 
 /// 任务状态
 enum TaskStatus: String, Codable {
@@ -26,6 +28,18 @@ enum DisplayCatagory: String, Codable {
     case All    /// 显示所有任务
     case Todos  /// 只显示待办事项
 }
+
+// MARK: - 🏞 环境配置
+
+class EnvironmentSettings: ObservableObject {
+    @Published var scrollProxy : ScrollViewProxy? = nil
+    @Published var isEditingMode = false
+    @Published var pickerSelected = 0
+    @Published var simpleMode = false
+    @Published var isSelected = false
+}
+
+// MARK: - 🗿 原始数据结构定义
 
 /// 文件结构版本号
 struct FileFormatVersion : Codable, Comparable{
@@ -97,7 +111,7 @@ struct PlannerFileStruct: Codable {
 }
 
 
-// MARK: - 可比较支持extension
+// MARK: - 🆙 可比较支持extension
 
 extension PlannerFileStruct: Equatable{
     static func == (lhs: PlannerFileStruct, rhs: PlannerFileStruct) -> Bool {
@@ -157,7 +171,7 @@ extension TaskStatusChangeRecord: Equatable{
     }
 }
 
-// MARK: - 文件初始化内容
+// MARK: - 💆🏼 文件初始化内容
 
 extension PlannerFileStruct {
     ///  初始化简单数据

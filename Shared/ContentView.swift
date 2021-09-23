@@ -12,12 +12,15 @@ struct ContentView_Previews: PreviewProvider {
     @State static var data = XPlanerDocument()
     
     static var previews: some View {
-        ContentView().environmentObject(data)
+        ContentView()
+            .environmentObject(data)
+            .environmentObject(EnvironmentSettings())
     }
 }
 
 struct ContentView: View {
     @EnvironmentObject var document: XPlanerDocument
+    @EnvironmentObject var env_settings : EnvironmentSettings
     @Environment(\.undoManager) var undoManager
     
     @State var scrollProxy : ScrollViewProxy? = nil
@@ -31,12 +34,19 @@ struct ContentView: View {
         ZStack{
             ScrollView(.vertical){
                 ScrollViewReader() {proxy in
-                    ExtractedMainViewView(
-                        data: $document.plannerData,
-                        isEditingMode: $isEditingMode)
-                        .onAppear(){
-                            scrollProxy = proxy
-                        }
+                    ExtractedMainViewView(data: $document.plannerData, isEditingMode: $isEditingMode){ prjGrp in
+                        ExtractedMainlyContentView(
+                            projectGroupName: prjGrp.name,
+                            projects: prjGrp.projects,
+                            isEditingMode: $isEditingMode,
+                            pickerSelected: $pickerSelected,
+                            displayMode: simpleMode ? .SimpleProcessBarMode : .FullSquareMode,
+                            isSelected: $isSelected
+                        )
+                    }
+                    .onAppear(){
+                        scrollProxy = proxy
+                    }
                 }
             }
             .frame(maxHeight: .infinity)
@@ -66,7 +76,6 @@ struct ContentView: View {
 }
 
 
-
 struct ExtractedBottomButtonGroupView: View {
     @Binding var pickerSelected: Int
     
@@ -78,44 +87,41 @@ struct ExtractedBottomButtonGroupView: View {
                 Group {
                     Picker("",selection: $pickerSelected){
                         Image(systemName: "tray").tag(0)
-                        Image(systemName:"calendar").tag(1)
+                        Image(systemName: "calendar").tag(1)
                     }.frame(width: 80, height: 30)
-                    
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(10)
                 .background(Color.white)
                 .cornerRadius(30)
                 .padding(10)
-                .shadow(color: Color(red: 0.8, green: 0.8, blue: 0.8), radius: 15, x: 0.0, y: 0.0)
+                .shadow(color:Color("ShallowShadowColor"), radius: 15, x: 0.0, y: 0.0)
                 Spacer()
             }
         }
     }
 }
 
-struct ExtractedMainViewView: View {
+struct ExtractedMainViewView<Content: View>: View {
     @Binding var data : PlannerFileStruct
     @Binding var isEditingMode : Bool
     @State var isSelected : Bool = false
     @State var pickerSeleted : Int = 0
     
+    var content : (_ item : ProjectGroupInfo) -> Content
+    
     var body: some View {
-        //            TextEditor(text: $document.text)
         VStack(alignment: .leading){
             ForEach(data.projectGroups, content: {i in
-                ExtractedMainlyContentView(
-                    projectGroupName: i.name,
-                    projects: i.projects,
-                    isEditingMode: $isEditingMode,
-                    pickerSelected: $pickerSeleted,
-                    displayMode: data.fileInformations.displayMode,
-                    isSelected: $isSelected
-                ).id(i.id)
+                content(i).id(i.id)
+                
                 if(i.id != data.projectGroups.last?.id){
                     Divider().padding([.leading, .trailing])
                 }else{
-                    EmptyView()
+                    HStack{
+//                        Text("空空如也")
+                        EmptyView()
+                    }
                 }
             })
             
