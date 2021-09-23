@@ -35,8 +35,14 @@ class EnvironmentSettings: ObservableObject {
     @Published var scrollProxy : ScrollViewProxy? = nil
     @Published var isEditingMode = false
     @Published var pickerSelected = 0
+    @Published var displayMode : DisplayMode = .FullSquareMode
     @Published var simpleMode = false
     @Published var isSelected = false
+    
+    init(simpleMode : Bool) {
+        self.simpleMode = simpleMode
+        displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+    }
 }
 
 // MARK: - 🗿 原始数据结构定义

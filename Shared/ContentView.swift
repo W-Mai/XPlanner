@@ -9,14 +9,16 @@
 import SwiftUI
 
 struct ContentView_Previews: PreviewProvider {
-    @State static var data = XPlanerDocument()
+    @State static var document = XPlanerDocument()
     
     static var previews: some View {
         ContentView()
-            .environmentObject(data)
-            .environmentObject(EnvironmentSettings())
+            .environmentObject(document)
+            .environmentObject(EnvironmentSettings(simpleMode: false))
     }
 }
+
+// MARK: - 总视图
 
 struct ContentView: View {
     @EnvironmentObject var document: XPlanerDocument
@@ -24,60 +26,57 @@ struct ContentView: View {
     @Environment(\.undoManager) var undoManager
     
     @State var scrollProxy : ScrollViewProxy? = nil
-    @State var isEditingMode = false
-    @State var pickerSelected = 0
-    @State var simpleMode = false
-    @State var isSelected = false
-    
     
     var body: some View {
         ZStack{
             ScrollView(.vertical){
                 ScrollViewReader() {proxy in
-                    ExtractedMainViewView(data: $document.plannerData, isEditingMode: $isEditingMode){ prjGrp in
+                    // MARK: 总渲染
+                    ExtractedMainViewView(
+                        data: $document.plannerData
+                    ){ prjGrp in
+                        // MARK: 项目组渲染
                         ExtractedMainlyContentView(
                             projectGroupName: prjGrp.name,
-                            projects: prjGrp.projects,
-                            isEditingMode: $isEditingMode,
-                            pickerSelected: $pickerSelected,
-                            displayMode: simpleMode ? .SimpleProcessBarMode : .FullSquareMode,
-                            isSelected: $isSelected
-                        )
+                            projects: prjGrp.projects
+                        ){ prj in
+                            // MARK: 项目渲染
+                            OneProjectView(
+                                projectName: prj.name,
+                                tasks: prj.tasks,
+                                isEditingMode: $env_settings.isEditingMode,
+                                displayMode: env_settings.displayMode,
+                                isSelected: $env_settings.isSelected)
+                        }
                     }
                     .onAppear(){
-                        scrollProxy = proxy
+                        env_settings.scrollProxy = proxy
                     }
                 }
             }
             .frame(maxHeight: .infinity)
             .foregroundColor(.accentColor)
             .animation(.spring(response: 0.3, dampingFraction: 0.5))
-            .toolbar {
-                ToolbarItem{
-                    ExtractedToolBarView(simpleMode: $simpleMode, isEditingMode: $isEditingMode){
-                        document.toggleDisplayMode(simple: simpleMode, undoManager)
-                    }
-                }
+            .toolbar { ToolbarItem{
+                ExtractedToolBarView(){
+                    document.toggleDisplayMode(simple: env_settings.simpleMode, undoManager)}}
             }
             
-            ExtractedBottomButtonGroupView(pickerSelected: $pickerSelected)
+            ExtractedBottomButtonGroupView()
             ExtractedTopMenuView(
-                scrollProxy: scrollProxy,
-                projectGroups: document.plannerData.projectGroups,
-                isEditingMode: $isEditingMode,
-                displayMode: $document.plannerData.fileInformations.displayMode,
-                isSelected: $isSelected
+                projectGroups: document.plannerData.projectGroups
             )
-        }
-        .onAppear{
-            simpleMode = document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode
         }
     }
 }
 
+// MARK: - 分立组件，子视图
 
+
+
+// MARK: 🔘底部按钮
 struct ExtractedBottomButtonGroupView: View {
-    @Binding var pickerSelected: Int
+    @EnvironmentObject var env_settings : EnvironmentSettings
     
     var body: some View {
         VStack{
@@ -85,7 +84,7 @@ struct ExtractedBottomButtonGroupView: View {
             HStack{
                 Spacer()
                 Group {
-                    Picker("",selection: $pickerSelected){
+                    Picker("",selection: $env_settings.pickerSelected){
                         Image(systemName: "tray").tag(0)
                         Image(systemName: "calendar").tag(1)
                     }.frame(width: 80, height: 30)
@@ -102,11 +101,11 @@ struct ExtractedBottomButtonGroupView: View {
     }
 }
 
+// MARK: 🐲总渲染
 struct ExtractedMainViewView<Content: View>: View {
+    @EnvironmentObject var env_settings : EnvironmentSettings
+    
     @Binding var data : PlannerFileStruct
-    @Binding var isEditingMode : Bool
-    @State var isSelected : Bool = false
-    @State var pickerSeleted : Int = 0
     
     var content : (_ item : ProjectGroupInfo) -> Content
     
@@ -119,13 +118,13 @@ struct ExtractedMainViewView<Content: View>: View {
                     Divider().padding([.leading, .trailing])
                 }else{
                     HStack{
-//                        Text("空空如也")
+                        //                        Text("空空如也")
                         EmptyView()
                     }
                 }
             })
             
-            if isEditingMode{
+            if env_settings.isEditingMode{
                 HStack{
                     Image(systemName: "plus.rectangle").resizable().scaledToFit()
                     
@@ -139,19 +138,19 @@ struct ExtractedMainViewView<Content: View>: View {
     }
 }
 
-struct ExtractedMainlyContentView: View {
+// MARK: 🐯项目组渲染
+struct ExtractedMainlyContentView<Content: View>: View {
+    @EnvironmentObject var env_settings : EnvironmentSettings
+    
     var projectGroupName: String
     
     var projects: [ProjectInfo]
     
-    @Binding var isEditingMode: Bool
-    @Binding var pickerSelected: Int
-    var displayMode: DisplayMode
-    @Binding var isSelected : Bool
+    var content : (_ item : ProjectInfo) -> Content
     
     var body: some View {
         Section(header: HStack{
-            if isEditingMode {
+            if env_settings.isEditingMode {
                 Button(action:{
                     
                 }){// "note.text.badge.plus"
@@ -161,7 +160,7 @@ struct ExtractedMainlyContentView: View {
                 }.padding([.leading], 10)
             }
             Text(projectGroupName)
-                .font(displayMode == .FullSquareMode ? .largeTitle : .title2)
+                .font(env_settings.displayMode == .FullSquareMode ? .largeTitle : .title2)
                 .fontWeight(.bold)
                 .padding([.leading, .trailing])
                 .background(Color.white)
@@ -176,15 +175,10 @@ struct ExtractedMainlyContentView: View {
         }.padding([.top], 30)
                 
         ){
-            ForEach(projects){i in
-                OneProjectView(
-                    projectName: i.name,
-                    tasks: i.tasks,
-                    isEditingMode: $isEditingMode,
-                    displayMode: displayMode,
-                    isSelected: $isSelected)
+            ForEach(projects){item in
+                content(item)
             }
-            if isEditingMode{
+            if env_settings.isEditingMode{
                 HStack{
                     Image(systemName: "plus.rectangle").resizable().scaledToFit()
                     
@@ -198,16 +192,13 @@ struct ExtractedMainlyContentView: View {
     }
 }
 
+// MARK: 🌲顶部菜单
 struct ExtractedTopMenuView: View {
     @EnvironmentObject var document : XPlanerDocument
+    @EnvironmentObject var env_settings : EnvironmentSettings
     @Environment(\.undoManager) var undoManager
     
-    var scrollProxy: ScrollViewProxy?
-    
     var projectGroups : [ProjectGroupInfo]
-    @Binding var isEditingMode: Bool
-    @Binding var displayMode : DisplayMode
-    @Binding var isSelected : Bool
     
     var body: some View {
         Group{
@@ -215,20 +206,20 @@ struct ExtractedTopMenuView: View {
                 HStack(spacing: 10){
                     Spacer()
                     HStack(spacing: 20){
-                        if !isSelected{
-                            if displayMode == .FullSquareMode {
-                                Button(action: {isEditingMode.toggle()}){
-                                    Text(isEditingMode ? "完成" : "编辑")
+                        if !env_settings.isSelected{
+                            if env_settings.displayMode == .FullSquareMode {
+                                Button(action: {env_settings.isEditingMode.toggle()}){
+                                    Text(env_settings.isEditingMode ? "完成" : "编辑")
                                 }
                             }
                         } else {
-                            Button(action: {isEditingMode.toggle()}){
+                            Button(action: {env_settings.isEditingMode.toggle()}){
                                 Text("代办")
                             }
-                            Button(action: {isEditingMode.toggle()}){
+                            Button(action: {}){
                                 Text("已完成")
                             }
-                            Button(action: {isEditingMode.toggle()}){
+                            Button(action: {}){
                                 Text("取消选择")
                             }
                             
@@ -238,7 +229,7 @@ struct ExtractedTopMenuView: View {
                         Menu("列表"){
                             ForEach(projectGroups){i in
                                 Button(action: {
-                                    scrollProxy?.scrollTo(i.id, anchor: .topLeading)
+                                    env_settings.scrollProxy?.scrollTo(i.id, anchor: .topLeading)
                                 }, label: {
                                     Text(i.name)
                                 })
@@ -266,21 +257,20 @@ struct ExtractedTopMenuView: View {
     }
 }
 
+// MARK: 🔧工具条
 struct ExtractedToolBarView: View {
-    @Binding var simpleMode : Bool
-    @Binding var isEditingMode : Bool
+    @EnvironmentObject var env_settings : EnvironmentSettings
     
     var onChange : () -> Void
     
     var body: some View {
-        Toggle(isOn: $simpleMode) {
+        Toggle(isOn: $env_settings.simpleMode) {
         }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
-            .onChange(of: simpleMode, perform: { value in
-                simpleMode = isEditingMode ? false : simpleMode
+            .onChange(of: env_settings.simpleMode, perform: { value in
+                env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
+                env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
                 onChange()
             })
-            .disabled(isEditingMode)
-        
-        
+            .disabled(env_settings.isEditingMode)
     }
 }
