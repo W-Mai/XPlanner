@@ -43,18 +43,10 @@ struct ContentView: View {
             .foregroundColor(.accentColor)
             .animation(.spring(response: 0.3, dampingFraction: 0.5))
             .toolbar {
-                ToolbarItem {
-                    Toggle(isOn: $simpleMode) {
-                    }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
-                    .onChange(of: simpleMode, perform: { value in
-                        simpleMode = isEditingMode ? false : simpleMode
-                        document.plannerData.fileInformations.displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
-                    })
-                    .onAppear{
-                        simpleMode = document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode
+                ToolbarItem{
+                    ExtractedToolBarView(simpleMode: $simpleMode, isEditingMode: $isEditingMode){
+                        document.toggleDisplayMode(simple: simpleMode, undoManager)
                     }
-                    .disabled(isEditingMode)
-
                 }
             }
             
@@ -66,6 +58,9 @@ struct ContentView: View {
                 displayMode: $document.plannerData.fileInformations.displayMode,
                 isSelected: $isSelected
             )
+        }
+        .onAppear{
+            simpleMode = document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode
         }
     }
 }
@@ -107,7 +102,7 @@ struct ExtractedMainViewView: View {
     
     var body: some View {
         //            TextEditor(text: $document.text)
-        VStack(alignment: .leading){            
+        VStack(alignment: .leading){
             ForEach(data.projectGroups, content: {i in
                 ExtractedMainlyContentView(
                     projectGroupName: i.name,
@@ -131,8 +126,8 @@ struct ExtractedMainViewView: View {
                     Text("添加新项目组").font(.largeTitle)
                         .fontWeight(.bold)
                 }.frame(height: 30)
-                .padding()
-                .padding([.bottom], 20)
+                    .padding()
+                    .padding([.bottom], 20)
             }
         }
     }
@@ -173,7 +168,7 @@ struct ExtractedMainlyContentView: View {
                     })
                 }.animation(.easeInOut)
         }.padding([.top], 30)
-        
+                
         ){
             ForEach(projects){i in
                 OneProjectView(
@@ -189,9 +184,9 @@ struct ExtractedMainlyContentView: View {
                     
                     Text("添加新项目").font(.title)
                 }.frame(height: 30)
-                .padding()
-                .padding([.leading], 40)
-                .padding([.bottom], 20)
+                    .padding()
+                    .padding([.leading], 40)
+                    .padding([.bottom], 20)
             }
         }
     }
@@ -262,5 +257,24 @@ struct ExtractedTopMenuView: View {
                 Spacer()
             }
         }.animation(.spring(response: 0.3, dampingFraction: 0.5))
+    }
+}
+
+struct ExtractedToolBarView: View {
+    @Binding var simpleMode : Bool
+    @Binding var isEditingMode : Bool
+    
+    var onChange : () -> Void
+    
+    var body: some View {
+        Toggle(isOn: $simpleMode) {
+        }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
+            .onChange(of: simpleMode, perform: { value in
+                simpleMode = isEditingMode ? false : simpleMode
+                onChange()
+            })
+            .disabled(isEditingMode)
+        
+        
     }
 }

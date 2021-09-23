@@ -22,4 +22,12 @@ extension XPlanerDocument {
         })
         
     }
+    
+    func toggleDisplayMode(simple: Bool ,_ undoManager : UndoManager?){
+        plannerData.fileInformations.displayMode = simple ? .SimpleProcessBarMode : .FullSquareMode
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.toggleDisplayMode(simple: !simple, undoManager)
+        })
+    }
 }
