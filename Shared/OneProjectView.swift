@@ -10,9 +10,11 @@ import SwiftUI
 
 struct OneTaskView: View {
     var task : TaskInfo
-    
+    var index : Int
     @Binding var isEditingMode: Bool
     @Binding var seleted: Bool
+    
+    var action : ((_ : Bool) -> Void)? = nil
     
     let shadowOpacityMap : [TaskStatus : Double] = [
         .finished : 0,
@@ -20,54 +22,61 @@ struct OneTaskView: View {
         .original : 0.5
     ]
     
+    let lineWidthMap : [TaskStatus : Double] = [
+        .finished : 0,
+        .todo : 3,
+        .original : 0.5
+    ]
+    
     var body: some View {
-        VStack{
+        VStack(){
             HStack{
-                Text("\(index)").font(.footnote)
-                    .frame(width: 24, height: 24, alignment: .center)
-                    .foregroundColor(.white).background(Color(red: 0.95, green: 0.8, blue: 0.5))
-                    .cornerRadius(15)
-                    .lineLimit(1)
+                Text("\(index)")
                     .minimumScaleFactor(0.2)
+                    .font(.footnote)
+                    .lineLimit(1)
+                    .foregroundColor(.white)
+                    .frame(width: 24, height: 24, alignment: .center)
+                    .background(Color(red: 0.95, green: 0.8, blue: 0.5))
+                    .clipShape(Circle())
                 VStack(){
-                    Text(title)
+                    Text(task.name)
                         .font(.subheadline)
                         .foregroundColor(Color.black)
                         .lineLimit(1)
                         .minimumScaleFactor(0.2)
-                    if status != .original {
+                    if task.status != .original {
                         Text(getSubTitleText()).font(.caption2)
                             .fontWeight(.light)
                             .foregroundColor(Color.gray)
                             .lineLimit(1)
                             .minimumScaleFactor(0.2)
-                        
                     }
-                }.frame(maxHeight: 24)
-                Spacer()
-            }.padding(6.0).background(Color.white).frame(height: 36)
+                }.frame(maxWidth: .infinity, maxHeight: 24)
+            }.padding(6.0).background(Color.white)
             
-            Spacer()
-            Text(content)
-                .font(.title2)
-                .fontWeight(.heavy)
-                .foregroundColor(Color.white)
-                .multilineTextAlignment(.center)
-                .padding(8)
-                .minimumScaleFactor(0.3)
-            Spacer()
+            VStack(alignment: .center) {
+                Text(task.content)
+                    .font(.title2)
+                    .fontWeight(.heavy)
+                    .frame(maxWidth: .infinity)
+                    .foregroundColor(Color.white)
+                    .multilineTextAlignment(.center)
+                    .padding(6)
+                    .minimumScaleFactor(0.4)
+            }
         }
-        .frame(width: 100, height: 100, alignment: .center)
+        .frame(width: 100, height: 100, alignment: .top)
         .background(Color.orange)
-        .cornerRadius(15)
+        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
         //        .shadow(color: Color("ShallowShadowColor").opacity(shadowOpacityMap[status]!),
         //                radius: 6,
         //                x: 5, y: 5)
-        .brightness(status == .finished ? -0.2 : 0)
-        .blur(radius: status == .finished ? 10 : 0)
+        .brightness(task.status == .finished ? -0.2 : 0)
+        .blur(radius: task.status == .finished ? 10 : 0)
         .overlay(
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(Color.accentColor, lineWidth: status == .todo ? 3 : status == .original ? 0.5 : 0)
+                .stroke(Color.accentColor, lineWidth: lineWidthMap[task.status]!)
         )
         .overlay(
             Text(getStatusText())
@@ -82,7 +91,6 @@ struct OneTaskView: View {
             Group{
                 if isEditingMode {
                     Image(systemName: "trash.slash").resizable().scaleEffect(0.6).foregroundColor(.white)
-                    
                 }
             }
         )
@@ -92,19 +100,18 @@ struct OneTaskView: View {
             Button(action: {
                 
             }, label: {
-                Text("删除 \(title) ")
+                Text("删除 \(task.name) ")
                 Image(systemName: "trash")
             })
         }
         .onTapGesture(count: 1) {
-            seleted.toggle()
-            
+            action?(self.seleted)
         }
         
     }
     
     func getStatusText() -> String {
-        switch self.status {
+        switch self.task.status {
         case .finished:
             return "已完成"
         default:
@@ -113,7 +120,7 @@ struct OneTaskView: View {
     }
     
     func getSubTitleText() -> String {
-        switch self.status {
+        switch self.task.status {
         case .finished:
             return "✔︎"
         case .todo:
@@ -146,7 +153,6 @@ struct OneProjectView: View {
                     }){
                         // plus.app.fill
                         Image(systemName: "minus.circle.fill").imageScale(.large).foregroundColor(.red)
-                        
                     }.padding([.top, .trailing], 10)
                         .padding([.leading], 30)
                 }
@@ -174,12 +180,14 @@ struct OneProjectView: View {
                                 ForEach(project.tasks.indices){ i in
                                     GeometryReader{geoTask in
                                         OneTaskView(
-                                            title: project.tasks[i].name,
-                                            content: project.tasks[i].content,
+                                            task: project.tasks[i],
                                             index: i,
                                             isEditingMode: $isEditingMode,
-                                            status: project.tasks[i].status,
-                                            seleted: $isSelected
+                                            seleted: $isSelected,
+                                            
+                                            action: { selected in
+                                                
+                                            }
                                         )
                                             .padding()
                                             .coordinateSpace(name: "task\(i)")
@@ -199,7 +207,9 @@ struct OneProjectView: View {
                                 }.frame(maxWidth: .infinity).frame(height: 140)
                                 
                                 if isEditingMode {
-                                    Button(action: {}, label: {
+                                    Button(action: {
+                                        
+                                    }, label: {
                                         VStack{
                                             Image(systemName: "plus.square").resizable().foregroundColor(.blue)
                                         }.padding(20)
@@ -253,9 +263,9 @@ struct OneProjectView_Previews: PreviewProvider {
             .preferredColorScheme(.light)
             .frame(width: 1000)
         HStack {
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, createDate: Date()), isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status2, createDate: Date()), isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: $isSelected)
             
             
         }.previewLayout(.sizeThatFits).padding()
