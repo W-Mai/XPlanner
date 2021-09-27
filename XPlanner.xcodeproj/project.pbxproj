@@ -10,13 +10,13 @@
 		B2E4537C976D8CD8000834D2 /* XPlanerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E459439A0C8FD12B604818 /* XPlanerApp.swift */; };
 		B2E453B70818471470299612 /* XPlanerDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45D4F3AB85456191AC12D /* XPlanerDocument.swift */; };
 		B2E45609A5CCE754E9A03CD9 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45C89A5D9562B61F40438 /* Tests_iOS.swift */; };
-		B2E45A3007E68204422C7928 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45322B6A1547BDF046C0A /* ContentView.swift */; };
+		B2E45A3007E68204422C7928 /* MainEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45322B6A1547BDF046C0A /* MainEditor.swift */; };
 		B2E45A91CEA2D60FBF9FC358 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2E458B7ED4F41CAE0543CD3 /* Assets.xcassets */; };
 		B2E45ACCD0263278F62B3203 /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E4597EF484318231A0FD41 /* Tests_macOS.swift */; };
 		B2E45B52F8FE8265BC225C7B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2E458B7ED4F41CAE0543CD3 /* Assets.xcassets */; };
 		B2E45DDC6B505061E87BF6FC /* XPlanerDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45D4F3AB85456191AC12D /* XPlanerDocument.swift */; };
 		B2E45E01DE4981F43DD4C0B5 /* XPlanerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E459439A0C8FD12B604818 /* XPlanerApp.swift */; };
-		B2E45E848C02F7EAB57EE671 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45322B6A1547BDF046C0A /* ContentView.swift */; };
+		B2E45E848C02F7EAB57EE671 /* MainEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45322B6A1547BDF046C0A /* MainEditor.swift */; };
 		EB4C17C826F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB4C17C926F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB99F92C26F4DD2200956A1A /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
@@ -52,7 +52,7 @@
 
 /* Begin PBXFileReference section */
 		B2E450025CCAC5CD73AC4BA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
-		B2E45322B6A1547BDF046C0A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B2E45322B6A1547BDF046C0A /* MainEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainEditor.swift; sourceTree = "<group>"; };
 		B2E4534419E7770ABFE2F361 /* XPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2E4538BA86B1ADA332921E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		B2E45525E7E096B5BCC4CCBA /* Tests iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,7 +138,7 @@
 				B2E459439A0C8FD12B604818 /* XPlanerApp.swift */,
 				B2E45D4F3AB85456191AC12D /* XPlanerDocument.swift */,
 				EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */,
-				B2E45322B6A1547BDF046C0A /* ContentView.swift */,
+				B2E45322B6A1547BDF046C0A /* MainEditor.swift */,
 				EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */,
 				EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */,
 				EB99F92B26F4DD2200956A1A /* Defs.swift */,
@@ -361,7 +361,7 @@
 				EB99F92C26F4DD2200956A1A /* Defs.swift in Sources */,
 				B2E453B70818471470299612 /* XPlanerDocument.swift in Sources */,
 				EB9FC94826F1E524005C21DD /* MyAnimations.swift in Sources */,
-				B2E45A3007E68204422C7928 /* ContentView.swift in Sources */,
+				B2E45A3007E68204422C7928 /* MainEditor.swift in Sources */,
 				EBE9187526FB721D00244137 /* BindingCollection.swift in Sources */,
 				EB9F372726EAFB1F003E70F6 /* OneProjectView.swift in Sources */,
 				EB4C17C826F08CA300311D8D /* SwiftUIViewTest.swift in Sources */,
@@ -394,7 +394,7 @@
 				EB99F92D26F4DD2200956A1A /* Defs.swift in Sources */,
 				B2E45DDC6B505061E87BF6FC /* XPlanerDocument.swift in Sources */,
 				EB9FC94926F1E524005C21DD /* MyAnimations.swift in Sources */,
-				B2E45E848C02F7EAB57EE671 /* ContentView.swift in Sources */,
+				B2E45E848C02F7EAB57EE671 /* MainEditor.swift in Sources */,
 				EBE9187626FB721D00244137 /* BindingCollection.swift in Sources */,
 				EB9F372826EAFB1F003E70F6 /* OneProjectView.swift in Sources */,
 				EB4C17C926F08CA300311D8D /* SwiftUIViewTest.swift in Sources */,
