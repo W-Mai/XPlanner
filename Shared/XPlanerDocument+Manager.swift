@@ -19,7 +19,6 @@ extension XPlanerDocument {
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.plannerData.projectGroups.removeLast()
         })
-        
     }
     
     func removeGroup(idIs grpId : UUID, _ undoManager : UndoManager?){
@@ -63,6 +62,44 @@ extension XPlanerDocument {
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.plannerData.projectGroups[index].projects.insert(old_data, at: index)
+        })
+    }
+    
+    func addTask(nameIs tskName : String, contentIs taskContent : String, for prjId : UUID,in grpId : UUID ,_ undoManager : UndoManager?) {
+        guard let index = plannerData.projectGroups.firstIndex (where: { grp in
+            grp.id == grpId
+        }) else { return }
+        
+        guard let indexPrj = plannerData.projectGroups[index].projects.firstIndex (where: { prj in
+            prj.id == prjId
+        }) else { return }
+        
+        plannerData.projectGroups[index].projects[indexPrj].tasks.append(TaskInfo(name: tskName, content: taskContent, status: .original, createDate: Date()))
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.plannerData.projectGroups[index].projects[indexPrj].tasks.removeLast()
+        })
+    }
+    
+    func removeTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID , _ undoManager : UndoManager?){
+        guard let index = plannerData.projectGroups.firstIndex (where: { grp in
+            grp.id == grpId
+        }) else { return }
+        
+        guard let indexPrj = plannerData.projectGroups[index].projects.firstIndex (where: { prj in
+            prj.id == prjId
+        }) else { return }
+        
+        guard let indexTsk = plannerData.projectGroups[index].projects[indexPrj].tasks.firstIndex (where: { tsk in
+            tsk.id == tskId
+        }) else { return }
+        
+        let old_data = plannerData.projectGroups[index].projects[indexPrj].tasks[indexTsk]
+        
+        plannerData.projectGroups[index].projects[indexPrj].tasks.remove(at: indexTsk)
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.plannerData.projectGroups[index].projects[indexPrj].tasks.insert(old_data, at: index)
         })
     }
     
