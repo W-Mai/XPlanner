@@ -72,7 +72,7 @@ struct TaskInfo: Codable, Identifiable {
     var status: TaskStatus  /// 任务状态
     var createDate : Date   /// 创建日期
     
-    var id : UUID
+    var id = UUID()
     var extra : String?
 }
 
@@ -81,7 +81,7 @@ struct ProjectInfo: Codable, Identifiable {
     var name : String       /// 项目名称
     var tasks : [TaskInfo]  /// 所包含的任务
     
-    var id : UUID
+    var id = UUID()
     var extra : String?
 }
 
@@ -90,7 +90,7 @@ struct ProjectGroupInfo: Codable, Identifiable {
     var name : String               /// 项目组名称
     var projects : [ProjectInfo]    /// 所包含的项目
     
-    var id : UUID
+    var id = UUID()
     var extra : String?
 }
 
