@@ -9,12 +9,9 @@ import SwiftUI
 
 
 struct OneTaskView: View {
-    var title: String
-    var content: String
-    var index: Int
-    @Binding var isEditingMode: Bool
+    var task : TaskInfo
     
-    var status: TaskStatus
+    @Binding var isEditingMode: Bool
     @Binding var seleted: Bool
     
     let shadowOpacityMap : [TaskStatus : Double] = [
@@ -256,9 +253,11 @@ struct OneProjectView_Previews: PreviewProvider {
             .preferredColorScheme(.light)
             .frame(width: 1000)
         HStack {
-            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing,status: status1,seleted: $isSelected)
-            OneTaskView(title: "TaskName",content: "Content", index: 1000, isEditingMode: $isEditing, status: status2, seleted: $isSelected)
-            OneTaskView(title: "TaskName",content: "✰🤣", index: 1000, isEditingMode: $isEditing, status: status3, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, createDate: Date()), isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status2, createDate: Date()), isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), isEditingMode: $isEditing, seleted: $isSelected)
+            
+            
         }.previewLayout(.sizeThatFits).padding()
     }
 }
