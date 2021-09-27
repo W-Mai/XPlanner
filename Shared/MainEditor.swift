@@ -37,13 +37,12 @@ struct ContentView: View {
                     ){ prjGrp in
                         // MARK: 项目组渲染
                         ExtractedMainlyContentView(
-                            projectGroupName: prjGrp.name,
-                            projects: prjGrp.projects
+                            projectGroup: prjGrp
                         ){ prj in
                             // MARK: 项目渲染
                             OneProjectView(
-                                projectName: prj.name,
-                                tasks: prj.tasks,
+                                project : prj,
+                                prjGrpId: prjGrp.id,
                                 isEditingMode: $env_settings.isEditingMode,
                                 displayMode: env_settings.displayMode,
                                 isSelected: $env_settings.isSelected)
@@ -56,6 +55,7 @@ struct ContentView: View {
             }
             .frame(maxHeight: .infinity)
             .foregroundColor(.accentColor)
+            //            .background(LinearGradient(colors: [.white, .gray], startPoint: .top, endPoint: .bottom))
             .animation(.spring(response: 0.3, dampingFraction: 0.5))
             .toolbar { ToolbarItem{
                 ExtractedToolBarView(){
@@ -103,7 +103,9 @@ struct ExtractedBottomButtonGroupView: View {
 
 // MARK: 🐲总渲染
 struct ExtractedMainViewView<Content: View>: View {
+    @EnvironmentObject var document: XPlanerDocument
     @EnvironmentObject var env_settings : EnvironmentSettings
+    @Environment(\.undoManager) var undoManager
     
     @Binding var data : PlannerFileStruct
     
@@ -125,14 +127,18 @@ struct ExtractedMainViewView<Content: View>: View {
             })
             
             if env_settings.isEditingMode{
-                HStack{
-                    Image(systemName: "plus.rectangle").resizable().scaledToFit()
-                    
-                    Text("添加新项目组").font(.largeTitle)
-                        .fontWeight(.bold)
-                }.frame(height: 30)
-                    .padding()
-                    .padding([.bottom], 20)
+                Button {
+                    document.addGroup(nameIs: "项目组 new", undoManager)
+                } label: {
+                    HStack{
+                        Image(systemName: "plus.rectangle").resizable().scaledToFit()
+                        
+                        Text("添加新项目组").font(.largeTitle)
+                            .fontWeight(.bold)
+                    }.frame(height: 30)
+                        .padding()
+                        .padding([.bottom], 20)
+                }
             }
         }
     }
@@ -140,11 +146,11 @@ struct ExtractedMainViewView<Content: View>: View {
 
 // MARK: 🐯项目组渲染
 struct ExtractedMainlyContentView<Content: View>: View {
+    @EnvironmentObject var document : XPlanerDocument
     @EnvironmentObject var env_settings : EnvironmentSettings
+    @Environment(\.undoManager) var undoManager
     
-    var projectGroupName: String
-    
-    var projects: [ProjectInfo]
+    var projectGroup : ProjectGroupInfo
     
     var content : (_ item : ProjectInfo) -> Content
     
@@ -152,41 +158,48 @@ struct ExtractedMainlyContentView<Content: View>: View {
         Section(header: HStack{
             if env_settings.isEditingMode {
                 Button(action:{
-                    
+                    document.removeGroup(idIs: projectGroup.id, undoManager)
                 }){// "note.text.badge.plus"
                     
                     Image(systemName: "minus.circle.fill")
                         .imageScale(.large).foregroundColor(.red)
                 }.padding([.leading], 10)
             }
-            Text(projectGroupName)
+            Text(projectGroup.name)
                 .font(env_settings.displayMode == .FullSquareMode ? .largeTitle : .title2)
                 .fontWeight(.bold)
                 .padding([.leading, .trailing])
                 .background(Color.white)
                 .contextMenu{
                     Button(action: {
-                        
+                        document.removeGroup(idIs: projectGroup.id, undoManager)
                     }, label: {
-                        Text("删除项目 \(projectGroupName) ")
+                        Text("删除项目 \(projectGroup.name) ")
                         Image(systemName: "trash")
                     })
                 }.animation(.easeInOut)
+            
         }.padding([.top], 30)
                 
         ){
-            ForEach(projects){item in
+            ForEach(projectGroup.projects){item in
                 content(item)
             }
             if env_settings.isEditingMode{
-                HStack{
-                    Image(systemName: "plus.rectangle").resizable().scaledToFit()
-                    
-                    Text("添加新项目").font(.title)
-                }.frame(height: 30)
-                    .padding()
-                    .padding([.leading], 40)
-                    .padding([.bottom], 20)
+                Button {
+                    document.addProject(nameIs: "项目", for: projectGroup.id, undoManager)
+                } label: {
+                    HStack{
+                        Image(systemName: "plus.rectangle").resizable().scaledToFit()
+                        
+                        Text("添加新项目").font(.title)
+                    }.frame(height: 30)
+                        .padding()
+                        .padding([.leading], 40)
+                        .padding([.bottom], 20)
+                }
+                
+                
             }
         }
     }
@@ -226,7 +239,7 @@ struct ExtractedTopMenuView: View {
                             Divider().frame(height: 20)
                         }
                         
-                        Menu("列表"){
+                        Menu {
                             ForEach(projectGroups){i in
                                 Button(action: {
                                     env_settings.scrollProxy?.scrollTo(i.id, anchor: .topLeading)
@@ -236,14 +249,17 @@ struct ExtractedTopMenuView: View {
                             }
                             Divider()
                             Button(action:{
-                                document.add(undoManager)
+                                document.addGroup(nameIs: "项目组 new", undoManager)
                             }){
                                 Text("添加")
                                 Image(systemName: "plus.app.fill")
                             }
-                        }
+                        } label: {
+                            Image(systemName: "list.bullet.rectangle")
+                                .font(.system(size: 20, weight: .bold))
+                        }.frame(maxWidth: 30)
+                            .menuStyle(BorderlessButtonMenuStyle())
                     }
-                    //                    .frame(width: 100)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(30)
