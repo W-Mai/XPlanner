@@ -28,6 +28,13 @@ enum DisplayCatagory: String, Codable {
     case All    /// 显示所有任务
     case Todos  /// 只显示待办事项
 }
+// MARK: - 🦀️ 辅助结构
+
+struct TaskIndexPath {
+    var prjGrpIndex : Int
+    var prjIndex : Int
+    var tskIndex : Int
+}
 
 // MARK: - 🏞 环境配置
 

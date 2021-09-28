@@ -66,7 +66,7 @@ struct OneTaskView: View {
     let lineWidthMap: [TaskStatus: Double] = [
         .finished: 0,
         .todo: 3,
-        .original: 0.5
+        .original: 0
     ]
     
     var body: some View {
@@ -112,8 +112,9 @@ struct OneTaskView: View {
         .frame(width: 80, height: 80, alignment: .top)
         .background(Color.orange)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        
         .drawingGroup()
-        .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 2, y: 2)
+        
         .brightness(task.status == .finished ? -0.2 : 0)
 //        .blur(radius: task.status == .finished ? 10 : 0)
         .overlay(
@@ -136,7 +137,11 @@ struct OneTaskView: View {
                 }
             }
         )
-        .scaleEffect(seleted ? 0.8 : 1)
+//        .scaleEffect(seleted ? 0.8 : 1)
+        .rotation3DEffect(Angle(degrees: task.status == .todo ? 10 : 0), axis: (-1 , 0, 0))
+        .offset(y: task.status == .todo ? 10 : 0)
+        .brightness(task.status == .todo ? -0.1 : 0)
+        .drawingGroup()
         .animation(.easeInOut(duration: 0.2))
         .onTapGesture(count: 1) {
             action?(self.seleted)
@@ -232,7 +237,7 @@ struct ProjectDifferentModeView: View {
         case .FullSquareMode :
             ScrollView(.horizontal, showsIndicators: false) {
                 ScrollViewReader { proxy in
-                    HStack(spacing: 80) {
+                    HStack(spacing: 90) {
                         ForEach(project.tasks) { tsk in
                             GeometryReader { geoTask in
                                 OneTaskView(
@@ -245,9 +250,21 @@ struct ProjectDifferentModeView: View {
                                         if env_settings.isEditingMode {
                                             document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
                                         }
+                                        
+//                                        env_settings.isSelected.toggle()
+                                        document.updateTaskStatus(tskStatus: StatusNextMapper[tsk.status]!, idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
                                     }
                                 )
                                     .padding()
+//                                    .contextMenu {
+//                                        Button(action: {
+//                                            document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
+//                                        }, label: {
+//                                            Text("删除 \(tsk.name) ")
+//                                            Image(systemName: "trash")
+//                                        })
+//                                    }
+                                    .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 2, y: 2)
                                     .coordinateSpace(name: "task\(tsk.id)")
 //                                    .rotation3DEffect(
 //                                        env_settings.isEditingMode ? .zero :
@@ -255,14 +272,7 @@ struct ProjectDifferentModeView: View {
 //                                                (Double(geoTask.frame(in: .named("task\(tsk.id)")).minX)) / 40,
 //                                                25)
 //                                                 ), axis: (x: -0.1, y: -0.3, z: 0))
-                                    .contextMenu {
-                                        Button(action: {
-                                            document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
-                                        }, label: {
-                                            Text("删除 \(tsk.name) ")
-                                            Image(systemName: "trash")
-                                        })
-                                    }
+                                    
                                     .drawingGroup()
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7))
                             }
@@ -296,3 +306,9 @@ struct ProjectDifferentModeView: View {
         
     }
 }
+
+var StatusNextMapper : [TaskStatus : TaskStatus] = [
+    .finished : .original,
+    .original : .todo,
+    .todo : .finished
+]

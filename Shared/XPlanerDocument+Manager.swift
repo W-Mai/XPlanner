@@ -82,29 +82,43 @@ extension XPlanerDocument {
     }
     
     func removeTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID , _ undoManager : UndoManager?){
-        guard let index = plannerData.projectGroups.firstIndex (where: { grp in
-            grp.id == grpId
-        }) else { return }
+        guard let index = indexOfTask(idIs: tskId, from: prjId, in: grpId) else { return }
         
-        guard let indexPrj = plannerData.projectGroups[index].projects.firstIndex (where: { prj in
-            prj.id == prjId
-        }) else { return }
+        let old_data = plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex]
         
-        guard let indexTsk = plannerData.projectGroups[index].projects[indexPrj].tasks.firstIndex (where: { tsk in
-            tsk.id == tskId
-        }) else { return }
-        
-        let old_data = plannerData.projectGroups[index].projects[indexPrj].tasks[indexTsk]
-        
-        plannerData.projectGroups[index].projects[indexPrj].tasks.remove(at: indexTsk)
+        plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks.remove(at: index.tskIndex)
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups[index].projects[indexPrj].tasks.insert(old_data, at: index)
+            doc.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks.insert(old_data, at: index.tskIndex)
         })
     }
     
-    func fuck() {
-        print("hhh")
+    func updateTaskStatus(tskStatus : TaskStatus, idIs tskId : UUID, from prjId : UUID, in grpId : UUID , _ undoManager : UndoManager?){
+        guard let index = indexOfTask(idIs: tskId, from: prjId, in: grpId) else { return }
+        
+        let old_status = plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex].status
+        
+        plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex].status = tskStatus
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex].status = old_status
+        })
+    }
+    
+    func indexOfTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID) -> TaskIndexPath?{
+        guard let index = plannerData.projectGroups.firstIndex (where: { grp in
+            grp.id == grpId
+        }) else { return nil }
+        
+        guard let indexPrj = plannerData.projectGroups[index].projects.firstIndex (where: { prj in
+            prj.id == prjId
+        }) else { return nil }
+        
+        guard let indexTsk = plannerData.projectGroups[index].projects[indexPrj].tasks.firstIndex (where: { tsk in
+            tsk.id == tskId
+        }) else { return nil }
+        
+        return TaskIndexPath(prjGrpIndex: index, prjIndex: indexPrj, tskIndex: indexTsk)
     }
     
     func toggleDisplayMode(simple: Bool ,_ undoManager : UndoManager?){
