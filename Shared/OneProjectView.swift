@@ -40,6 +40,7 @@ struct OneProjectView_Previews: PreviewProvider {
             OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
             OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
             OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: .constant(true))
             
             
         }.previewLayout(.sizeThatFits).padding()
@@ -59,7 +60,7 @@ struct OneTaskView: View {
     let shadowOpacityMap: [TaskStatus: Double] = [
         .finished: 0,
         .todo: 1,
-        .original: 0.5
+        .original: 0
     ]
     
     let lineWidthMap: [TaskStatus: Double] = [
@@ -71,14 +72,16 @@ struct OneTaskView: View {
     var body: some View {
         VStack() {
             HStack {
-                Text("\(index)")
-                    .minimumScaleFactor(0.2)
-                    .font(.footnote)
-                    .lineLimit(1)
-                    .foregroundColor(.white)
-                    .frame(width: 24, height: 24, alignment: .center)
-                    .background(Color(red: 0.95, green: 0.8, blue: 0.5))
-                    .clipShape(Circle())
+                ZStack{
+                    Color(red: 0.95, green: 0.8, blue: 0.5)
+                        .clipShape(Circle())
+                    Text("\(index)")
+                        .minimumScaleFactor(0.2)
+                        .font(.footnote)
+                        .lineLimit(1)
+                        .foregroundColor(.white)
+                }.frame(width: 24, height: 24, alignment: .center)
+
                 VStack() {
                     Text(task.name)
                         .font(.subheadline)
@@ -108,14 +111,13 @@ struct OneTaskView: View {
         }
         .frame(width: 80, height: 80, alignment: .top)
         .background(Color.orange)
-        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
-        //        .shadow(color: Color("ShallowShadowColor").opacity(shadowOpacityMap[status]!),
-        //                radius: 6,
-        //                x: 5, y: 5)
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .drawingGroup()
+        .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 2, y: 2)
         .brightness(task.status == .finished ? -0.2 : 0)
-        .blur(radius: task.status == .finished ? 10 : 0)
+//        .blur(radius: task.status == .finished ? 10 : 0)
         .overlay(
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(Color.accentColor, lineWidth: lineWidthMap[task.status]!)
         )
         .overlay(
@@ -139,6 +141,7 @@ struct OneTaskView: View {
         .onTapGesture(count: 1) {
             action?(self.seleted)
         }
+        
         
     }
     
@@ -246,12 +249,12 @@ struct ProjectDifferentModeView: View {
                                 )
                                     .padding()
                                     .coordinateSpace(name: "task\(tsk.id)")
-                                    .rotation3DEffect(
-                                        env_settings.isEditingMode ? .zero :
-                                            Angle(degrees: min(
-                                                (Double(geoTask.frame(in: .named("task\(tsk.id)")).minX)) / 40,
-                                                25)
-                                                 ), axis: (x: -0.1, y: -0.3, z: 0))
+//                                    .rotation3DEffect(
+//                                        env_settings.isEditingMode ? .zero :
+//                                            Angle(degrees: min(
+//                                                (Double(geoTask.frame(in: .named("task\(tsk.id)")).minX)) / 40,
+//                                                25)
+//                                                 ), axis: (x: -0.1, y: -0.3, z: 0))
                                     .contextMenu {
                                         Button(action: {
                                             document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
@@ -260,6 +263,7 @@ struct ProjectDifferentModeView: View {
                                             Image(systemName: "trash")
                                         })
                                     }
+                                    .drawingGroup()
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7))
                             }
                         }.frame(maxWidth: .infinity).frame(height: 120)
