@@ -50,13 +50,16 @@ struct MyProgressStyle: ProgressViewStyle {
     ]
     
     func makeBody(configuration: Configuration) -> some View {
-        VStack{HStack{ForEach(missionsWithStatus.indices, id: \.self){ i in
+        VStack{HStack{
+            ForEach(missionsWithStatus.indices, id: \.self){ i in
             RoundedRectangle(cornerRadius: 2.5)
                 .frame(height: 5)
                 .foregroundColor(
                      colorMap[missionsWithStatus[i].status]
                 )
-        }}}
+            }}.frame(maxWidth: .infinity)
+        }
+        .frame(height: 10)
         .padding(5)
         .background(Color.white)
         .cornerRadius(7.5)
