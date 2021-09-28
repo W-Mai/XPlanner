@@ -88,7 +88,6 @@ struct OneTaskView: View {
                     if task.status != .original {
                         Text(getSubTitleText()).font(.caption2)
                             .fontWeight(.light)
-                        //                            .opacity(task.status != .original ? 1 : 0)
                             .foregroundColor(Color.gray)
                             .lineLimit(1)
                             .minimumScaleFactor(0.2)
@@ -107,7 +106,7 @@ struct OneTaskView: View {
                     .minimumScaleFactor(0.4)
             }
         }
-        .frame(width: 100, height: 100, alignment: .top)
+        .frame(width: 80, height: 80, alignment: .top)
         .background(Color.orange)
         .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
         //        .shadow(color: Color("ShallowShadowColor").opacity(shadowOpacityMap[status]!),
@@ -186,13 +185,13 @@ struct OneProjectView: View {
                     }) {
                         // plus.app.fill
                         Image(systemName: "minus.circle.fill").imageScale(.large).foregroundColor(.red)
-                    }.padding([.top, .trailing], 10)
+                    }//.padding([.top, .trailing], 10)
                         .padding([.leading], 30)
                 }
                 
                 Text(project.name)
-                    .font(displayMode == .FullSquareMode ? .title : .title3)
-                    .padding([.top, .trailing], 10)
+                    .font(displayMode == .FullSquareMode ? .title2 : .title3)
+//                    .padding([.top, .trailing], 10)
                     .padding([.leading], 30)
                     .contextMenu {
                         Button(action: {
@@ -205,17 +204,7 @@ struct OneProjectView: View {
                 
             }
             ) {
-                if self.displayMode == .FullSquareMode {
-                    ProjectDifferentModeView(project: project, prjGrpId: prjGrpId)
-                } else {
-                    HStack {
-                        ProgressView(value: 1)
-                            .progressViewStyle(MyProgressStyle(
-                                missionsWithStatus: project.tasks
-                            ))
-                    }.padding([.horizontal])
-                        .padding([.vertical], 5)
-                }
+                ProjectDifferentModeView(project: project, prjGrpId: prjGrpId)
             }
         })
     }
@@ -240,7 +229,7 @@ struct ProjectDifferentModeView: View {
         case .FullSquareMode :
             ScrollView(.horizontal, showsIndicators: false) {
                 ScrollViewReader { proxy in
-                    HStack(spacing: 120) {
+                    HStack(spacing: 80) {
                         ForEach(project.tasks) { tsk in
                             GeometryReader { geoTask in
                                 OneTaskView(
@@ -260,7 +249,7 @@ struct ProjectDifferentModeView: View {
                                     .rotation3DEffect(
                                         env_settings.isEditingMode ? .zero :
                                             Angle(degrees: min(
-                                                (Double(geoTask.frame(in: .named("task\(tsk.id)")).minX)) / 15,
+                                                (Double(geoTask.frame(in: .named("task\(tsk.id)")).minX)) / 40,
                                                 25)
                                                  ), axis: (x: -0.1, y: -0.3, z: 0))
                                     .contextMenu {
@@ -271,9 +260,9 @@ struct ProjectDifferentModeView: View {
                                             Image(systemName: "trash")
                                         })
                                     }
-                                    .animation(.spring(response: 0.8, dampingFraction: 0.3))
+                                    .animation(.spring(response: 0.3, dampingFraction: 0.7))
                             }
-                        }.frame(maxWidth: .infinity).frame(height: 140)
+                        }.frame(maxWidth: .infinity).frame(height: 120)
                         
                         if env_settings.isEditingMode {
                             Button(action: {
