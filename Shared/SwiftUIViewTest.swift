@@ -111,6 +111,13 @@ struct docuitest : View {
     
     var body : some View{
         VStack{
+            Section(header: HStack{
+                Color.black
+                
+            }){
+                Color.blue
+            }
+            
             Button(action: {
                 manager.change(id: data.id)
                 
