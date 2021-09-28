@@ -103,6 +103,10 @@ extension XPlanerDocument {
         })
     }
     
+    func fuck() {
+        print("hhh")
+    }
+    
     func toggleDisplayMode(simple: Bool ,_ undoManager : UndoManager?){
         plannerData.fileInformations.displayMode = simple ? .SimpleProcessBarMode : .FullSquareMode
         

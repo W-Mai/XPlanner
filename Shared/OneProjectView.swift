@@ -7,30 +7,70 @@
 
 import SwiftUI
 
+struct OneProjectView_Previews: PreviewProvider {
+    
+    @State static var isEditing = false
+    @State static var simpleMode = DisplayMode.FullSquareMode
+    @State static var isSelected = false
+    @State static var project = ProjectInfo(
+        name: "ProjectName",
+        tasks: [TaskInfo](
+            arrayLiteral:
+                TaskInfo(name: "任务1", content: "任务内容1", status: .finished, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务3", content: "任务内容3", status: .original, createDate: Date(), id: UUID())
+        ))
+    
+    @State static var status1 = TaskStatus.finished
+    @State static var status2 = TaskStatus.todo
+    @State static var status3 = TaskStatus.original
+    
+    static var previews: some View {
+        OneProjectView(project: project, prjGrpId: UUID(), isEditingMode: self.$isEditing, displayMode: simpleMode, isSelected: $isSelected)
+            .previewLayout(.sizeThatFits)
+            .preferredColorScheme(.light)
+            .frame(width: 1000)
+        
+            .environmentObject(EnvironmentSettings(simpleMode: false))
+        HStack {
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: $isSelected)
+            
+            
+        }.previewLayout(.sizeThatFits).padding()
+    }
+}
+
+
 
 struct OneTaskView: View {
-    var task : TaskInfo
-    var index : Int
+    var task: TaskInfo
+    var index: Int
     @Binding var isEditingMode: Bool
     @Binding var seleted: Bool
     
-    var action : ((_ : Bool) -> Void)? = nil
+    var action: ((_: Bool) -> Void)? = nil
     
-    let shadowOpacityMap : [TaskStatus : Double] = [
-        .finished : 0,
-        .todo : 1,
-        .original : 0.5
+    let shadowOpacityMap: [TaskStatus: Double] = [
+        .finished: 0,
+        .todo: 1,
+        .original: 0.5
     ]
     
-    let lineWidthMap : [TaskStatus : Double] = [
-        .finished : 0,
-        .todo : 3,
-        .original : 0.5
+    let lineWidthMap: [TaskStatus: Double] = [
+        .finished: 0,
+        .todo: 3,
+        .original: 0.5
     ]
     
     var body: some View {
-        VStack(){
-            HStack{
+        VStack() {
+            HStack {
                 Text("\(index)")
                     .minimumScaleFactor(0.2)
                     .font(.footnote)
@@ -39,7 +79,7 @@ struct OneTaskView: View {
                     .frame(width: 24, height: 24, alignment: .center)
                     .background(Color(red: 0.95, green: 0.8, blue: 0.5))
                     .clipShape(Circle())
-                VStack(){
+                VStack() {
                     Text(task.name)
                         .font(.subheadline)
                         .foregroundColor(Color.black)
@@ -48,6 +88,7 @@ struct OneTaskView: View {
                     if task.status != .original {
                         Text(getSubTitleText()).font(.caption2)
                             .fontWeight(.light)
+                        //                            .opacity(task.status != .original ? 1 : 0)
                             .foregroundColor(Color.gray)
                             .lineLimit(1)
                             .minimumScaleFactor(0.2)
@@ -88,7 +129,7 @@ struct OneTaskView: View {
                 .minimumScaleFactor(0.3)
         )
         .overlay(
-            Group{
+            Group {
                 if isEditingMode {
                     Image(systemName: "trash.slash").resizable().scaleEffect(0.6).foregroundColor(.white)
                 }
@@ -96,14 +137,6 @@ struct OneTaskView: View {
         )
         .scaleEffect(seleted ? 0.8 : 1)
         .animation(.easeInOut(duration: 0.2))
-        .contextMenu{
-            Button(action: {
-                
-            }, label: {
-                Text("删除 \(task.name) ")
-                Image(systemName: "trash")
-            })
-        }
         .onTapGesture(count: 1) {
             action?(self.seleted)
         }
@@ -134,23 +167,23 @@ struct OneTaskView: View {
 }
 
 struct OneProjectView: View {
-    @EnvironmentObject var document : XPlanerDocument
+    @EnvironmentObject var document: XPlanerDocument
     @Environment(\.undoManager) var undoManager
     
-    var project : ProjectInfo
-    var prjGrpId : UUID
+    var project: ProjectInfo
+    var prjGrpId: UUID
     
     @Binding var isEditingMode: Bool
     var displayMode: DisplayMode
-    @Binding var isSelected : Bool
+    @Binding var isSelected: Bool
     
     var body: some View {
-        VStack(alignment: .leading){
-            Section(header:HStack(alignment: .center){
+        VStack(alignment: .leading, content: {
+            Section(header: HStack(alignment: .center) {
                 if isEditingMode {
-                    Button(action:{
+                    Button(action: {
                         document.removeProject(idIs: project.id, from: prjGrpId, undoManager)
-                    }){
+                    }) {
                         // plus.app.fill
                         Image(systemName: "minus.circle.fill").imageScale(.large).foregroundColor(.red)
                     }.padding([.top, .trailing], 10)
@@ -161,7 +194,7 @@ struct OneProjectView: View {
                     .font(displayMode == .FullSquareMode ? .title : .title3)
                     .padding([.top, .trailing], 10)
                     .padding([.leading], 30)
-                    .contextMenu{
+                    .contextMenu {
                         Button(action: {
                             document.removeProject(idIs: project.id, from: prjGrpId, undoManager)
                         }, label: {
@@ -171,103 +204,102 @@ struct OneProjectView: View {
                     }
                 
             }
-            ){
-                switch self.displayMode {
-                case .FullSquareMode:
-                    ScrollView(.horizontal, showsIndicators:false){
-                        ScrollViewReader{proxy in
-                            HStack(spacing: 120){
-                                ForEach(project.tasks.indices){ i in
-                                    GeometryReader{geoTask in
-                                        OneTaskView(
-                                            task: project.tasks[i],
-                                            index: i,
-                                            isEditingMode: $isEditingMode,
-                                            seleted: $isSelected,
-                                            
-                                            action: { selected in
-                                                
-                                            }
-                                        )
-                                            .padding()
-                                            .coordinateSpace(name: "task\(i)")
-                                            .rotation3DEffect(
-                                                isEditingMode ? .zero :
-                                                    Angle(degrees: min(
-                                                        (Double(geoTask.frame(in: .named("task\(i)")).minX)) /  15,
-                                                        45)
-                                                         ) , axis: (x:-0.1, y: -0.3, z: 0))
-                                        //                                            .onTapGesture {
-                                        //                                                proxy.scrollTo(i+1, anchor: .topLeading)
-                                        //                                            }
-                                            .animation(.spring(response: 0.8, dampingFraction: 0.3))
-                                        //                                    Text("\(Int(geoTask.frame(in: .global).minX))")
-                                        
-                                    }
-                                }.frame(maxWidth: .infinity).frame(height: 140)
-                                
-                                if isEditingMode {
-                                    Button(action: {
-                                        
-                                    }, label: {
-                                        VStack{
-                                            Image(systemName: "plus.square").resizable().foregroundColor(.blue)
-                                        }.padding(20)
-                                            .frame(width: 80, height: 80, alignment: .center)
-                                            .cornerRadius(16)
-                                            .shadow(color: Color(hue: 0.8, saturation: 0.0, brightness: 0.718, opacity: 0.5), radius: 6, x: 5, y: 5)
-                                    })}
-                            }.padding([.trailing], 120)
-                        }
-                    }
-                case .SimpleProcessBarMode:
-                    HStack{
+            ) {
+                if self.displayMode == .FullSquareMode {
+                    ProjectDifferentModeView(project: project, prjGrpId: prjGrpId)
+                } else {
+                    HStack {
                         ProgressView(value: 1)
                             .progressViewStyle(MyProgressStyle(
                                 missionsWithStatus: project.tasks
                             ))
                     }.padding([.horizontal])
                         .padding([.vertical], 5)
-                    
                 }
-                
             }
-        }
+        })
     }
-    func getSometing(){
+    
+    func getSometing() {
         
     }
 }
 
-struct OneProjectView_Previews: PreviewProvider {
+
+
+struct ProjectDifferentModeView: View {
+    var project: ProjectInfo
+    var prjGrpId: UUID
     
-    @State static var isEditing = false
-    @State static var simpleMode = DisplayMode.FullSquareMode
-    @State static var isSelected = false
-    @State static var project = ProjectInfo(
-        name: "ProjectName",
-        tasks: [TaskInfo](
-            arrayLiteral:
-                TaskInfo(name: "任务1",content: "任务内容1",status: .finished,createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2",content: "任务内容2",status: .todo,createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务3",content: "任务内容3",status: .original,createDate: Date(), id: UUID())
-        ))
+    @EnvironmentObject var document: XPlanerDocument
+    @EnvironmentObject var env_settings: EnvironmentSettings
+    @Environment(\.undoManager) var undoManager
     
-    @State static var status1 = TaskStatus.finished
-    @State static var status2 = TaskStatus.todo
-    @State static var status3 = TaskStatus.original
-    
-    static var previews: some View {
-        OneProjectView(project: project, prjGrpId: UUID(), isEditingMode: self.$isEditing, displayMode: simpleMode, isSelected: $isSelected)
-            .previewLayout(.sizeThatFits)
-            .preferredColorScheme(.light)
-            .frame(width: 1000)
-        HStack {
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: $isSelected)
+    var body: some View {
+        switch env_settings.displayMode{
+        case .FullSquareMode :
+            ScrollView(.horizontal, showsIndicators: false) {
+                ScrollViewReader { proxy in
+                    HStack(spacing: 120) {
+                        ForEach(project.tasks) { tsk in
+                            GeometryReader { geoTask in
+                                OneTaskView(
+                                    task: tsk,
+                                    index: project.tasks.firstIndex(of: tsk)! + 1,
+                                    isEditingMode: $env_settings.isEditingMode,
+                                    seleted: $env_settings.isSelected,
+                                    
+                                    action: { selected in
+                                        if env_settings.isEditingMode {
+                                            document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
+                                        }
+                                    }
+                                )
+                                    .padding()
+                                    .coordinateSpace(name: "task\(tsk.id)")
+                                    .rotation3DEffect(
+                                        env_settings.isEditingMode ? .zero :
+                                            Angle(degrees: min(
+                                                (Double(geoTask.frame(in: .named("task\(tsk.id)")).minX)) / 15,
+                                                25)
+                                                 ), axis: (x: -0.1, y: -0.3, z: 0))
+                                    .contextMenu {
+                                        Button(action: {
+                                            document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
+                                        }, label: {
+                                            Text("删除 \(tsk.name) ")
+                                            Image(systemName: "trash")
+                                        })
+                                    }
+                                    .animation(.spring(response: 0.8, dampingFraction: 0.3))
+                            }
+                        }.frame(maxWidth: .infinity).frame(height: 140)
+                        
+                        if env_settings.isEditingMode {
+                            Button(action: {
+                                document.addTask(nameIs: "Task", contentIs: "Content", for: project.id, in: prjGrpId, undoManager)
+                            }, label: {
+                                VStack {
+                                    Image(systemName: "plus.square").resizable().foregroundColor(.blue)
+                                }.padding(20)
+                                    .frame(width: 80, height: 80, alignment: .center)
+                                    .cornerRadius(16)
+                                    .shadow(color: Color(hue: 0.8, saturation: 0.0, brightness: 0.718, opacity: 0.5), radius: 6, x: 5, y: 5)
+                            })
+                        }
+                    }.padding([.trailing], 120)
+                }
+            }
             
-            
-        }.previewLayout(.sizeThatFits).padding()
+        case .SimpleProcessBarMode:
+            HStack {
+                ProgressView(value: 1)
+                    .progressViewStyle(MyProgressStyle(
+                        missionsWithStatus: project.tasks
+                    ))
+            }.padding([.horizontal])
+                .padding([.vertical], 5)
+        }
+        
     }
 }
