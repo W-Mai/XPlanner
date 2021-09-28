@@ -52,11 +52,13 @@ struct ContentView: View {
                         env_settings.scrollProxy = proxy
                     }
                 }
+
+                VStack{}.frame(height: 100)
             }
             .frame(maxHeight: .infinity)
             .foregroundColor(.accentColor)
             //            .background(LinearGradient(colors: [.white, .gray], startPoint: .top, endPoint: .bottom))
-            .animation(.spring(response: 0.3, dampingFraction: 0.5))
+            .animation(.easeInOut(duration: 0.2))
             .toolbar { ToolbarItem{
                 ExtractedToolBarView(){
                     document.toggleDisplayMode(simple: env_settings.simpleMode, undoManager)}}
@@ -113,18 +115,19 @@ struct ExtractedMainViewView<Content: View>: View {
     
     var body: some View {
         VStack(alignment: .leading){
-            ForEach(data.projectGroups, content: {i in
-                content(i).id(i.id)
-                
-                if(i.id != data.projectGroups.last?.id){
-                    Divider().padding([.leading, .trailing])
-                }else{
-                    HStack{
-                        //                        Text("空空如也")
-                        EmptyView()
+            if data.projectGroups.count > 0{
+                ForEach(data.projectGroups, content: {i in
+                    content(i).id(i.id)
+                    
+                    if(i.id != data.projectGroups.last?.id){
+                        Divider().padding([.leading, .trailing])
                     }
+                }).frame(maxWidth: .infinity)
+            } else {
+                VStack{
+                    Text("空空如也").frame(maxWidth: .infinity)
                 }
-            })
+            }
             
             if env_settings.isEditingMode{
                 Button {
@@ -133,11 +136,10 @@ struct ExtractedMainViewView<Content: View>: View {
                     HStack{
                         Image(systemName: "plus.rectangle").resizable().scaledToFit()
                         
-                        Text("添加新项目组").font(.largeTitle)
+                        Text("添加新项目组").font(.title)
                             .fontWeight(.bold)
                     }.frame(height: 30)
-                        .padding()
-                        .padding([.bottom], 20)
+                        .padding([.leading, .bottom], 20)
                 }
             }
         }
@@ -166,7 +168,7 @@ struct ExtractedMainlyContentView<Content: View>: View {
                 }.padding([.leading], 10)
             }
             Text(projectGroup.name)
-                .font(env_settings.displayMode == .FullSquareMode ? .largeTitle : .title2)
+                .font(env_settings.displayMode == .FullSquareMode ? .title : .title2)
                 .fontWeight(.bold)
                 .padding([.leading, .trailing])
                 .background(Color.white)
@@ -178,28 +180,35 @@ struct ExtractedMainlyContentView<Content: View>: View {
                         Image(systemName: "trash")
                     })
                 }.animation(.easeInOut)
-            
-        }.padding([.top], 30)
-                
+                Spacer()
+        }.padding([.top, .bottom], 1)
         ){
-            ForEach(projectGroup.projects){item in
-                content(item)
+            if projectGroup.projects.count > 0 {
+                ForEach(projectGroup.projects){item in
+                    content(item).padding([.top], 0)
+                }
+            } else {
+                VStack{
+                    Text("空空如也")
+                }
             }
+            
             if env_settings.isEditingMode{
+                HStack{
                 Button {
                     document.addProject(nameIs: "项目", for: projectGroup.id, undoManager)
                 } label: {
                     HStack{
                         Image(systemName: "plus.rectangle").resizable().scaledToFit()
                         
-                        Text("添加新项目").font(.title)
+                        Text("添加新项目").font(.title2)
                     }.frame(height: 30)
-                        .padding()
-                        .padding([.leading], 40)
-                        .padding([.bottom], 20)
+//
                 }
-                
-                
+                .padding([.leading], 40)
+                    .padding([.bottom], 20)
+                Spacer()
+                }
             }
         }
     }
@@ -290,3 +299,5 @@ struct ExtractedToolBarView: View {
             .disabled(env_settings.isEditingMode)
     }
 }
+
+let screen = UIScreen.main.bounds
