@@ -200,8 +200,14 @@ extension PlannerFileStruct {
                             TaskInfo(name: "任务2",content: "任务内容2",status: .todo,createDate: Date(), id: UUID()),
                             TaskInfo(name: "任务3",content: "任务内容3",status: .original,createDate: Date(), id: UUID())
                         ),
-                        id: UUID())),
-                id: UUID())
+                        id: UUID()),
+                    ProjectInfo(
+                        name: "项目",
+                        tasks: [TaskInfo](),
+                        id: UUID())
+                ),
+                id: UUID()),
+            ProjectGroupInfo(name: "空项目组", projects: [ProjectInfo]())
         ),
         taskStatusChanges: [TaskStatusChangeRecord]()
     )
