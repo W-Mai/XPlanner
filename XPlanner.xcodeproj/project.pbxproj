@@ -17,6 +17,10 @@
 		B2E45DDC6B505061E87BF6FC /* XPlanerDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45D4F3AB85456191AC12D /* XPlanerDocument.swift */; };
 		B2E45E01DE4981F43DD4C0B5 /* XPlanerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E459439A0C8FD12B604818 /* XPlanerApp.swift */; };
 		B2E45E848C02F7EAB57EE671 /* MainEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45322B6A1547BDF046C0A /* MainEditor.swift */; };
+		EB2BBC26270388E000470E4F /* AuxTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB2BBC25270388E000470E4F /* AuxTools.swift */; };
+		EB2BBC27270388E000470E4F /* AuxTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB2BBC25270388E000470E4F /* AuxTools.swift */; };
+		EB3AF4B12704543300293546 /* SmallComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3AF4B02704543300293546 /* SmallComponent.swift */; };
+		EB3AF4B22704543300293546 /* SmallComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3AF4B02704543300293546 /* SmallComponent.swift */; };
 		EB4C17C826F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB4C17C926F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB99F92C26F4DD2200956A1A /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
@@ -66,8 +70,10 @@
 		B2E45C89A5D9562B61F40438 /* Tests_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_iOS.swift; sourceTree = "<group>"; };
 		B2E45D4F3AB85456191AC12D /* XPlanerDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XPlanerDocument.swift; sourceTree = "<group>"; };
 		B2E45F98F040A6EBF2ACC38D /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		EB2BBC25270388E000470E4F /* AuxTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuxTools.swift; sourceTree = "<group>"; };
 		EB3A88AA26FA16A80017527E /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		EB3A88AB26FA16BB0017527E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		EB3AF4B02704543300293546 /* SmallComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallComponent.swift; sourceTree = "<group>"; };
 		EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewTest.swift; sourceTree = "<group>"; };
 		EB99F92B26F4DD2200956A1A /* Defs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defs.swift; sourceTree = "<group>"; };
 		EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XPlanerDocument+Manager.swift"; sourceTree = "<group>"; };
@@ -139,6 +145,7 @@
 				B2E45D4F3AB85456191AC12D /* XPlanerDocument.swift */,
 				EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */,
 				B2E45322B6A1547BDF046C0A /* MainEditor.swift */,
+				EB3AF4B02704543300293546 /* SmallComponent.swift */,
 				EB9F372626EAFB1F003E70F6 /* OneProjectView.swift */,
 				EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */,
 				EB99F92B26F4DD2200956A1A /* Defs.swift */,
@@ -199,6 +206,7 @@
 				EB9FC94726F1E524005C21DD /* MyAnimations.swift */,
 				EBE9187026FB695200244137 /* MyComponentStyles.swift */,
 				EBE9187426FB721D00244137 /* BindingCollection.swift */,
+				EB2BBC25270388E000470E4F /* AuxTools.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -364,7 +372,9 @@
 				B2E45A3007E68204422C7928 /* MainEditor.swift in Sources */,
 				EBE9187526FB721D00244137 /* BindingCollection.swift in Sources */,
 				EB9F372726EAFB1F003E70F6 /* OneProjectView.swift in Sources */,
+				EB2BBC26270388E000470E4F /* AuxTools.swift in Sources */,
 				EB4C17C826F08CA300311D8D /* SwiftUIViewTest.swift in Sources */,
+				EB3AF4B12704543300293546 /* SmallComponent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,7 +407,9 @@
 				B2E45E848C02F7EAB57EE671 /* MainEditor.swift in Sources */,
 				EBE9187626FB721D00244137 /* BindingCollection.swift in Sources */,
 				EB9F372826EAFB1F003E70F6 /* OneProjectView.swift in Sources */,
+				EB2BBC27270388E000470E4F /* AuxTools.swift in Sources */,
 				EB4C17C926F08CA300311D8D /* SwiftUIViewTest.swift in Sources */,
+				EB3AF4B22704543300293546 /* SmallComponent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
