@@ -81,32 +81,233 @@ class Manager: ObservableObject {
     }
 }
 
-struct docuitest1 : View {
-    @State var n = 0
-    @ObservedObject var manager = Manager()
-    
-    var body : some View{
-        VStack{
-            HStack{
-                Button(action: {
-                    manager.add()
-                }, label: {
-                    Text("Add").padding()
-                })
-                VStack{
-                    ForEach(manager.data.data, id: \.id){ i in
-                        Text("\(i.data) \(i.id)")
-                        docuitest(data: i, manager: manager)
-                    }
-                }
+//struct docuitest1 : View {
+//    @State var n = 0
+//    @ObservedObject var manager = Manager()
+//    @GestureState var isLongPressed = false //用于刷新长按手势的状态
+//    @State var isEnded = false
+//
+//    @State var str = ""
+//    @State var str2 = ""
+//    @State var status = ""
+//
+//    var body: some View {
+//        let longPressGesture = LongPressGesture(minimumDuration: 1) //初始化一个长按手势，该手势一旦识别到长按的触摸状态，就会调用手势的结束事件。您甚至可以限制长按手势的时间长度
+//            .updating($isLongPressed) { value, state, transcation in //通过调用updating方法，监听手势状态的变化
+//                print(value, state, transcation)
+//                state = value
+//
+//                str += "1"
+//                isEnded = false
+//            }
+//            .onEnded { (value) in
+//                str += "2"
+//                isEnded = true
+//            }
+//            .onChanged { _ in
+//                str += "3"
+//            }
+//
+//        return Circle()
+//            .fill(Color.orange)
+//            .frame(width: 240, height: 240)
+//
+//            .overlay(
+//                List{
+//                    Text(str)
+//                    Text(str2)
+//                    Text(status)
+//
+//                }
+//                    .onChange(of: isLongPressed, perform: { V in
+//                        if !isLongPressed {
+//                            status = isEnded ? "Loong Pressed" : "Tap Once"
+//                        }
+//                        str2 += isEnded.description
+//                    })
+//            )
+//
+//            .gesture(longPressGesture)
+//            .scaleEffect(isLongPressed ? 1.4 : 1)
+//
+//
+//            .animation(.default)
+//
+//    }
+//    //    var body : some View{
+//    //        VStack{
+//    //            HStack{
+//    //                Button(action: {
+//    //                    manager.add()
+//    //                }, label: {
+//    //                    Text("Add").padding()
+//    //                })
+//    //                VStack{
+//    //                    ForEach(manager.data.data, id: \.id){ i in
+//    //                        Text("\(i.data) \(i.id)")
+//    //                        docuitest(data: i, manager: manager)
+//    //                    }
+//    //                }
+//    //            }
+//    //        }
+//    //    }
+//}
+
+struct GestureView: UIViewRepresentable {
+    let callback: () -> Void
+
+    func makeUIView(context: UIViewRepresentableContext<GestureView>) -> UIView {
+        let view = UIView(frame: .zero)
+        let gesture = UILongPressGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.action))
+        gesture.delegate = context.coordinator
+        gesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(gesture)
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<GestureView>) {}
+
+    class Coordinator: NSObject {
+        let callback: () -> Void
+
+        init(callback: @escaping () -> Void) {
+            self.callback = callback
+        }
+
+        @objc func action(_ sender: UIPanGestureRecognizer) {
+            
+            if sender.state == .began {
+                callback()
+            }
+            if sender.state == .changed{
+                callback()
             }
         }
+    }
+
+    func makeCoordinator() -> GestureView.Coordinator {
+        Coordinator(callback: callback)
+    }
+}
+
+extension GestureView.Coordinator: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        true
     }
 }
 
 
+struct docuitest1 : View {
+    @State var n = 0
+    @ObservedObject var manager = Manager()
+    @GestureState var isLongPressed = false //用于刷新长按手势的状态
+    @State var isEnded = false
+    
+    @State var str = ""
+    @State var str2 = ""
+    @State var status = ""
+    
+    var body: some View {
+        VStack {
+            Text(status)
+            ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(0 ..< 15) { item in
+                            RoundedRectangle(cornerRadius: 25.0)
+                                .frame(width: 125, height: 200)
+                                .padding(.horizontal)
+//                                .overlay(
+//                                    GestureView(callback: { status += "Long" })
+//                                )
+                                .onTapGesture {
+                                    status += "Tap"
+                                }
+                                .onLongPressGesture(minimumDuration: 0.2, pressing: { v in
+                                    status += "l"
+                                }, perform: {
+                                    status += "k"
+                                })
+                        }
+                    }
+            }
+        }
+        }
+//    var body: some View {
+//        let longPressGesture = TapGesture()
+//            .updating($isLongPressed) { value, state, transcation in //通过调用updating方法，监听手势状态的变化
+//                print(value, state, transcation)
+////                state = sta
+//
+//                str += "1"
+//                isEnded = false
+//            }
+//            .onEnded({ _ in
+//                status += "Tap"
+//            })
+//
+//            .simultaneously(with:
+//
+//                                LongPressGesture(minimumDuration: 0.4, maximumDistance: 0.2)
+//                    .updating($isLongPressed, body: { val, sta, trans in
+//                        sta = val
+//                    })
+//                    .onEnded({ _ in
+//                        status += "LongPress"
+//                    })
+//            )
+//
+//        return ScrollView{
+//            Circle()
+//                .fill(Color.orange)
+//                .frame(width: 240, height: 240)
+//
+//                .overlay(
+//                    List{
+//                        Text(str)
+//                        Text(str2)
+//                        Text(status)
+//                    }
+//                )
+//
+////                .gesture(longPressGesture)
+////                .onLongPressGesture(minimumDuration: 1, pressing: { v in
+////                    isEnded = v
+////                }, perform: {
+////                    status = "LongPress"
+////                    isEnded = false
+////                })
+//                .overlay(GestureView(callback: {
+//                    isEnded = true
+//                }))
+//                .scaleEffect(isEnded ? 1.4 : 1)
+//
+//
+//                .animation(.default)
+//        }
+
+
+    }
+    //    var body : some View{
+    //        VStack{
+    //            HStack{
+    //                Button(action: {
+    //                    manager.add()
+    //                }, label: {
+    //                    Text("Add").padding()
+    //                })
+    //                VStack{
+    //                    ForEach(manager.data.data, id: \.id){ i in
+    //                        Text("\(i.data) \(i.id)")
+    //                        docuitest(data: i, manager: manager)
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+//}
+
 struct docuitest : View {
-     var data : testObsStruct2
+    var data : testObsStruct2
     @ObservedObject var manager : Manager
     
     var body : some View{

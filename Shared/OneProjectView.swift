@@ -60,25 +60,11 @@ struct OneTaskView: View {
     
     @GestureState var isDetectingLongPress = false
     @State var completedLongPress = false
+    @State var currentState = false
     
-    var longPress: some Gesture {
-        LongPressGesture(minimumDuration: 3)
-            .updating($isDetectingLongPress) { currentState, gestureState,
-                transaction in
-                gestureState = currentState
-                transaction.animation = Animation.easeInOut(duration: 0.3)
-                
-                let ifg = UIImpactFeedbackGenerator()
-                ifg.prepare()
-                ifg.impactOccurred()
-            }
-            .onEnded { finished in
-                self.completedLongPress = finished
-            }.onChanged({ _ in
-                
-                longAction?()
-            })
-    }
+    //    let longPress =
+    
+    
     
     let shadowOpacityMap: [TaskStatus: Double] = [
         .finished: 0,
@@ -160,18 +146,48 @@ struct OneTaskView: View {
                 }
             }
         )
-        .scaleEffect(isDetectingLongPress ? 0.9 : completedLongPress ? 1 : 1)
+        .animation(.easeInOut(duration: 0.2))
+        
+        .scaleEffect(currentState ? 0.9 : 1)
+        .offset(y: currentState ? -5 : 0)
+        .animation(.easeInOut(duration: 0.5))
         .rotation3DEffect(Angle(degrees: task.status == .todo ? 10 : 0), axis: (-1 , 0, 0))
         .offset(y: task.status == .todo ? 10 : 0)
         .brightness(task.status == .todo ? -0.1 : 0)
         .drawingGroup()
         .animation(.easeInOut(duration: 0.2))
-        .onTapGesture(count: 1) {
-            action?(self.seleted)
-            
+        .onTapGesture {
+            action?(seleted)
+        }.onLongPressGesture(minimumDuration: 0.1) { v in
+            currentState = v
+        } perform: {
             MyFeedBack()
+            longAction?()
         }
-        .gesture(longPress)
+
+//        .gesture(
+//            TapGesture().onEnded{ _ in
+//                action?(seleted)
+//            }.exclusively(
+//                    before: LongPressGesture()
+//                            .updating($isDetectingLongPress) { currentState, gestureState,
+//                                transaction in
+//                                gestureState = currentState
+//                            }
+//                            .onEnded { finished in
+//                                longAction?()
+//                            }))
+//
+        
+        //        .highPriorityGesture(
+        //            TapGesture(count: 1).onEnded { _ in
+        //                action?(self.seleted)
+        //
+        //                MyFeedBack()
+        //            }
+        //        )
+        
+        
     }
     
     func getStatusText() -> String {
@@ -281,8 +297,8 @@ struct ProjectDifferentModeView: View {
                                     }
                                 )
                                     .padding()
-//
-//                                    .gesture(longPress)
+                                //
+                                //                                    .gesture(longPress)
                                 //                                    .contextMenu {
                                 //                                        Button(action: {
                                 //                                            document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
