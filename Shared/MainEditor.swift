@@ -374,7 +374,7 @@ struct ExtractedTaskEditViewView: View {
         .scaleEffect(env_settings.editTaskInfoPresented ? 1 : 0.2)
         .animation(.spring(response: 0.3, dampingFraction: 0.7))
         
-        .onChange(of: env_settings.currentTaskPath, perform: { V in
+        .onChange(of: env_settings.editTaskInfoPresented, perform: { V in
             let indexes = env_settings.currentTaskPath
             let task = indexes != nil ? document.plannerData.projectGroups[indexes!.prjGrpIndex].projects[indexes!.prjIndex].tasks[indexes!.tskIndex] : (TaskInfo(name: "", content: "", status: .original, createDate: Date()))
             
@@ -403,7 +403,7 @@ struct ExtractedTaskEditViewView: View {
                     self.willCloseFlag = false;
                     env_settings.editTaskInfoPresented = false
                     
-                    
+                    document.updateTaskInfo(tsk: tmpTask, for: env_settings.currentTaskPath!, undoManager)
                 }
         )
     }

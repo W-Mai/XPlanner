@@ -45,8 +45,8 @@ class EnvironmentSettings: ObservableObject {
     @Published var displayMode : DisplayMode = .FullSquareMode
     @Published var simpleMode = false
     @Published var isSelected = false
-    @Published var currentTaskPath : TaskIndexPath? = TaskIndexPath(prjGrpIndex: 0, prjIndex: 0, tskIndex: 0)
-    @Published var editTaskInfoPresented = true
+    @Published var currentTaskPath : TaskIndexPath? = nil
+    @Published var editTaskInfoPresented = false
     
     init(simpleMode : Bool) {
         self.simpleMode = simpleMode

@@ -105,6 +105,17 @@ extension XPlanerDocument {
         })
     }
     
+    func updateTaskInfo(tsk : TaskInfo, for index : TaskIndexPath , _ undoManager : UndoManager?){
+        let old_tsk = plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex]
+        
+        plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex] = tsk
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex] = old_tsk
+        })
+    }
+    
+    
     func indexOfTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID) -> TaskIndexPath?{
         guard let index = plannerData.projectGroups.firstIndex (where: { grp in
             grp.id == grpId
