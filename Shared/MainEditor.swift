@@ -324,88 +324,96 @@ struct ExtractedTaskEditViewView: View {
 //    @State var pickerSelection = 1
     
     var body: some View {
-        VStack{
-            VStack{
-                    VStack(spacing: 20) {
-                        MyTextFiled(title: "标题", text: $tmpTask.name, tilt: Color("FavoriteColor7"))
-                            .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
-                            
-                           
-                        MyTextFiled(title: "内容", text: $tmpTask.content, tilt: Color("FavoriteColor7"))
-                            .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
-                        Picker(selection: $tmpTask.status, label: EmptyView()) {
-                            Text("无😶").tag(TaskStatus.original)
-                            Text("待办🧐").tag(TaskStatus.todo)
-                            Text("完成🥰").tag(TaskStatus.finished)
-                        }.pickerStyle(SegmentedPickerStyle())
-                            
-//                        Spacer()
-//                        MyTextFiled(title: "备注", text: $task.extra!, tilt: Color("FavoriteColor7"))
-                    
-                    }.padding([.vertical], 40)
-                    .padding(.horizontal, 30)
-            }.frame(height: 200)
-            .background(LinearGradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")], startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
-                .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
-                .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
+        ZStack {
+            Color.white.opacity(0.01).frame(maxWidth: .infinity, maxHeight: .infinity).edgesIgnoringSafeArea(.all)
+                .onTapGesture {
+                    env_settings.editTaskInfoPresented = false
+                }
             
             VStack{
-                Spacer()
-                Button(action: {
-                    env_settings.editTaskInfoPresented = false
-                }){
-                    Text("不保存")
+                VStack{
+                        VStack(spacing: 20) {
+                            MyTextFiled(title: "标题", text: $tmpTask.name, tilt: Color("FavoriteColor7"))
+                                .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
+                                
+                               
+                            MyTextFiled(title: "内容", text: $tmpTask.content, tilt: Color("FavoriteColor7"))
+                                .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
+                            Picker(selection: $tmpTask.status, label: EmptyView()) {
+                                Text("无😶").tag(TaskStatus.original)
+                                Text("待办🧐").tag(TaskStatus.todo)
+                                Text("完成🥰").tag(TaskStatus.finished)
+                            }.pickerStyle(SegmentedPickerStyle())
+                                
+    //                        Spacer()
+    //                        MyTextFiled(title: "备注", text: $task.extra!, tilt: Color("FavoriteColor7"))
+                        
+                        }.padding([.vertical], 40)
+                        .padding(.horizontal, 30)
+                }.frame(height: 200)
+                .background(LinearGradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")], startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
+                    .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
+                    .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
+                
+                VStack{
+                    Spacer()
+                    Button(action: {
+                        env_settings.editTaskInfoPresented = false
+                    }){
+                        Text("不保存")
+                    }
+                    Spacer()
                 }
-                Spacer()
             }
-        }
-        .frame(width: 256, height: 256)
-        .padding([.top, .leading, .trailing], 16)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 56, style: .continuous))
-        .shadow(color: Color.white.opacity(0.6), radius: 25, x: -20, y: -20)
-        .shadow(color: Color.gray.opacity(0.6), radius: 25, x: (1 - dragOffset.height / 30) * 20, y: (dragOffset.height / 30 + 1) * 20)
-        
-        .offset(x: dragOffset.width * 2, y: dragOffset.height * 2)
-        .rotation3DEffect(Angle(degrees: Double(dragOffset.height) / 2), axis: (-1, 0, 0))
-        .brightness(-dragOffset.height / 200)
-        
-        .opacity(env_settings.editTaskInfoPresented ? 1 : 0)
-        .scaleEffect(env_settings.editTaskInfoPresented ? 1 : 0.2)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7))
-        
-        .onChange(of: env_settings.editTaskInfoPresented, perform: { V in
-            let indexes = env_settings.currentTaskPath
-            let task = indexes != nil ? document.plannerData.projectGroups[indexes!.prjGrpIndex].projects[indexes!.prjIndex].tasks[indexes!.tskIndex] : (TaskInfo(name: "", content: "", status: .original, createDate: Date()))
+            .frame(width: 256, height: 256)
+            .padding([.top, .leading, .trailing], 16)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 56, style: .continuous))
+            .shadow(color: Color.white.opacity(0.6), radius: 25, x: -20, y: -20)
+            .shadow(color: Color.gray.opacity(0.6), radius: 25, x: (1 - dragOffset.height / 30) * 20, y: (dragOffset.height / 30 + 1) * 20)
             
-            if env_settings.editTaskInfoPresented {
-                tmpTask = task
-            }
-        })
-        .gesture(
-            DragGesture()
-                .onChanged { state in
-                    let pos = state.translation
-                    dragOffset = CGSize(width: pos.width / 50, height: pos.height > 0 ? pos.height / 10: 0)
-                    
-                    if pos.height > 200 {
-                        if !willCloseFlag {
-                            MyFeedBack()
-                        }
-                        self.willCloseFlag = true
-                    } else { self.willCloseFlag = false }
+            .offset(x: dragOffset.width * 2, y: dragOffset.height * 2)
+            .rotation3DEffect(Angle(degrees: Double(dragOffset.height) / 2), axis: (-1, 0, 0))
+            .brightness(-dragOffset.height / 200)
+            
+            .opacity(env_settings.editTaskInfoPresented ? 1 : 0)
+            .scaleEffect(env_settings.editTaskInfoPresented ? 1 : 0.2)
+            
+            .onChange(of: env_settings.editTaskInfoPresented, perform: { V in
+                let indexes = env_settings.currentTaskPath
+                let task = indexes != nil ? document.plannerData.projectGroups[indexes!.prjGrpIndex].projects[indexes!.prjIndex].tasks[indexes!.tskIndex] : (TaskInfo(name: "", content: "", status: .original, createDate: Date()))
+                
+                if env_settings.editTaskInfoPresented {
+                    tmpTask = task
                 }
-                .onEnded{ state in
-                    dragOffset = .zero
-                    
-                    guard self.willCloseFlag else { return }
-                    
-                    self.willCloseFlag = false;
-                    env_settings.editTaskInfoPresented = false
-                    
-                    document.updateTaskInfo(tsk: tmpTask, for: env_settings.currentTaskPath!, undoManager)
-                }
+            })
+            .gesture(
+                DragGesture()
+                    .onChanged { state in
+                        let pos = state.translation
+                        dragOffset = CGSize(width: pos.width / 50, height: pos.height > 0 ? pos.height / 10: 0)
+                        
+                        if pos.height > 200 {
+                            if !willCloseFlag {
+                                MyFeedBack()
+                            }
+                            self.willCloseFlag = true
+                        } else { self.willCloseFlag = false }
+                    }
+                    .onEnded{ state in
+                        dragOffset = .zero
+                        
+                        guard self.willCloseFlag else { return }
+                        
+                        self.willCloseFlag = false;
+                        env_settings.editTaskInfoPresented = false
+                        
+                        document.updateTaskInfo(tsk: tmpTask, for: env_settings.currentTaskPath!, undoManager)
+                    }
         )
+        }.opacity(env_settings.editTaskInfoPresented ? 1 : 0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7))
+        
     }
 }
 
