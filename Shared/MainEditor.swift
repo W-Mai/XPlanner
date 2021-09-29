@@ -28,46 +28,56 @@ struct ContentView: View {
     @State var scrollProxy : ScrollViewProxy? = nil
     
     var body: some View {
-        ZStack{
-            ScrollView(.vertical){
-                ScrollViewReader() {proxy in
-                    // MARK: 总渲染
-                    ExtractedMainViewView(
-                        data: $document.plannerData
-                    ){ prjGrp in
-                        // MARK: 项目组渲染
-                        ExtractedMainlyContentView(
-                            projectGroup: prjGrp
-                        ){ prj in
-                            // MARK: 项目渲染
-                            OneProjectView(
-                                project : prj,
-                                prjGrpId: prjGrp.id,
-                                isEditingMode: $env_settings.isEditingMode,
-                                displayMode: env_settings.displayMode,
-                                isSelected: $env_settings.isSelected)
+        ZStack {
+            ZStack{
+                ScrollView(.vertical){
+                    ScrollViewReader() {proxy in
+                        // MARK: 总渲染
+                        ExtractedMainViewView(
+                            data: $document.plannerData
+                        ){ prjGrp in
+                            // MARK: 项目组渲染
+                            ExtractedMainlyContentView(
+                                projectGroup: prjGrp
+                            ){ prj in
+                                // MARK: 项目渲染
+                                OneProjectView(
+                                    project : prj,
+                                    prjGrpId: prjGrp.id,
+                                    isEditingMode: $env_settings.isEditingMode,
+                                    displayMode: env_settings.displayMode,
+                                    isSelected: $env_settings.isSelected)
+                            }
+                        }
+                        .onAppear(){
+                            env_settings.scrollProxy = proxy
                         }
                     }
-                    .onAppear(){
-                        env_settings.scrollProxy = proxy
-                    }
+                    
+                    VStack{}.frame(height: 100)
                 }
-
-                VStack{}.frame(height: 100)
+                .frame(maxHeight: .infinity)
+                .foregroundColor(.accentColor)
+                //            .background(LinearGradient(colors: [.white, .gray], startPoint: .top, endPoint: .bottom))
+                .animation(.easeInOut(duration: 0.2))
+                .toolbar { ToolbarItem{
+                    ExtractedToolBarView(){
+                        document.toggleDisplayMode(simple: env_settings.simpleMode, undoManager)}}
+                }
+                
+                
+                ExtractedBottomButtonGroupView()
+                ExtractedTopMenuView(
+                    projectGroups: document.plannerData.projectGroups
+                )
+                
+                
             }
-            .frame(maxHeight: .infinity)
-            .foregroundColor(.accentColor)
-            //            .background(LinearGradient(colors: [.white, .gray], startPoint: .top, endPoint: .bottom))
-            .animation(.easeInOut(duration: 0.2))
-            .toolbar { ToolbarItem{
-                ExtractedToolBarView(){
-                    document.toggleDisplayMode(simple: env_settings.simpleMode, undoManager)}}
-            }
+            .saturation(env_settings.editTaskInfoPresented ? 0.2 : 1)
+            .blur(radius: env_settings.editTaskInfoPresented ? 20 : 0)
+            .disabled(env_settings.editTaskInfoPresented)
             
-            ExtractedBottomButtonGroupView()
-            ExtractedTopMenuView(
-                projectGroups: document.plannerData.projectGroups
-            )
+            ExtractedTaskEditViewView()
         }
     }
 }
@@ -180,7 +190,7 @@ struct ExtractedMainlyContentView<Content: View>: View {
                         Image(systemName: "trash")
                     })
                 }.animation(.easeInOut)
-                Spacer()
+            Spacer()
         }.padding([.top, .bottom], 1)
         ){
             if projectGroup.projects.count > 0 {
@@ -195,19 +205,19 @@ struct ExtractedMainlyContentView<Content: View>: View {
             
             if env_settings.isEditingMode{
                 HStack{
-                Button {
-                    document.addProject(nameIs: "项目", for: projectGroup.id, undoManager)
-                } label: {
-                    HStack{
-                        Image(systemName: "plus.rectangle").resizable().scaledToFit()
-                        
-                        Text("添加新项目").font(.title2)
-                    }.frame(height: 30)
-//
-                }
-                .padding([.leading], 40)
+                    Button {
+                        document.addProject(nameIs: "项目", for: projectGroup.id, undoManager)
+                    } label: {
+                        HStack{
+                            Image(systemName: "plus.rectangle").resizable().scaledToFit()
+                            
+                            Text("添加新项目").font(.title2)
+                        }.frame(height: 30)
+                        //
+                    }
+                    .padding([.leading], 40)
                     .padding([.bottom], 20)
-                Spacer()
+                    Spacer()
                 }
             }
         }
@@ -274,6 +284,7 @@ struct ExtractedTopMenuView: View {
                     .cornerRadius(30)
                     .padding()
                     .shadow(color: Color(red: 0.8, green: 0.8, blue: 0.8), radius: 15, x: 0.0, y: 0.0)
+                    
                 }
                 
                 Spacer()
@@ -299,5 +310,105 @@ struct ExtractedToolBarView: View {
             .disabled(env_settings.isEditingMode)
     }
 }
+
+// MARK: - 📑编辑弹窗
+struct ExtractedTaskEditViewView: View {
+    @EnvironmentObject var document: XPlanerDocument
+    @EnvironmentObject var env_settings : EnvironmentSettings
+    @Environment(\.undoManager) var undoManager
+    
+    @GestureState var draging : Bool = false
+    @State var dragOffset : CGSize = .zero
+    @State var willCloseFlag = false
+    @State var tmpTask : TaskInfo = TaskInfo(name: "", content: "", status: .original, createDate: Date())
+//    @State var pickerSelection = 1
+    
+    var body: some View {
+        VStack{
+            VStack{
+                    VStack(spacing: 20) {
+                        MyTextFiled(title: "标题", text: $tmpTask.name, tilt: Color("FavoriteColor7"))
+                            .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
+                            
+                           
+                        MyTextFiled(title: "内容", text: $tmpTask.content, tilt: Color("FavoriteColor7"))
+                            .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
+                        Picker(selection: $tmpTask.status, label: EmptyView()) {
+                            Text("无😶").tag(TaskStatus.original)
+                            Text("待办🧐").tag(TaskStatus.todo)
+                            Text("完成🥰").tag(TaskStatus.finished)
+                        }.pickerStyle(SegmentedPickerStyle())
+                            
+//                        Spacer()
+//                        MyTextFiled(title: "备注", text: $task.extra!, tilt: Color("FavoriteColor7"))
+                    
+                    }.padding([.vertical], 40)
+                    .padding(.horizontal, 30)
+            }.frame(height: 200)
+            .background(LinearGradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")], startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
+                .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
+            
+            VStack{
+                Spacer()
+                Button(action: {
+                    env_settings.editTaskInfoPresented = false
+                }){
+                    Text("不保存")
+                }
+                Spacer()
+            }
+        }
+        .frame(width: 256, height: 256)
+        .padding([.top, .leading, .trailing], 16)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 56, style: .continuous))
+        .shadow(color: Color.white.opacity(0.6), radius: 25, x: -20, y: -20)
+        .shadow(color: Color.gray.opacity(0.6), radius: 25, x: (1 - dragOffset.height / 30) * 20, y: (dragOffset.height / 30 + 1) * 20)
+        
+        .offset(x: dragOffset.width * 2, y: dragOffset.height * 2)
+        .rotation3DEffect(Angle(degrees: Double(dragOffset.height) / 2), axis: (-1, 0, 0))
+        .brightness(-dragOffset.height / 200)
+        
+        .opacity(env_settings.editTaskInfoPresented ? 1 : 0)
+        .scaleEffect(env_settings.editTaskInfoPresented ? 1 : 0.2)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7))
+        
+        .onChange(of: env_settings.currentTaskPath, perform: { V in
+            let indexes = env_settings.currentTaskPath
+            let task = indexes != nil ? document.plannerData.projectGroups[indexes!.prjGrpIndex].projects[indexes!.prjIndex].tasks[indexes!.tskIndex] : (TaskInfo(name: "", content: "", status: .original, createDate: Date()))
+            
+            if env_settings.editTaskInfoPresented {
+                tmpTask = task
+            }
+        })
+        .gesture(
+            DragGesture()
+                .onChanged { state in
+                    let pos = state.translation
+                    dragOffset = CGSize(width: pos.width / 50, height: pos.height > 0 ? pos.height / 10: 0)
+                    
+                    if pos.height > 200 {
+                        if !willCloseFlag {
+                            MyFeedBack()
+                        }
+                        self.willCloseFlag = true
+                    } else { self.willCloseFlag = false }
+                }
+                .onEnded{ state in
+                    dragOffset = .zero
+                    
+                    guard self.willCloseFlag else { return }
+                    
+                    self.willCloseFlag = false;
+                    env_settings.editTaskInfoPresented = false
+                    
+                    
+                }
+        )
+    }
+}
+
+//MARK: - ☹️一些全局常量
 
 let screen = UIScreen.main.bounds

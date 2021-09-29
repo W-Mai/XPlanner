@@ -56,6 +56,29 @@ struct OneTaskView: View {
     @Binding var seleted: Bool
     
     var action: ((_: Bool) -> Void)? = nil
+    var longAction : (() -> Void)? = nil
+    
+    @GestureState var isDetectingLongPress = false
+    @State var completedLongPress = false
+    
+    var longPress: some Gesture {
+        LongPressGesture(minimumDuration: 3)
+            .updating($isDetectingLongPress) { currentState, gestureState,
+                transaction in
+                gestureState = currentState
+                transaction.animation = Animation.easeInOut(duration: 0.3)
+                
+                let ifg = UIImpactFeedbackGenerator()
+                ifg.prepare()
+                ifg.impactOccurred()
+            }
+            .onEnded { finished in
+                self.completedLongPress = finished
+            }.onChanged({ _ in
+                
+                longAction?()
+            })
+    }
     
     let shadowOpacityMap: [TaskStatus: Double] = [
         .finished: 0,
@@ -81,7 +104,7 @@ struct OneTaskView: View {
                         .lineLimit(1)
                         .foregroundColor(.white)
                 }.frame(width: 24, height: 24, alignment: .center)
-
+                
                 VStack() {
                     Text(task.name)
                         .font(.subheadline)
@@ -116,7 +139,7 @@ struct OneTaskView: View {
         .drawingGroup()
         
         .brightness(task.status == .finished ? -0.2 : 0)
-//        .blur(radius: task.status == .finished ? 10 : 0)
+        //        .blur(radius: task.status == .finished ? 10 : 0)
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(Color.accentColor, lineWidth: lineWidthMap[task.status]!)
@@ -137,7 +160,7 @@ struct OneTaskView: View {
                 }
             }
         )
-//        .scaleEffect(seleted ? 0.8 : 1)
+        .scaleEffect(isDetectingLongPress ? 0.9 : completedLongPress ? 1 : 1)
         .rotation3DEffect(Angle(degrees: task.status == .todo ? 10 : 0), axis: (-1 , 0, 0))
         .offset(y: task.status == .todo ? 10 : 0)
         .brightness(task.status == .todo ? -0.1 : 0)
@@ -145,9 +168,10 @@ struct OneTaskView: View {
         .animation(.easeInOut(duration: 0.2))
         .onTapGesture(count: 1) {
             action?(self.seleted)
+            
+            MyFeedBack()
         }
-        
-        
+        .gesture(longPress)
     }
     
     func getStatusText() -> String {
@@ -194,12 +218,12 @@ struct OneProjectView: View {
                         // plus.app.fill
                         Image(systemName: "minus.circle.fill").imageScale(.large).foregroundColor(.red)
                     }//.padding([.top, .trailing], 10)
-                        .padding([.leading], 30)
+                    .padding([.leading], 30)
                 }
                 
                 Text(project.name)
                     .font(displayMode == .FullSquareMode ? .title2 : .title3)
-//                    .padding([.top, .trailing], 10)
+                //                    .padding([.top, .trailing], 10)
                     .padding([.leading], 30)
                     .contextMenu {
                         Button(action: {
@@ -221,7 +245,6 @@ struct OneProjectView: View {
         
     }
 }
-
 
 
 struct ProjectDifferentModeView: View {
@@ -250,34 +273,37 @@ struct ProjectDifferentModeView: View {
                                         if env_settings.isEditingMode {
                                             document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
                                         }
-                                        
-//                                        env_settings.isSelected.toggle()
                                         document.updateTaskStatus(tskStatus: StatusNextMapper[tsk.status]!, idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
+                                    },
+                                    longAction : {
+                                        env_settings.editTaskInfoPresented = true
+                                        env_settings.currentTaskPath = document.indexOfTask(idIs: tsk.id, from: project.id, in: prjGrpId)
                                     }
                                 )
                                     .padding()
-//                                    .contextMenu {
-//                                        Button(action: {
-//                                            document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
-//                                        }, label: {
-//                                            Text("删除 \(tsk.name) ")
-//                                            Image(systemName: "trash")
-//                                        })
-//                                    }
+//
+//                                    .gesture(longPress)
+                                //                                    .contextMenu {
+                                //                                        Button(action: {
+                                //                                            document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
+                                //                                        }, label: {
+                                //                                            Text("删除 \(tsk.name) ")
+                                //                                            Image(systemName: "trash")
+                                //                                        })
+                                //                                    }
                                     .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 2, y: 2)
                                     .coordinateSpace(name: "task\(tsk.id)")
-//                                    .rotation3DEffect(
-//                                        env_settings.isEditingMode ? .zero :
-//                                            Angle(degrees: min(
-//                                                (Double(geoTask.frame(in: .named("task\(tsk.id)")).minX)) / 40,
-//                                                25)
-//                                                 ), axis: (x: -0.1, y: -0.3, z: 0))
-                                    
+                                //                                    .rotation3DEffect(
+                                //                                        env_settings.isEditingMode ? .zero :
+                                //                                            Angle(degrees: min(
+                                //                                                (Double(geoTask.frame(in: .named("task\(tsk.id)")).minX)) / 40,
+                                //                                                25)
+                                //                                                 ), axis: (x: -0.1, y: -0.3, z: 0))
+                                
                                     .drawingGroup()
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7))
                             }
                         }.frame(maxWidth: .infinity).frame(height: 120)
-                        
                         if env_settings.isEditingMode {
                             Button(action: {
                                 document.addTask(nameIs: "Task", contentIs: "Content", for: project.id, in: prjGrpId, undoManager)
@@ -312,3 +338,5 @@ var StatusNextMapper : [TaskStatus : TaskStatus] = [
     .original : .todo,
     .todo : .finished
 ]
+
+var feedbackGenerator : UIImpactFeedbackGenerator? = nil

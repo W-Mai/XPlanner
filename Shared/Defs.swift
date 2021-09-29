@@ -30,7 +30,7 @@ enum DisplayCatagory: String, Codable {
 }
 // MARK: - 🦀️ 辅助结构
 
-struct TaskIndexPath {
+struct TaskIndexPath : Equatable {
     var prjGrpIndex : Int
     var prjIndex : Int
     var tskIndex : Int
@@ -45,6 +45,8 @@ class EnvironmentSettings: ObservableObject {
     @Published var displayMode : DisplayMode = .FullSquareMode
     @Published var simpleMode = false
     @Published var isSelected = false
+    @Published var currentTaskPath : TaskIndexPath? = TaskIndexPath(prjGrpIndex: 0, prjIndex: 0, tskIndex: 0)
+    @Published var editTaskInfoPresented = true
     
     init(simpleMode : Bool) {
         self.simpleMode = simpleMode
