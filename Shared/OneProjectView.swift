@@ -164,30 +164,6 @@ struct OneTaskView: View {
             MyFeedBack()
             longAction?()
         }
-
-//        .gesture(
-//            TapGesture().onEnded{ _ in
-//                action?(seleted)
-//            }.exclusively(
-//                    before: LongPressGesture()
-//                            .updating($isDetectingLongPress) { currentState, gestureState,
-//                                transaction in
-//                                gestureState = currentState
-//                            }
-//                            .onEnded { finished in
-//                                longAction?()
-//                            }))
-//
-        
-        //        .highPriorityGesture(
-        //            TapGesture(count: 1).onEnded { _ in
-        //                action?(self.seleted)
-        //
-        //                MyFeedBack()
-        //            }
-        //        )
-        
-        
     }
     
     func getStatusText() -> String {
@@ -215,10 +191,13 @@ struct OneTaskView: View {
 
 struct OneProjectView: View {
     @EnvironmentObject var document: XPlanerDocument
+    @EnvironmentObject var env_settings : EnvironmentSettings
     @Environment(\.undoManager) var undoManager
     
     var project: ProjectInfo
     var prjGrpId: UUID
+    
+    @State var prjName = ""
     
     @Binding var isEditingMode: Bool
     var displayMode: DisplayMode
@@ -235,21 +214,30 @@ struct OneProjectView: View {
                         Image(systemName: "minus.circle.fill").imageScale(.large).foregroundColor(.red)
                     }//.padding([.top, .trailing], 10)
                     .padding([.leading], 30)
+                    
+                    TextField(prjName, text: $prjName, onCommit : {
+                        document.updateProject(to: prjName, idIs: project.id, from: prjGrpId, undoManager)
+                        self.env_settings.isEditingMode = false
+                    })
+                        .foregroundColor(Color.secondary)
+                        .font(.title2)
+                        .padding([.leading, .trailing])
+                        .onAppear {
+                            prjName = project.name
+                        }
+                } else {
+                    Text(project.name)
+                        .font(displayMode == .FullSquareMode ? .title2 : .title3)
+                        .padding([.leading], 30)
+                        .contextMenu {
+                            Button(action: {
+                                document.removeProject(idIs: project.id, from: prjGrpId, undoManager)
+                            }, label: {
+                                Text("删除任务 \(project.name) ")
+                                Image(systemName: "trash")
+                            })
+                        }
                 }
-                
-                Text(project.name)
-                    .font(displayMode == .FullSquareMode ? .title2 : .title3)
-                //                    .padding([.top, .trailing], 10)
-                    .padding([.leading], 30)
-                    .contextMenu {
-                        Button(action: {
-                            document.removeProject(idIs: project.id, from: prjGrpId, undoManager)
-                        }, label: {
-                            Text("删除任务 \(project.name) ")
-                            Image(systemName: "trash")
-                        })
-                    }
-                
             }
             ) {
                 ProjectDifferentModeView(project: project, prjGrpId: prjGrpId)
@@ -299,25 +287,7 @@ struct ProjectDifferentModeView: View {
                                     }
                                 )
                                     .padding()
-                                //
-                                //                                    .gesture(longPress)
-                                //                                    .contextMenu {
-                                //                                        Button(action: {
-                                //                                            document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
-                                //                                        }, label: {
-                                //                                            Text("删除 \(tsk.name) ")
-                                //                                            Image(systemName: "trash")
-                                //                                        })
-                                //                                    }
                                     .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 2, y: 2)
-                                    .coordinateSpace(name: "task\(tsk.id)")
-                                //                                    .rotation3DEffect(
-                                //                                        env_settings.isEditingMode ? .zero :
-                                //                                            Angle(degrees: min(
-                                //                                                (Double(geoTask.frame(in: .named("task\(tsk.id)")).minX)) / 40,
-                                //                                                25)
-                                //                                                 ), axis: (x: -0.1, y: -0.3, z: 0))
-                                
                                     .drawingGroup()
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7))
                             }

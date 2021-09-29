@@ -35,6 +35,20 @@ extension XPlanerDocument {
         })
     }
     
+    func updateGroup(to name : String, idIs grpId : UUID, _ undoManager : UndoManager?){
+        guard let index = plannerData.projectGroups.firstIndex (where: { grp in
+            grp.id == grpId
+        }) else { return }
+        
+        let old_data = plannerData.projectGroups[index].name
+        
+        plannerData.projectGroups[index].name = name
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.plannerData.projectGroups[index].name = old_data
+        })
+    }
+    
     func addProject(nameIs prjName : String , for grpId : UUID, _ undoManager : UndoManager?) {
         guard let index = plannerData.projectGroups.firstIndex (where: { grp in
             grp.id == grpId
@@ -62,6 +76,24 @@ extension XPlanerDocument {
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.plannerData.projectGroups[index].projects.insert(old_data, at: index)
+        })
+    }
+    
+    func updateProject(to prjName :String,idIs prjId : UUID, from grpId : UUID, _ undoManager : UndoManager?){
+        guard let index = plannerData.projectGroups.firstIndex (where: { grp in
+            grp.id == grpId
+        }) else { return }
+        
+        guard let indexPrj = plannerData.projectGroups[index].projects.firstIndex (where: { prj in
+            prj.id == prjId
+        }) else { return }
+        
+        let old_data = plannerData.projectGroups[index].projects[indexPrj].name
+        
+        plannerData.projectGroups[index].projects[indexPrj].name = prjName
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.plannerData.projectGroups[index].projects[indexPrj].name = old_data
         })
     }
     

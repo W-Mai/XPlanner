@@ -75,12 +75,10 @@ struct ContentView: View {
             .rotation3DEffect(Angle(degrees: env_settings.editTaskInfoPresented ? 30 : 0), axis: (-1, 0, 0))
             .animation(.spring(response: 0.2))
             .disabled(env_settings.editTaskInfoPresented)
-            //            .popover(isPresented: .constant(false)) {
-            //                        Text("hhh")
-            //            }
             //            .sheet(isPresented: .constant(true)) {
-            //                Text("HHH")
+            //                MyTextFiled(title: "Fuck?", text: .constant("yes"), tilt: Color.blue)
             //            }
+            
             ExtractedTopMenuView(
                 projectGroups: document.plannerData.projectGroups
             ).offset(x: env_settings.editTaskInfoPresented ? screen.width : 0)
@@ -180,6 +178,8 @@ struct ExtractedMainlyContentView<Content: View>: View {
     
     var projectGroup : ProjectGroupInfo
     
+    @State var grpName : String = ""
+    
     var content : (_ item : ProjectInfo) -> Content
     
     var body: some View {
@@ -188,24 +188,35 @@ struct ExtractedMainlyContentView<Content: View>: View {
                 Button(action:{
                     document.removeGroup(idIs: projectGroup.id, undoManager)
                 }){// "note.text.badge.plus"
-                    
                     Image(systemName: "minus.circle.fill")
                         .imageScale(.large).foregroundColor(.red)
                 }.padding([.leading], 10)
-            }
-            Text(projectGroup.name)
-                .font(env_settings.displayMode == .FullSquareMode ? .title : .title2)
-                .fontWeight(.bold)
+                
+                TextField(grpName, text: $grpName, onCommit : {
+                    document.updateGroup(to: grpName, idIs: projectGroup.id, undoManager)
+                    self.env_settings.isEditingMode = false
+                })
+                .foregroundColor(Color.secondary)
+                .font(.title)
                 .padding([.leading, .trailing])
-                .background(Color.white)
-                .contextMenu{
-                    Button(action: {
-                        document.removeGroup(idIs: projectGroup.id, undoManager)
-                    }, label: {
-                        Text("删除项目 \(projectGroup.name) ")
-                        Image(systemName: "trash")
-                    })
-                }.animation(.easeInOut)
+                .onAppear {
+                    grpName = projectGroup.name
+                }
+            } else {
+                Text(projectGroup.name)
+                    .font(env_settings.displayMode == .FullSquareMode ? .title : .title2)
+                    .fontWeight(.bold)
+                    .padding([.leading, .trailing])
+                    .background(Color.white)
+                    .contextMenu{
+                        Button(action: {
+                            document.removeGroup(idIs: projectGroup.id, undoManager)
+                        }, label: {
+                            Text("删除项目 \(projectGroup.name) ")
+                            Image(systemName: "trash")
+                        })
+                    }.animation(.easeInOut)
+            }
             Spacer()
         }.padding([.top, .bottom], 1)
         ){
@@ -253,11 +264,11 @@ struct ExtractedTopMenuView: View {
             HStack(alignment: .bottom, spacing: 10){
                 Spacer()
                 HStack(spacing: 20){
-                        if env_settings.displayMode == .FullSquareMode {
-                            Button(action: {env_settings.isEditingMode.toggle()}){
-                                Text(env_settings.isEditingMode ? "完成" : "编辑")
-                            }
+                    if env_settings.displayMode == .FullSquareMode {
+                        Button(action: {env_settings.isEditingMode.toggle()}){
+                            Text(env_settings.isEditingMode ? "完成" : "编辑")
                         }
+                    }
                     VStack{
                         Menu {
                             ForEach(projectGroups){i in
@@ -284,7 +295,7 @@ struct ExtractedTopMenuView: View {
                 .padding()
                 .background(Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-//                .frame(height: 60)
+                //                .frame(height: 60)
                 .padding()
                 .shadow(color: Color(red: 0.8, green: 0.8, blue: 0.8), radius: 15, x: 0.0, y: 0.0)
                 
