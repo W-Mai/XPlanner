@@ -67,17 +67,28 @@ struct ContentView: View {
                 
                 
                 ExtractedBottomButtonGroupView()
-                ExtractedTopMenuView(
-                    projectGroups: document.plannerData.projectGroups
-                )
-                
-                
             }
             .saturation(env_settings.editTaskInfoPresented ? 0.2 : 1)
-            .blur(radius: env_settings.editTaskInfoPresented ? 20 : 0)
+            .blur(radius: env_settings.editTaskInfoPresented ? 2 : 0)
+            .scaleEffect(env_settings.editTaskInfoPresented ? 0.5 : 1)
+            .offset(y: env_settings.editTaskInfoPresented ? -screen.height / 4 : 0)
+            .rotation3DEffect(Angle(degrees: env_settings.editTaskInfoPresented ? 30 : 0), axis: (-1, 0, 0))
+            .animation(.spring(response: 0.2))
             .disabled(env_settings.editTaskInfoPresented)
+            //            .popover(isPresented: .constant(false)) {
+            //                        Text("hhh")
+            //            }
+            //            .sheet(isPresented: .constant(true)) {
+            //                Text("HHH")
+            //            }
+            ExtractedTopMenuView(
+                projectGroups: document.plannerData.projectGroups
+            ).offset(x: env_settings.editTaskInfoPresented ? screen.width : 0)
+                .animation(.spring(response: 0.2))
             
             ExtractedTaskEditViewView()
+            
+            
         }
     }
 }
@@ -238,31 +249,16 @@ struct ExtractedTopMenuView: View {
     var projectGroups : [ProjectGroupInfo]
     
     var body: some View {
-        Group{
-            VStack{
-                HStack(spacing: 10){
-                    Spacer()
-                    HStack(spacing: 20){
-                        if !env_settings.isSelected{
-                            if env_settings.displayMode == .FullSquareMode {
-                                Button(action: {env_settings.isEditingMode.toggle()}){
-                                    Text(env_settings.isEditingMode ? "完成" : "编辑")
-                                }
-                            }
-                        } else {
+        VStack(alignment: .trailing){
+            HStack(alignment: .bottom, spacing: 10){
+                Spacer()
+                HStack(spacing: 20){
+                        if env_settings.displayMode == .FullSquareMode {
                             Button(action: {env_settings.isEditingMode.toggle()}){
-                                Text("代办")
+                                Text(env_settings.isEditingMode ? "完成" : "编辑")
                             }
-                            Button(action: {}){
-                                Text("已完成")
-                            }
-                            Button(action: {}){
-                                Text("取消选择")
-                            }
-                            
-                            Divider().frame(height: 20)
                         }
-                        
+                    VStack{
                         Menu {
                             ForEach(projectGroups){i in
                                 Button(action: {
@@ -284,17 +280,17 @@ struct ExtractedTopMenuView: View {
                         }.frame(maxWidth: 30)
                             .menuStyle(BorderlessButtonMenuStyle())
                     }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(30)
-                    .padding()
-                    .shadow(color: Color(red: 0.8, green: 0.8, blue: 0.8), radius: 15, x: 0.0, y: 0.0)
-                    
                 }
+                .padding()
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+//                .frame(height: 60)
+                .padding()
+                .shadow(color: Color(red: 0.8, green: 0.8, blue: 0.8), radius: 15, x: 0.0, y: 0.0)
                 
-                Spacer()
             }
-        }.animation(.spring(response: 0.3, dampingFraction: 0.5))
+            Spacer()
+        }.frame(maxWidth: .infinity)
     }
 }
 
@@ -326,7 +322,7 @@ struct ExtractedTaskEditViewView: View {
     @State var dragOffset : CGSize = .zero
     @State var willCloseFlag = false
     @State var tmpTask : TaskInfo = TaskInfo(name: "", content: "", status: .original, createDate: Date())
-//    @State var pickerSelection = 1
+    //    @State var pickerSelection = 1
     
     var body: some View {
         ZStack {
@@ -334,29 +330,24 @@ struct ExtractedTaskEditViewView: View {
                 .onTapGesture {
                     env_settings.editTaskInfoPresented = false
                 }
-            
             VStack{
                 VStack{
-                        VStack(spacing: 20) {
-                            MyTextFiled(title: "标题", text: $tmpTask.name, tilt: Color("FavoriteColor7"))
-                                .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
-                                
-                               
-                            MyTextFiled(title: "内容", text: $tmpTask.content, tilt: Color("FavoriteColor7"))
-                                .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
-                            Picker(selection: $tmpTask.status, label: EmptyView()) {
-                                Text("无😶").tag(TaskStatus.original)
-                                Text("待办🧐").tag(TaskStatus.todo)
-                                Text("完成🥰").tag(TaskStatus.finished)
-                            }.pickerStyle(SegmentedPickerStyle())
-                                
-    //                        Spacer()
-    //                        MyTextFiled(title: "备注", text: $task.extra!, tilt: Color("FavoriteColor7"))
+                    VStack(spacing: 20) {
+                        MyTextFiled(title: "标题", text: $tmpTask.name, tilt: Color("FavoriteColor7"))
+                            .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
                         
-                        }.padding([.vertical], 40)
+                        
+                        MyTextFiled(title: "内容", text: $tmpTask.content, tilt: Color("FavoriteColor7"))
+                            .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
+                        Picker(selection: $tmpTask.status, label: EmptyView()) {
+                            Text("无😶").tag(TaskStatus.original)
+                            Text("待办🧐").tag(TaskStatus.todo)
+                            Text("完成🥰").tag(TaskStatus.finished)
+                        }.pickerStyle(SegmentedPickerStyle())
+                    }.padding([.vertical], 40)
                         .padding(.horizontal, 30)
                 }.frame(height: 200)
-                .background(LinearGradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")], startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
+                    .background(LinearGradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")], startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
                     .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
                     .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
                 
@@ -415,7 +406,7 @@ struct ExtractedTaskEditViewView: View {
                         
                         document.updateTaskInfo(tsk: tmpTask, for: env_settings.currentTaskPath!, undoManager)
                     }
-        )
+            )
         }.opacity(env_settings.editTaskInfoPresented ? 1 : 0)
             .animation(.spring(response: 0.3, dampingFraction: 0.7))
         
