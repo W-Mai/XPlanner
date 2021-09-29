@@ -8,11 +8,16 @@
 
 import SwiftUI
 
+var runtime_config = EnvironmentSettings(simpleMode: false, displayCategory: .All)
+
 @main
 struct XPlanerApp: App {
     var body: some Scene {
         DocumentGroup { XPlanerDocument() } editor: { file in
-            ContentView().environmentObject(EnvironmentSettings(simpleMode: file.document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode, displayCategory: file.document.plannerData.fileInformations.displayCatagory))
+            ContentView().environmentObject(runtime_config).onAppear(){
+                runtime_config.pickerSelected = file.document.plannerData.fileInformations.displayCatagory
+                runtime_config.simpleMode = file.document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode
+            }
         }
     }
 }
