@@ -14,7 +14,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .environmentObject(document)
-            .environmentObject(EnvironmentSettings(simpleMode: false))
+            .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: DisplayCatagory.All))
     }
 }
 
@@ -88,7 +88,9 @@ struct ContentView: View {
 
 // MARK: 🔘底部按钮
 struct ExtractedBottomButtonGroupView: View {
+    @EnvironmentObject var document : XPlanerDocument
     @EnvironmentObject var env_settings : EnvironmentSettings
+    @Environment(\.undoManager) var undoManager
     
     var body: some View {
         VStack{
@@ -97,9 +99,12 @@ struct ExtractedBottomButtonGroupView: View {
                 Spacer()
                 Group {
                     Picker("",selection: $env_settings.pickerSelected){
-                        Image(systemName: "tray").tag(0)
-                        Image(systemName: "calendar").tag(1)
+                        Image(systemName: "tray").tag(DisplayCatagory.All)
+                        Image(systemName: "calendar").tag(DisplayCatagory.Todos)
                     }.frame(width: 80, height: 30)
+                        .onChange(of: env_settings.pickerSelected) { v in
+                            document.updateDisplayCategory(to: env_settings.pickerSelected, undoManager)
+                        }
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(10)

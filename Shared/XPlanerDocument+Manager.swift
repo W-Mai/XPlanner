@@ -132,6 +132,15 @@ extension XPlanerDocument {
         return TaskIndexPath(prjGrpIndex: index, prjIndex: indexPrj, tskIndex: indexTsk)
     }
     
+    func updateDisplayCategory(to category: DisplayCatagory ,_ undoManager : UndoManager?){
+        let old_category = plannerData.fileInformations.displayCatagory
+        plannerData.fileInformations.displayCatagory = category
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.updateDisplayCategory(to: old_category, undoManager)
+        })
+    }
+    
     func toggleDisplayMode(simple: Bool ,_ undoManager : UndoManager?){
         plannerData.fileInformations.displayMode = simple ? .SimpleProcessBarMode : .FullSquareMode
         

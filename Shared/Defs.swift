@@ -41,16 +41,17 @@ struct TaskIndexPath : Equatable {
 class EnvironmentSettings: ObservableObject {
     @Published var scrollProxy : ScrollViewProxy? = nil
     @Published var isEditingMode = false
-    @Published var pickerSelected = 0
+    @Published var pickerSelected = DisplayCatagory.All
     @Published var displayMode : DisplayMode = .FullSquareMode
     @Published var simpleMode = false
     @Published var isSelected = false
     @Published var currentTaskPath : TaskIndexPath? = nil
     @Published var editTaskInfoPresented = false
     
-    init(simpleMode : Bool) {
+    init(simpleMode : Bool, displayCategory: DisplayCatagory) {
         self.simpleMode = simpleMode
-        displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+        self.displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+        self.pickerSelected = displayCategory
     }
 }
 

@@ -12,7 +12,7 @@ import SwiftUI
 struct XPlanerApp: App {
     var body: some Scene {
         DocumentGroup { XPlanerDocument() } editor: { file in
-            ContentView().environmentObject(EnvironmentSettings(simpleMode: file.document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode))
+            ContentView().environmentObject(EnvironmentSettings(simpleMode: file.document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode, displayCategory: file.document.plannerData.fileInformations.displayCatagory))
         }
     }
 }

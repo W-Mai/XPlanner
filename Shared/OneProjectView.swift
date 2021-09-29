@@ -35,7 +35,7 @@ struct OneProjectView_Previews: PreviewProvider {
             .preferredColorScheme(.light)
             .frame(width: 1000)
         
-            .environmentObject(EnvironmentSettings(simpleMode: false))
+            .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: (DisplayCatagory.All)))
         HStack {
             OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
             OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
@@ -277,7 +277,9 @@ struct ProjectDifferentModeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 ScrollViewReader { proxy in
                     HStack(spacing: 90) {
-                        ForEach(project.tasks) { tsk in
+                        ForEach(project.tasks.filter({ ele in
+                            env_settings.pickerSelected == .Todos ? ele.status == .todo : true
+                        })) { tsk in
                             GeometryReader { geoTask in
                                 OneTaskView(
                                     task: tsk,
