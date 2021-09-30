@@ -128,7 +128,7 @@ struct OneTaskView: View {
         //        .blur(radius: task.status == .finished ? 10 : 0)
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color.accentColor, lineWidth: lineWidthMap[task.status]!)
+                .stroke(LinearGradient(colors: [Color("FavoriteColor5").opacity(0.3), Color("FavoriteColor6")], startPoint: .leading, endPoint: .bottom), lineWidth: lineWidthMap[task.status]!)
         )
         .overlay(
             Text(getStatusText())
@@ -139,6 +139,15 @@ struct OneTaskView: View {
                 .padding()
                 .minimumScaleFactor(0.3)
         )
+        
+        .animation(.easeInOut(duration: 0.2))
+        
+        .scaleEffect(currentState ? 0.9 : 1)
+        .animation(.easeInOut(duration: 0.5))
+        .rotation3DEffect(Angle(degrees: task.status == .todo ? 10 : 0), axis: (1 , 0, 0))
+        .offset(y: task.status == .todo ? -5 : 0)
+//        .brightness(task.status == .todo ? -0.1 : 0)
+        
         .overlay(
             Group {
                 if isEditingMode {
@@ -146,14 +155,7 @@ struct OneTaskView: View {
                 }
             }
         )
-        .animation(.easeInOut(duration: 0.2))
         
-        .scaleEffect(currentState ? 0.9 : 1)
-        .offset(y: currentState ? -5 : 0)
-        .animation(.easeInOut(duration: 0.5))
-        .rotation3DEffect(Angle(degrees: task.status == .todo ? 10 : 0), axis: (-1 , 0, 0))
-        .offset(y: task.status == .todo ? 10 : 0)
-        .brightness(task.status == .todo ? -0.1 : 0)
         .drawingGroup()
         .animation(.easeInOut(duration: 0.2))
         .onTapGesture {
