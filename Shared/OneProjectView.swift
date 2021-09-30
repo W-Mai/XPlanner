@@ -307,7 +307,7 @@ struct ProjectDifferentModeView: View {
                                 proxy.scrollTo(lst_tsk.id, anchor: .leading)
                             }, label: {
                                 VStack {
-                                    Image(systemName: "plus.square").resizable().foregroundColor(.blue)
+                                    Image(systemName: "plus.square").resizable().foregroundColor(Color("AccentColor"))
                                 }.padding(20)
                                     .frame(width: 80, height: 80, alignment: .center)
                                     .cornerRadius(16)

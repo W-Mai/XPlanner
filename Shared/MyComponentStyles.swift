@@ -17,12 +17,12 @@ struct ImageToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack {
             Rectangle()
-                .foregroundColor(Color(red: 0.9, green: 0.9, blue: 0.9))
+                .foregroundColor(Color("ToggleBarBackgroundColor"))
                 .frame(width: 51, height: 31, alignment: .center)
                 .overlay(
                     Circle()
                         .strokeBorder()
-                        .foregroundColor(.white)
+                        .foregroundColor(Color("AccentColor"))
                         .padding(.all, 3)
                         .overlay(
                             Image(systemName: configuration.isOn ? onImageName : offImageName).scaleEffect(0.6 )
@@ -61,7 +61,7 @@ struct MyProgressStyle: ProgressViewStyle {
         }
         .frame(height: 10)
         .padding(5)
-        .background(Color.white)
+        .background(Color("BarsBackgroundColor"))
         .cornerRadius(7.5)
         .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 0.0, y: 0.0)
     }

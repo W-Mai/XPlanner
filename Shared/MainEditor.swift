@@ -13,6 +13,7 @@ struct ContentView_Previews: PreviewProvider {
     
     static var previews: some View {
         ContentView()
+            .preferredColorScheme(.dark)
             .environmentObject(document)
             .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: DisplayCatagory.All))
     }
@@ -114,10 +115,11 @@ struct ExtractedBottomButtonGroupView: View {
                         .onChange(of: env_settings.pickerSelected) { v in
                             document.updateDisplayCategory(to: env_settings.pickerSelected, undoManager)
                         }
+                        
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(10)
-                .background(Color.white)
+                .background(Color("BarsBackgroundColor"))
                 .cornerRadius(30)
                 .padding(10)
                 .shadow(color:Color("ShallowShadowColor"), radius: 15, x: 0.0, y: 0.0)
@@ -207,7 +209,6 @@ struct ExtractedMainlyContentView<Content: View>: View {
                     .font(env_settings.displayMode == .FullSquareMode ? .title : .title2)
                     .fontWeight(.bold)
                     .padding([.leading, .trailing])
-                    .background(Color.white)
                     .contextMenu{
                         Button(action: {
                             document.removeGroup(idIs: projectGroup.id, undoManager)
@@ -295,11 +296,10 @@ struct ExtractedTopMenuView: View {
                     }
                 }
                 .padding()
-                .background(Color.white)
+                .background(Color("BarsBackgroundColor"))
                 .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-                //                .frame(height: 60)
                 .padding()
-                .shadow(color: Color(red: 0.8, green: 0.8, blue: 0.8), radius: 15, x: 0.0, y: 0.0)
+                .shadow(color: Color("ShallowShadowColor"), radius: 15, x: 0.0, y: 0.0)
                 
             }
             Spacer()
@@ -328,7 +328,7 @@ struct ExtractedToolBarView: View {
 //            }){
 //                Image(systemName: "arrow.uturn.forward.circle")
 //            }
-            
+            Spacer()
             if !env_settings.simpleMode {
                 Button(action: {
                     env_settings.goToFirstTodoTask.toggle()
@@ -400,10 +400,10 @@ struct ExtractedTaskEditViewView: View {
             }
             .frame(width: 256, height: 256)
             .padding([.top, .leading, .trailing], 16)
-            .background(Color.white)
+            .background(Color("BarsBackgroundColor"))
             .clipShape(RoundedRectangle(cornerRadius: 56, style: .continuous))
-            .shadow(color: Color.white.opacity(0.6), radius: 25, x: -20, y: -20)
-            .shadow(color: Color.gray.opacity(0.6), radius: 25, x: (1 - dragOffset.height / 30) * 20, y: (dragOffset.height / 30 + 1) * 20)
+            .shadow(color: Color("ShallowShadowColor").opacity(0.6), radius: 25, x: -20, y: -20)
+            .shadow(color: Color("ShallowShadowColor").opacity(0.6), radius: 25, x: (1 - dragOffset.height / 30) * 20, y: (dragOffset.height / 30 + 1) * 20)
             
             .offset(x: dragOffset.width * 2, y: dragOffset.height * 2)
             .rotation3DEffect(Angle(degrees: Double(dragOffset.height) / 2), axis: (-1, 0, 0))
