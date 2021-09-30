@@ -282,8 +282,8 @@ struct ProjectDifferentModeView: View {
                                         document.updateTaskStatus(tskStatus: StatusNextMapper[tsk.status]!, idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
                                     },
                                     longAction : {
-                                        env_settings.editTaskInfoPresented = true
                                         env_settings.currentTaskPath = document.indexOfTask(idIs: tsk.id, from: project.id, in: prjGrpId)
+                                        env_settings.editTaskInfoPresented = true
                                     }
                                 )
                                     .padding()
@@ -294,7 +294,13 @@ struct ProjectDifferentModeView: View {
                         }.frame(maxWidth: .infinity).frame(height: 120)
                         if env_settings.isEditingMode {
                             Button(action: {
-                                document.addTask(nameIs: "Task", contentIs: "Content", for: project.id, in: prjGrpId, undoManager)
+                                let lst_tsk = document.getLastAddedTask(from: project.id, in: prjGrpId)
+                                
+                                guard let new_tsk = document.addTask(nameIs: lst_tsk.name, contentIs: lst_tsk.content, for: project.id, in: prjGrpId, undoManager)
+                                else { return }
+                                
+                                env_settings.currentTaskPath = document.indexOfTask(idIs: new_tsk.id, from: project.id, in: prjGrpId)
+                                env_settings.editTaskInfoPresented = true
                             }, label: {
                                 VStack {
                                     Image(systemName: "plus.square").resizable().foregroundColor(.blue)

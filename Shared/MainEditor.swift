@@ -264,7 +264,7 @@ struct ExtractedTopMenuView: View {
             HStack(alignment: .bottom, spacing: 10){
                 Spacer()
                 HStack(spacing: 20){
-                    if env_settings.displayMode == .FullSquareMode {
+                    if env_settings.displayMode == .FullSquareMode && env_settings.pickerSelected == .All {
                         Button(action: {env_settings.isEditingMode.toggle()}){
                             Text(env_settings.isEditingMode ? "完成" : "编辑")
                         }
@@ -280,7 +280,7 @@ struct ExtractedTopMenuView: View {
                             }
                             Divider()
                             Button(action:{
-                                document.addGroup(nameIs: "项目组 new", undoManager)
+                                document.addGroup(nameIs: "新项目组", undoManager)
                             }){
                                 Text("添加")
                                 Image(systemName: "plus.app.fill")

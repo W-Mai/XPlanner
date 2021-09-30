@@ -222,3 +222,7 @@ extension PlannerFileStruct {
         taskStatusChanges: [TaskStatusChangeRecord]()
     )
 }
+
+func TaskTemplate() -> TaskInfo {
+    return TaskInfo(name: "任务", content: "任务内容", status: .original, createDate: Date())
+}

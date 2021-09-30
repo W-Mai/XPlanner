@@ -97,20 +97,23 @@ extension XPlanerDocument {
         })
     }
     
-    func addTask(nameIs tskName : String, contentIs taskContent : String, for prjId : UUID,in grpId : UUID ,_ undoManager : UndoManager?) {
+    func addTask(nameIs tskName : String, contentIs taskContent : String, for prjId : UUID,in grpId : UUID ,_ undoManager : UndoManager?) -> TaskInfo?{
         guard let index = plannerData.projectGroups.firstIndex (where: { grp in
             grp.id == grpId
-        }) else { return }
+        }) else { return nil }
         
         guard let indexPrj = plannerData.projectGroups[index].projects.firstIndex (where: { prj in
             prj.id == prjId
-        }) else { return }
+        }) else { return nil }
         
-        plannerData.projectGroups[index].projects[indexPrj].tasks.append(TaskInfo(name: tskName, content: taskContent, status: .original, createDate: Date()))
+        let res = TaskInfo(name: tskName, content: taskContent, status: .original, createDate: Date())
+        plannerData.projectGroups[index].projects[indexPrj].tasks.append(res)
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.plannerData.projectGroups[index].projects[indexPrj].tasks.removeLast()
         })
+        
+        return res
     }
     
     func removeTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID , _ undoManager : UndoManager?){
@@ -147,6 +150,19 @@ extension XPlanerDocument {
         })
     }
     
+    func getLastAddedTask(from prjId : UUID, in grpId : UUID) -> TaskInfo {
+        guard let index = plannerData.projectGroups.firstIndex (where: { grp in
+            grp.id == grpId
+        }) else { return TaskTemplate()}
+        
+        guard let indexPrj = plannerData.projectGroups[index].projects.firstIndex (where: { prj in
+            prj.id == prjId
+        }) else { return TaskTemplate()}
+        
+        guard let lst_tsk = plannerData.projectGroups[index].projects[indexPrj].tasks.last
+        else { return TaskTemplate() }
+        return lst_tsk
+    }
     
     func indexOfTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID) -> TaskIndexPath?{
         guard let index = plannerData.projectGroups.firstIndex (where: { grp in
