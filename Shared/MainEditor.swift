@@ -310,11 +310,25 @@ struct ExtractedTopMenuView: View {
 // MARK: 🔧工具条
 struct ExtractedToolBarView: View {
     @EnvironmentObject var env_settings : EnvironmentSettings
+    @Environment(\.undoManager) var undoManager
     
     var onChange : () -> Void
     
     var body: some View {
         HStack{
+            
+            Button(action: {
+                undoManager?.undo()
+            }){
+                Image(systemName: "arrow.uturn.backward.circle")
+            }
+            .opacity(undoManager?.canUndo ?? false ? 1 : 0)
+//            Button(action: {
+//                undoManager?.redo()
+//            }){
+//                Image(systemName: "arrow.uturn.forward.circle")
+//            }
+            
             if !env_settings.simpleMode {
                 Button(action: {
                     env_settings.goToFirstTodoTask.toggle()
