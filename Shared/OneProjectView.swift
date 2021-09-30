@@ -328,9 +328,8 @@ struct ProjectDifferentModeView: View {
 }
 
 var StatusNextMapper : [TaskStatus : TaskStatus] = [
-    .finished : .original,
+    .finished : .finished,
     .original : .todo,
     .todo : .finished
 ]
 
-var feedbackGenerator : UIImpactFeedbackGenerator? = nil
