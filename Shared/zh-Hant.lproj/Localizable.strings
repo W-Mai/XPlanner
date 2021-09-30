@@ -1,0 +1,47 @@
+/* 
+  Localizable.strings
+  XPlanner
+
+  Created by Esther on 2021/9/30.
+  
+*/
+
+"MENU.ADDGROUP" = "添加新項目組";
+"MENU.ADDPROJECT" = "添加新項目";
+"MENU.DELGROUP %@" = "刪除項目組 %@";
+"MENU.DELPROJECT %@" = "刪除項目 %@";
+
+
+"CONTEXT.NOGROUP" = "空空如也";
+"CONTEXT.NOPROJECT" = "空空如也";
+
+"NEW.PROJECTGROUP.NAME" = "新項目組";
+"NEW.PROJECT.NAME" = "新項目";
+"NEW.TASK.NAME" = "新任務";
+"NEW.TASK.CONTENT" = "任務內容";
+
+"BUTTON.EDIT" = "編輯";
+"BUTTON.DONE" = "完成";
+
+"EDITTASK.TITLE" = "標題";
+"EDITTASK.CONTENT" = "內容";
+"EDITTASK.CANCEL" = "不保存";
+
+"TASK.STATUS.ORIGINAL" = "無😶";
+"TASK.STATUS.TODO" = "待辦🧐";
+"TASK.STATUS.FINISHED" = "完成🥰";
+
+"TASK.COMPONENT.STATUS.ORIGINAL" = "";
+"TASK.COMPONENT.STATUS.TODO" = "Todo";
+"TASK.COMPONENT.STATUS.FINISHED" = "已完成";
+
+"TASK.COMPONENT.STATUS.SUBTITLE.ORIGINAL" = "";
+"TASK.COMPONENT.STATUS.SUBTITLE.TODO" = "Todo";
+"TASK.COMPONENT.STATUS.SUBTITLE.FINISHED" = "✔︎";
+
+"TEMPLATE.TOPIC" = "計劃";
+"TEMPLATE.PROJECTGROUP.NAME" = "項目組";
+"TEMPLATE.PROJECTGROUP.NAME.NULL" = "空項目組";
+"TEMPLATE.PROJECT.NAME" = "項目";
+"TEMPLATE.TASK.NAME" = "任務";
+"TEMPLATE.TASK.CONTENT" = "任務內容";

@@ -1,0 +1,47 @@
+/* 
+  Localizable.strings
+  XPlanner
+
+  Created by Esther on 2021/9/30.
+  
+*/
+
+"MENU.ADDGROUP" = "Add New Group";
+"MENU.ADDPROJECT" = "Add New Project";
+"MENU.DELGROUP %@" = "Delete Group %@";
+"MENU.DELPROJECT %@" = "Delete Project %@";
+
+
+"CONTEXT.NOGROUP" = "It's Empty here";
+"CONTEXT.NOPROJECT" = "It's Empty here";
+
+"NEW.PROJECTGROUP.NAME" = "Untitled Group";
+"NEW.PROJECT.NAME" = "Untitled Project";
+"NEW.TASK.NAME" = "Task";
+"NEW.TASK.CONTENT" = "Content";
+
+"BUTTON.EDIT" = "Edit";
+"BUTTON.DONE" = "Done";
+
+"EDITTASK.TITLE" = "Title";
+"EDITTASK.CONTENT" = "Content";
+"EDITTASK.CANCEL" = "DON'T SAVE";
+
+"TASK.STATUS.ORIGINAL" = "😶";
+"TASK.STATUS.TODO" = "Todo🧐";
+"TASK.STATUS.FINISHED" = "Done🥰";
+
+"TASK.COMPONENT.STATUS.ORIGINAL" = "";
+"TASK.COMPONENT.STATUS.TODO" = "Todo";
+"TASK.COMPONENT.STATUS.FINISHED" = "DONE";
+
+"TASK.COMPONENT.STATUS.SUBTITLE.ORIGINAL" = "";
+"TASK.COMPONENT.STATUS.SUBTITLE.TODO" = "Todo";
+"TASK.COMPONENT.STATUS.SUBTITLE.FINISHED" = "✔︎";
+
+"TEMPLATE.TOPIC" = "XPlan";
+"TEMPLATE.PROJECTGROUP.NAME" = "Project Group";
+"TEMPLATE.PROJECTGROUP.NAME.NULL" = "Empty Group";
+"TEMPLATE.PROJECT.NAME" = "Project";
+"TEMPLATE.TASK.NAME" = "Task";
+"TEMPLATE.TASK.CONTENT" = "Content";

@@ -171,7 +171,7 @@ struct OneTaskView: View {
     func getStatusText() -> String {
         switch self.task.status {
         case .finished:
-            return "已完成"
+            return L("TASK.COMPONENT.STATUS.FINISHED")
         default:
             return ""
         }
@@ -180,13 +180,13 @@ struct OneTaskView: View {
     func getSubTitleText() -> String {
         switch self.task.status {
         case .finished:
-            return "✔︎"
+            return L("TASK.COMPONENT.STATUS.SUBTITLE.FINISHED")
         case .todo:
-            return "Todo"
+            return L("TASK.COMPONENT.STATUS.SUBTITLE.TODO")
         case .original:
             fallthrough
         default:
-            return ""
+            return L("TASK.COMPONENT.STATUS.SUBTITLE.ORIGINAL")
         }
     }
 }
@@ -235,7 +235,7 @@ struct OneProjectView: View {
                             Button(action: {
                                 document.removeProject(idIs: project.id, from: prjGrpId, undoManager)
                             }, label: {
-                                Text("删除任务 \(project.name) ")
+                                Text("MENU.DELPROJECT \(project.name)")
                                 Image(systemName: "trash")
                             })
                         }

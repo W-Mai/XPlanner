@@ -14,14 +14,14 @@ struct MyTextFiled: View {
     
     var body: some View {
         HStack{
-            Text(title).padding(10).foregroundColor(tilt)
+            Text(title).padding(10).foregroundColor(tilt).minimumScaleFactor(0.2).frame(width: 60)
             Divider()
             TextField(text, text: $text)
         }
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(tilt, lineWidth: 1)
-        ).background(Color.white)
+        ).background(Color("BarsBackgroundColor"))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .frame(height: 40)
     }

@@ -195,35 +195,39 @@ extension PlannerFileStruct {
     static let init_doc = PlannerFileStruct(
         fileInformations: FileInfos(
             documentVersion: CurrentFileFormatVerison,
-            topic: "计划",
+            topic: L("TEMPLATE.TOPIC"),
             createDate: Date(),
             author: "XPlanner",
             displayMode: .FullSquareMode,
             displayCatagory: .All),
         projectGroups: [ProjectGroupInfo](
             arrayLiteral:ProjectGroupInfo(
-                name: "项目组",
+                name: L("TEMPLATE.PROJECTGROUP.NAME"),
                 projects: [ProjectInfo](
                     arrayLiteral:ProjectInfo(
-                        name: "项目",
+                        name: L("TEMPLATE.PROJECT.NAME"),
                         tasks: [TaskInfo](
-                            arrayLiteral:TaskInfo(name: "任务1",content: "任务内容1",status: .finished,createDate: Date(), id: UUID()),
-                            TaskInfo(name: "任务2",content: "任务内容2",status: .todo,createDate: Date(), id: UUID()),
-                            TaskInfo(name: "任务3",content: "任务内容3",status: .original,createDate: Date(), id: UUID())
+                            arrayLiteral:TaskInfo(name: L("TEMPLATE.TASK.NAME") + "1",content: L("TEMPLATE.TASK.CONTENT") + "1",status: .finished,createDate: Date(), id: UUID()),
+                            TaskInfo(name: L("TEMPLATE.TASK.NAME") + "2",content: L("TEMPLATE.TASK.CONTENT") + "2",status: .todo,createDate: Date(), id: UUID()),
+                            TaskInfo(name: L("TEMPLATE.TASK.NAME") + "3",content: L("TEMPLATE.TASK.CONTENT") + "3",status: .original,createDate: Date(), id: UUID())
                         ),
                         id: UUID()),
                     ProjectInfo(
-                        name: "项目",
+                        name: L("TEMPLATE.PROJECT.NAME"),
                         tasks: [TaskInfo](),
                         id: UUID())
                 ),
                 id: UUID()),
-            ProjectGroupInfo(name: "空项目组", projects: [ProjectInfo]())
+            ProjectGroupInfo(name: L("TEMPLATE.PROJECTGROUP.NAME.NULL"), projects: [ProjectInfo]())
         ),
         taskStatusChanges: [TaskStatusChangeRecord]()
     )
 }
 
 func TaskTemplate() -> TaskInfo {
-    return TaskInfo(name: "任务", content: "任务内容", status: .original, createDate: Date())
+    return TaskInfo(name: L("NEW.TASK.NAME"), content: L("NEW.TASK.CONTENT"), status: .original, createDate: Date())
+}
+
+func L(_ localStr: String) -> String{
+    return NSLocalizedString(localStr, comment: "")
 }

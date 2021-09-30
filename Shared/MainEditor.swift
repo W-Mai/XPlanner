@@ -13,7 +13,7 @@ struct ContentView_Previews: PreviewProvider {
     
     static var previews: some View {
         ContentView()
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(.light)
             .environmentObject(document)
             .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: DisplayCatagory.All))
     }
@@ -68,6 +68,7 @@ struct ContentView: View {
                 
                 
                 ExtractedBottomButtonGroupView()
+                    .offset(y: env_settings.simpleMode ? screen.height : 0)
             }
             .saturation(env_settings.editTaskInfoPresented ? 0.2 : 1)
             .blur(radius: env_settings.editTaskInfoPresented ? 2 : 0)
@@ -151,18 +152,18 @@ struct ExtractedMainViewView<Content: View>: View {
                 }).frame(maxWidth: .infinity)
             } else {
                 VStack{
-                    Text("空空如也").frame(maxWidth: .infinity)
+                    Text("CONTEXT.NOGROUP").frame(maxWidth: .infinity)
                 }
             }
             
             if env_settings.isEditingMode{
                 Button {
-                    document.addGroup(nameIs: "项目组 new", undoManager)
+                    document.addGroup(nameIs: "NEW.PROJECTGROUP.NAME", undoManager)
                 } label: {
                     HStack{
                         Image(systemName: "plus.rectangle").resizable().scaledToFit()
                         
-                        Text("添加新项目组").font(.title)
+                        Text("MENU.ADDGROUP").font(.title)
                             .fontWeight(.bold)
                     }.frame(height: 30)
                         .padding([.leading, .bottom], 20)
@@ -213,7 +214,7 @@ struct ExtractedMainlyContentView<Content: View>: View {
                         Button(action: {
                             document.removeGroup(idIs: projectGroup.id, undoManager)
                         }, label: {
-                            Text("删除项目 \(projectGroup.name) ")
+                            Text("MENU.DELGROUP \(projectGroup.name)")
                             Image(systemName: "trash")
                         })
                     }.animation(.easeInOut)
@@ -227,19 +228,19 @@ struct ExtractedMainlyContentView<Content: View>: View {
                 }
             } else {
                 VStack{
-                    Text("空空如也")
+                    Text("CONTEXT.NOPROJECT")
                 }
             }
             
             if env_settings.isEditingMode{
                 HStack{
                     Button {
-                        document.addProject(nameIs: "项目", for: projectGroup.id, undoManager)
+                        document.addProject(nameIs: "NEW.PROJECT.NAME", for: projectGroup.id, undoManager)
                     } label: {
                         HStack{
                             Image(systemName: "plus.rectangle").resizable().scaledToFit()
                             
-                            Text("添加新项目").font(.title2)
+                            Text("MENU.ADDPROJECT").font(.title2)
                         }.frame(height: 30)
                         //
                     }
@@ -267,7 +268,7 @@ struct ExtractedTopMenuView: View {
                 HStack(spacing: 20){
                     if env_settings.displayMode == .FullSquareMode && env_settings.pickerSelected == .All {
                         Button(action: {env_settings.isEditingMode.toggle()}){
-                            Text(env_settings.isEditingMode ? "完成" : "编辑")
+                            Text(env_settings.isEditingMode ? "BUTTON.DONE" : "BUTTON.EDIT")
                         }
                     }
                     VStack{
@@ -283,9 +284,9 @@ struct ExtractedTopMenuView: View {
                             }
                             Divider()
                             Button(action:{
-                                document.addGroup(nameIs: "新项目组", undoManager)
+                                document.addGroup(nameIs: "NEW.PROJECTGROUP.NAME", undoManager)
                             }){
-                                Text("添加")
+                                Text("MENU.ADDGROUP")
                                 Image(systemName: "plus.app.fill")
                             }
                         } label: {
@@ -370,16 +371,14 @@ struct ExtractedTaskEditViewView: View {
             VStack{
                 VStack{
                     VStack(spacing: 20) {
-                        MyTextFiled(title: "标题", text: $tmpTask.name, tilt: Color("FavoriteColor7"))
+                        MyTextFiled(title: L("EDITTASK.TITLE"), text: $tmpTask.name, tilt: Color("FavoriteColor7"))
                             .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
-                        
-                        
-                        MyTextFiled(title: "内容", text: $tmpTask.content, tilt: Color("FavoriteColor7"))
+                        MyTextFiled(title: L("EDITTASK.CONTENT"), text: $tmpTask.content, tilt: Color("FavoriteColor7"))
                             .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
                         Picker(selection: $tmpTask.status, label: EmptyView()) {
-                            Text("无😶").tag(TaskStatus.original)
-                            Text("待办🧐").tag(TaskStatus.todo)
-                            Text("完成🥰").tag(TaskStatus.finished)
+                            Text("TASK.STATUS.ORIGINAL").tag(TaskStatus.original)
+                            Text("TASK.STATUS.TODO").tag(TaskStatus.todo)
+                            Text("TASK.STATUS.FINISHED").tag(TaskStatus.finished)
                         }.pickerStyle(SegmentedPickerStyle())
                     }.padding([.vertical], 40)
                         .padding(.horizontal, 30)
@@ -393,7 +392,7 @@ struct ExtractedTaskEditViewView: View {
                     Button(action: {
                         env_settings.editTaskInfoPresented = false
                     }){
-                        Text("不保存")
+                        Text("EDITTASK.CANCEL")
                     }
                     Spacer()
                 }
