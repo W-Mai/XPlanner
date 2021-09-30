@@ -273,7 +273,9 @@ struct ExtractedTopMenuView: View {
                         Menu {
                             ForEach(projectGroups){i in
                                 Button(action: {
-                                    env_settings.scrollProxy?.scrollTo(i.id, anchor: .topLeading)
+                                    withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+                                        env_settings.scrollProxy?.scrollTo(i.id, anchor: .top)
+                                    }
                                 }, label: {
                                     Text(i.name)
                                 })
@@ -312,14 +314,24 @@ struct ExtractedToolBarView: View {
     var onChange : () -> Void
     
     var body: some View {
-        Toggle(isOn: $env_settings.simpleMode) {
-        }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
-            .onChange(of: env_settings.simpleMode, perform: { value in
-                env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
-                env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
-                onChange()
-            })
-            .disabled(env_settings.isEditingMode)
+        HStack{
+            if !env_settings.simpleMode {
+                Button(action: {
+                    env_settings.goToFirstTodoTask.toggle()
+                }){
+                    Image(systemName: "rays")
+                }
+            }
+            Toggle(isOn: $env_settings.simpleMode) {
+            }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
+                .onChange(of: env_settings.simpleMode, perform: { value in
+                    env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
+                    env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+                    onChange()
+                })
+                .disabled(env_settings.isEditingMode)
+            
+        }
     }
 }
 

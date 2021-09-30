@@ -164,6 +164,22 @@ extension XPlanerDocument {
         return lst_tsk
     }
     
+    func getFirstTask(where cmp : (TaskInfo) -> Bool , from prjId : UUID, in grpId : UUID) -> TaskInfo {
+        guard let index = plannerData.projectGroups.firstIndex (where: { grp in
+            grp.id == grpId
+        }) else { return TaskTemplate()}
+        
+        guard let indexPrj = plannerData.projectGroups[index].projects.firstIndex (where: { prj in
+            prj.id == prjId
+        }) else { return TaskTemplate()}
+        
+        guard let tsk = plannerData.projectGroups[index].projects[indexPrj].tasks.firstIndex(where: { v in
+            cmp(v)
+        }) else { return TaskTemplate() }
+        
+        return plannerData.projectGroups[index].projects[indexPrj].tasks[tsk]
+    }
+    
     func indexOfTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID) -> TaskIndexPath?{
         guard let index = plannerData.projectGroups.firstIndex (where: { grp in
             grp.id == grpId

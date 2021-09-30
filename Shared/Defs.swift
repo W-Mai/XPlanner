@@ -47,6 +47,7 @@ class EnvironmentSettings: ObservableObject {
     @Published var isSelected = false
     @Published var currentTaskPath : TaskIndexPath? = nil
     @Published var editTaskInfoPresented = false
+    @Published var goToFirstTodoTask = false
     
     init(simpleMode : Bool, displayCategory: DisplayCatagory) {
         self.simpleMode = simpleMode

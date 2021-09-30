@@ -301,6 +301,8 @@ struct ProjectDifferentModeView: View {
                                 
                                 env_settings.currentTaskPath = document.indexOfTask(idIs: new_tsk.id, from: project.id, in: prjGrpId)
                                 env_settings.editTaskInfoPresented = true
+                                
+                                proxy.scrollTo(lst_tsk.id, anchor: .leading)
                             }, label: {
                                 VStack {
                                     Image(systemName: "plus.square").resizable().foregroundColor(.blue)
@@ -311,6 +313,15 @@ struct ProjectDifferentModeView: View {
                             })
                         }
                     }.padding([.trailing], 120)
+                        .onChange(of: env_settings.goToFirstTodoTask) { v in
+                            let lst_tsk = document.getFirstTask(where:{ tsk in
+                                tsk.status == .todo
+                            }, from: project.id, in: prjGrpId)
+                            
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                proxy.scrollTo(lst_tsk.id, anchor: .topLeading)
+                            }
+                        }
                 }
             }
             
