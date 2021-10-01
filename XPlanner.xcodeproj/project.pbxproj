@@ -25,6 +25,11 @@
 		EB3E7DD927069FD300231BE5 /* XPlanerDocument+Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */; };
 		EB3E7DDA27069FDB00231BE5 /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
 		EB3E7DDB2706A0C400231BE5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB9A6D322705D09B003487DE /* Localizable.strings */; };
+		EB3E7DE42706DC3800231BE5 /* Messages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB3E7DE32706DC3800231BE5 /* Messages.framework */; };
+		EB3E7DE72706DC3800231BE5 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3E7DE62706DC3800231BE5 /* MessagesViewController.swift */; };
+		EB3E7DEA2706DC3800231BE5 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB3E7DE82706DC3800231BE5 /* MainInterface.storyboard */; };
+		EB3E7DEC2706DC3B00231BE5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB3E7DEB2706DC3B00231BE5 /* Assets.xcassets */; };
+		EB3E7DF02706DC3B00231BE5 /* MsgSharer.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = EB3E7DE22706DC3800231BE5 /* MsgSharer.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EB4C17C826F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB4C17C926F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB99F92C26F4DD2200956A1A /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
@@ -65,6 +70,13 @@
 			remoteGlobalIDString = B2E4532D478C2C192D63327A;
 			remoteInfo = "XPlaner (iOS)";
 		};
+		EB3E7DEE2706DC3B00231BE5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B2E45EE91AD080FA1707FFBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EB3E7DE12706DC3800231BE5;
+			remoteInfo = MsgSharer;
+		};
 		EB9A6D482705EF6B003487DE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B2E45EE91AD080FA1707FFBF /* Project object */;
@@ -82,6 +94,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				EB9A6D4A2705EF6B003487DE /* XPlanner WidgetExtension.appex in Embed App Extensions */,
+				EB3E7DF02706DC3B00231BE5 /* MsgSharer.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -108,6 +121,14 @@
 		EB3A88AA26FA16A80017527E /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		EB3A88AB26FA16BB0017527E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EB3AF4B02704543300293546 /* SmallComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallComponent.swift; sourceTree = "<group>"; };
+		EB3E7DDC2706C9F400231BE5 /* XPlanner WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "XPlanner WidgetExtension.entitlements"; sourceTree = "<group>"; };
+		EB3E7DDD2706C9F400231BE5 /* XPlanner WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "XPlanner WidgetExtension.entitlements"; sourceTree = "<group>"; };
+		EB3E7DE22706DC3800231BE5 /* MsgSharer.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MsgSharer.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB3E7DE32706DC3800231BE5 /* Messages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Messages.framework; path = Library/Frameworks/Messages.framework; sourceTree = DEVELOPER_DIR; };
+		EB3E7DE62706DC3800231BE5 /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
+		EB3E7DE92706DC3800231BE5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		EB3E7DEB2706DC3B00231BE5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EB3E7DED2706DC3B00231BE5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewTest.swift; sourceTree = "<group>"; };
 		EB99F92B26F4DD2200956A1A /* Defs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defs.swift; sourceTree = "<group>"; };
 		EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XPlanerDocument+Manager.swift"; sourceTree = "<group>"; };
@@ -158,6 +179,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EB3E7DDF2706DC3800231BE5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB3E7DE42706DC3800231BE5 /* Messages.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EB9A6D362705EF68003487DE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -173,10 +202,13 @@
 		B2E4500A83348AAE0BCD3AD4 = {
 			isa = PBXGroup;
 			children = (
+				EB3E7DDD2706C9F400231BE5 /* XPlanner WidgetExtension.entitlements */,
+				EB3E7DDC2706C9F400231BE5 /* XPlanner WidgetExtension.entitlements */,
 				EB9A6D5427060702003487DE /* XPlanner (iOS).entitlements */,
 				EB9A6D5327060702003487DE /* XPlanner (iOS).entitlements */,
 				EB3A88AC26FA16C30017527E /* Something Else */,
 				EB9A6D3F2705EF69003487DE /* XPlanner Widget */,
+				EB3E7DE52706DC3800231BE5 /* MsgSharer */,
 				EB9A6D3A2705EF68003487DE /* Frameworks */,
 				B2E45C189B3ECF01CFAADD38 /* Products */,
 				B2E454E80D4AFEBF13F9CAC3 /* Shared */,
@@ -248,6 +280,7 @@
 				B2E45525E7E096B5BCC4CCBA /* Tests iOS.xctest */,
 				B2E457EBB019FEB301A017F8 /* Tests macOS.xctest */,
 				EB9A6D392705EF68003487DE /* XPlanner WidgetExtension.appex */,
+				EB3E7DE22706DC3800231BE5 /* MsgSharer.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -261,11 +294,23 @@
 			path = "Something Else";
 			sourceTree = "<group>";
 		};
+		EB3E7DE52706DC3800231BE5 /* MsgSharer */ = {
+			isa = PBXGroup;
+			children = (
+				EB3E7DE62706DC3800231BE5 /* MessagesViewController.swift */,
+				EB3E7DE82706DC3800231BE5 /* MainInterface.storyboard */,
+				EB3E7DEB2706DC3B00231BE5 /* Assets.xcassets */,
+				EB3E7DED2706DC3B00231BE5 /* Info.plist */,
+			);
+			path = MsgSharer;
+			sourceTree = "<group>";
+		};
 		EB9A6D3A2705EF68003487DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				EB9A6D3B2705EF68003487DE /* WidgetKit.framework */,
 				EB9A6D3D2705EF69003487DE /* SwiftUI.framework */,
+				EB3E7DE32706DC3800231BE5 /* Messages.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -308,6 +353,7 @@
 			);
 			dependencies = (
 				EB9A6D492705EF6B003487DE /* PBXTargetDependency */,
+				EB3E7DEF2706DC3B00231BE5 /* PBXTargetDependency */,
 			);
 			name = "XPlanner (iOS)";
 			packageProductDependencies = (
@@ -369,6 +415,23 @@
 			productReference = B2E457EBB019FEB301A017F8 /* Tests macOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		EB3E7DE12706DC3800231BE5 /* MsgSharer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB3E7DF12706DC3B00231BE5 /* Build configuration list for PBXNativeTarget "MsgSharer" */;
+			buildPhases = (
+				EB3E7DDE2706DC3800231BE5 /* Sources */,
+				EB3E7DDF2706DC3800231BE5 /* Frameworks */,
+				EB3E7DE02706DC3800231BE5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MsgSharer;
+			productName = MsgSharer;
+			productReference = EB3E7DE22706DC3800231BE5 /* MsgSharer.appex */;
+			productType = "com.apple.product-type.app-extension.messages";
+		};
 		EB9A6D382705EF68003487DE /* XPlanner WidgetExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EB9A6D4B2705EF6B003487DE /* Build configuration list for PBXNativeTarget "XPlanner WidgetExtension" */;
@@ -401,6 +464,9 @@
 					B2E453ECEE1D118892B84D5C = {
 						DevelopmentTeam = 25LKBCVZX2;
 					};
+					EB3E7DE12706DC3800231BE5 = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					EB9A6D382705EF68003487DE = {
 						CreatedOnToolsVersion = 13.0;
 					};
@@ -428,6 +494,7 @@
 				B2E456CB16DEC1F84127F5A8 /* Tests iOS */,
 				B2E457D060D64CE13D91A033 /* Tests macOS */,
 				EB9A6D382705EF68003487DE /* XPlanner WidgetExtension */,
+				EB3E7DE12706DC3800231BE5 /* MsgSharer */,
 			);
 		};
 /* End PBXProject section */
@@ -462,6 +529,15 @@
 			files = (
 				B2E45A91CEA2D60FBF9FC358 /* Assets.xcassets in Resources */,
 				EB9A6D2F2705D09B003487DE /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB3E7DE02706DC3800231BE5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB3E7DEC2706DC3B00231BE5 /* Assets.xcassets in Resources */,
+				EB3E7DEA2706DC3800231BE5 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,6 +608,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EB3E7DDE2706DC3800231BE5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB3E7DE72706DC3800231BE5 /* MessagesViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EB9A6D352705EF68003487DE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -557,6 +641,11 @@
 			target = B2E453ECEE1D118892B84D5C /* XPlanner (macOS) */;
 			targetProxy = B2E4504996C93DCE4D2750FD /* PBXContainerItemProxy */;
 		};
+		EB3E7DEF2706DC3B00231BE5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EB3E7DE12706DC3800231BE5 /* MsgSharer */;
+			targetProxy = EB3E7DEE2706DC3B00231BE5 /* PBXContainerItemProxy */;
+		};
 		EB9A6D492705EF6B003487DE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = EB9A6D382705EF68003487DE /* XPlanner WidgetExtension */;
@@ -565,6 +654,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		EB3E7DE82706DC3800231BE5 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EB3E7DE92706DC3800231BE5 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
 		EB9A6D322705D09B003487DE /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -864,12 +961,72 @@
 			};
 			name = Debug;
 		};
+		EB3E7DF22706DC3B00231BE5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25LKBCVZX2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MsgSharer/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MsgSharer;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "XCLZ-STUDIO.XPlaner.MsgSharer";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EB3E7DF32706DC3B00231BE5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 25LKBCVZX2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MsgSharer/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MsgSharer;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "XCLZ-STUDIO.XPlaner.MsgSharer";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		EB9A6D4C2705EF6B003487DE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_ENTITLEMENTS = "XPlanner WidgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 25LKBCVZX2;
@@ -900,6 +1057,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_ENTITLEMENTS = "XPlanner WidgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 25LKBCVZX2;
@@ -969,6 +1127,15 @@
 			buildConfigurations = (
 				B2E45F21484E5E53941F6677 /* Debug */,
 				B2E4524E7FEE0291C610731C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EB3E7DF12706DC3B00231BE5 /* Build configuration list for PBXNativeTarget "MsgSharer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB3E7DF22706DC3B00231BE5 /* Debug */,
+				EB3E7DF32706DC3B00231BE5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

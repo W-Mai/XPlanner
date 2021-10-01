@@ -36,9 +36,11 @@ struct TaskIndexPath : Equatable {
     var tskIndex : Int
 }
 
-struct TaskWithIndexPath : Equatable {
+struct TaskWithIndexPath : Equatable, Identifiable {
     var task : TaskInfo
     var index : TaskIndexPath
+    
+    var id = UUID()
 }
 
 // MARK: - 🏞 环境配置

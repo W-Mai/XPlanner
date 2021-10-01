@@ -15,15 +15,15 @@ struct Provider: IntentTimelineProvider {
         config.parameter2 = DisplayCategory.value
         return SimpleEntry(date: Date(), displayCategory : .All, tasks: [TaskWithIndexPath]())
     }
-
+    
     func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
         let entry = SimpleEntry(date: Date(), displayCategory : .All, tasks: [TaskWithIndexPath]())
         completion(entry)
     }
-
+    
     func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         var entries: [SimpleEntry] = []
-
+        
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         let currentDate = Date()
         for hourOffset in 0 ..< 1 {
@@ -36,16 +36,20 @@ struct Provider: IntentTimelineProvider {
             if file == nil {
                 tasks = [TaskWithIndexPath]()
             } else {
-                let doc = try! XPlanerDocument(with: file!)
+//                let doc = try! XPlanerDocument(with: file!)
                 
-                tasks = doc.getAllTasks(of: displayCategory)
+//                tasks = doc.getAllTasks(of: displayCategory)
+                tasks = [TaskWithIndexPath](arrayLiteral: TaskWithIndexPath(task: TaskInfo(name: file!.fileURL!.description, content: "", status: .todo, createDate: Date()), index: TaskIndexPath(prjGrpIndex: 0, prjIndex: 0, tskIndex: 0)))
+                
+                let data = file!.data
+                let myfile = try! FileWrapper(url: file!.fileURL!)
             }
             
             let entry = SimpleEntry(date: entryDate, displayCategory : displayCategory, tasks: tasks)
             entries.append(entry)
         }
-
-        let timeline = Timeline(entries: entries, policy: .never)
+        
+        let timeline = Timeline(entries: entries, policy: .atEnd)
         completion(timeline)
     }
 }
@@ -64,10 +68,14 @@ struct XPlanner_WidgetEntryView : View {
     var body: some View {
         switch family {
         case .systemSmall:
-            if entry.displayCategory == .All {
-                Text("ALL")
-            } else {
-                Text("Todo")
+            VStack{
+                if entry.displayCategory == .All {
+                    ForEach(entry.tasks) { tsk in
+                        Text(tsk.task.name).minimumScaleFactor(0.2)
+                    }
+                } else {
+                    Text("Todo")
+                }
             }
             
         case .systemMedium:
@@ -86,7 +94,7 @@ struct XPlanner_WidgetEntryView : View {
 @main
 struct XPlanner_Widget: Widget {
     let kind: String = "XPlanner_Widget"
-
+    
     var body: some WidgetConfiguration {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             XPlanner_WidgetEntryView(entry: entry)
@@ -98,7 +106,7 @@ struct XPlanner_Widget: Widget {
 }
 
 struct XPlanner_Widget_Previews: PreviewProvider {
-//    let conf = SimpleEntry(date: Date(), configuration: ConfigurationIntent())
+    //    let conf = SimpleEntry(date: Date(), configuration: ConfigurationIntent())
     
     static var previews: some View {
         Group {
