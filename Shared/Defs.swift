@@ -36,6 +36,11 @@ struct TaskIndexPath : Equatable {
     var tskIndex : Int
 }
 
+struct TaskWithIndexPath : Equatable {
+    var task : TaskInfo
+    var index : TaskIndexPath
+}
+
 // MARK: - 🏞 环境配置
 
 class EnvironmentSettings: ObservableObject {

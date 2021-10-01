@@ -11,11 +11,13 @@ import Intents
 
 struct Provider: IntentTimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationIntent())
+        let config =  ConfigurationIntent()
+        config.parameter2 = DisplayCategory.value
+        return SimpleEntry(date: Date(), displayCategory : .All, tasks: [TaskWithIndexPath]())
     }
 
     func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), configuration: configuration)
+        let entry = SimpleEntry(date: Date(), displayCategory : .All, tasks: [TaskWithIndexPath]())
         completion(entry)
     }
 
@@ -24,20 +26,35 @@ struct Provider: IntentTimelineProvider {
 
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
+        for hourOffset in 0 ..< 1 {
             let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
+            
+            let displayCategory: DisplayCatagory = configuration.parameter2 == .value ? .Todos : .All
+            let file : INFile? = configuration.parameter
+            var tasks: [TaskWithIndexPath]
+            
+            if file == nil {
+                tasks = [TaskWithIndexPath]()
+            } else {
+                let doc = try! XPlanerDocument(with: file!)
+                
+                tasks = doc.getAllTasks(of: displayCategory)
+            }
+            
+            let entry = SimpleEntry(date: entryDate, displayCategory : displayCategory, tasks: tasks)
             entries.append(entry)
         }
 
-        let timeline = Timeline(entries: entries, policy: .atEnd)
+        let timeline = Timeline(entries: entries, policy: .never)
         completion(timeline)
     }
 }
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
-    let configuration: ConfigurationIntent
+    
+    let displayCategory : DisplayCatagory
+    let tasks : [TaskWithIndexPath]
 }
 
 struct XPlanner_WidgetEntryView : View {
@@ -47,24 +64,18 @@ struct XPlanner_WidgetEntryView : View {
     var body: some View {
         switch family {
         case .systemSmall:
-            if entry.configuration.parameter2 == DisplayCategory.value {
-                Text(entry.configuration.description)
+            if entry.displayCategory == .All {
+                Text("ALL")
             } else {
-                let file : INFile? = entry.configuration.parameter
-                if file == nil {
-                    Text("Nothing")
-                }else{
-                    Text(file!.fileURL!.path).minimumScaleFactor(0.2)
-                }
-                
+                Text("Todo")
             }
             
         case .systemMedium:
             Text("Medium!!")
         case .systemLarge:
-            Text(entry.date, style: .time)
+            Text(Calendar.current.date(byAdding: .hour, value: 2, to: Date())!, style: .time)
         case .systemExtraLarge:
-            Text(entry.date, style: .time)
+            Text(Calendar.current.date(byAdding: .hour, value: 2, to: Date())!, style: .time)
         default:
             Text(entry.date, style: .time)
         }
@@ -91,11 +102,11 @@ struct XPlanner_Widget_Previews: PreviewProvider {
     
     static var previews: some View {
         Group {
-            XPlanner_WidgetEntryView(entry: SimpleEntry(date: Date(), configuration: ConfigurationIntent()))
+            XPlanner_WidgetEntryView(entry: SimpleEntry(date: Date(),displayCategory : .All, tasks: [TaskWithIndexPath]()))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
-            XPlanner_WidgetEntryView(entry: SimpleEntry(date: Date(), configuration: ConfigurationIntent()))
+            XPlanner_WidgetEntryView(entry: SimpleEntry(date: Date(), displayCategory : .All, tasks: [TaskWithIndexPath]()))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
-            XPlanner_WidgetEntryView(entry: SimpleEntry(date: Date(), configuration: ConfigurationIntent()))
+            XPlanner_WidgetEntryView(entry: SimpleEntry(date: Date(), displayCategory : .All, tasks: [TaskWithIndexPath]()))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
         }
     }

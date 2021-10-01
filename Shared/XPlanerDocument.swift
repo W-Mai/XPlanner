@@ -9,6 +9,8 @@
 import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
+import Intents
+import WidgetKit
 
 struct GroceryProduct: Codable {
     var name: String
@@ -42,7 +44,11 @@ class XPlanerDocument: ReferenceFileDocument, ObservableObject {
     
     typealias Snapshot = PlannerFileStruct
     
-    @Published var plannerData: Snapshot
+    @Published var plannerData: Snapshot {
+        didSet{
+            WidgetCenter.shared.reloadAllTimelines()
+        }
+    }
     
     init() {
         plannerData = Snapshot.init_doc
@@ -51,6 +57,16 @@ class XPlanerDocument: ReferenceFileDocument, ObservableObject {
     required init(configuration: ReadConfiguration) throws {
         guard let data = configuration.file.regularFileContents,
               let extracted_data = try extractData(from: data)
+        else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        plannerData = extracted_data
+    }
+    
+    init(with file : INFile) throws {
+        
+        guard let data = try? FileWrapper(url: file.fileURL!),
+              let extracted_data = try? extractData(from: data.regularFileContents!)
         else {
             throw CocoaError(.fileReadCorruptFile)
         }

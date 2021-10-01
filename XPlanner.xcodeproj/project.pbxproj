@@ -21,6 +21,10 @@
 		EB2BBC27270388E000470E4F /* AuxTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB2BBC25270388E000470E4F /* AuxTools.swift */; };
 		EB3AF4B12704543300293546 /* SmallComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3AF4B02704543300293546 /* SmallComponent.swift */; };
 		EB3AF4B22704543300293546 /* SmallComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3AF4B02704543300293546 /* SmallComponent.swift */; };
+		EB3E7DD827069FD000231BE5 /* XPlanerDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E45D4F3AB85456191AC12D /* XPlanerDocument.swift */; };
+		EB3E7DD927069FD300231BE5 /* XPlanerDocument+Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92E26F6FBCA00956A1A /* XPlanerDocument+Manager.swift */; };
+		EB3E7DDA27069FDB00231BE5 /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
+		EB3E7DDB2706A0C400231BE5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB9A6D322705D09B003487DE /* Localizable.strings */; };
 		EB4C17C826F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB4C17C926F08CA300311D8D /* SwiftUIViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4C17C726F08CA300311D8D /* SwiftUIViewTest.swift */; };
 		EB99F92C26F4DD2200956A1A /* Defs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB99F92B26F4DD2200956A1A /* Defs.swift */; };
@@ -466,6 +470,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB9A6D442705EF6A003487DE /* Assets.xcassets in Resources */,
+				EB3E7DDB2706A0C400231BE5 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,6 +538,9 @@
 			files = (
 				EB9A6D462705EF6A003487DE /* XPlanner_Widget.intentdefinition in Sources */,
 				EB9A6D412705EF69003487DE /* XPlanner_Widget.swift in Sources */,
+				EB3E7DDA27069FDB00231BE5 /* Defs.swift in Sources */,
+				EB3E7DD827069FD000231BE5 /* XPlanerDocument.swift in Sources */,
+				EB3E7DD927069FD300231BE5 /* XPlanerDocument+Manager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

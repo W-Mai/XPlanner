@@ -205,6 +205,26 @@ extension XPlanerDocument {
         })
     }
     
+    func getAllTasks(of displayCategory : DisplayCatagory) -> [TaskWithIndexPath] {
+        var result = [TaskWithIndexPath]()
+        
+        for prjGrp in plannerData.projectGroups {
+            let prjGrpIndex = plannerData.projectGroups.firstIndex(of: prjGrp)!
+            for prj in prjGrp.projects {
+                let prjIndex = prjGrp.projects.firstIndex(of: prj)!
+                for tsk in prj.tasks {
+                    let tskIndex = prj.tasks.firstIndex(of: tsk)!
+                    if displayCategory == .Todos {
+                        if tsk.status != .todo { continue }
+                    }
+                    result.append(TaskWithIndexPath(task: tsk, index: TaskIndexPath(prjGrpIndex: prjGrpIndex, prjIndex: prjIndex, tskIndex: tskIndex)))
+                }
+            }
+        }
+        
+        return result
+    }
+    
     func toggleDisplayMode(simple: Bool ,_ undoManager : UndoManager?){
         plannerData.fileInformations.displayMode = simple ? .SimpleProcessBarMode : .FullSquareMode
         
