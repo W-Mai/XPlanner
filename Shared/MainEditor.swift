@@ -158,7 +158,7 @@ struct ExtractedMainViewView<Content: View>: View {
             
             if env_settings.isEditingMode{
                 Button {
-                    document.addGroup(nameIs: "NEW.PROJECTGROUP.NAME", undoManager)
+                    document.addGroup(nameIs: L("NEW.PROJECTGROUP.NAME"), undoManager)
                 } label: {
                     HStack{
                         Image(systemName: "plus.rectangle").resizable().scaledToFit()
@@ -235,7 +235,7 @@ struct ExtractedMainlyContentView<Content: View>: View {
             if env_settings.isEditingMode{
                 HStack{
                     Button {
-                        document.addProject(nameIs: "NEW.PROJECT.NAME", for: projectGroup.id, undoManager)
+                        document.addProject(nameIs: L("NEW.PROJECT.NAME"), for: projectGroup.id, undoManager)
                     } label: {
                         HStack{
                             Image(systemName: "plus.rectangle").resizable().scaledToFit()
@@ -284,7 +284,7 @@ struct ExtractedTopMenuView: View {
                             }
                             Divider()
                             Button(action:{
-                                document.addGroup(nameIs: "NEW.PROJECTGROUP.NAME", undoManager)
+                                document.addGroup(nameIs: L("NEW.PROJECTGROUP.NAME"), undoManager)
                             }){
                                 Text("MENU.ADDGROUP")
                                 Image(systemName: "plus.app.fill")
