@@ -63,12 +63,13 @@ struct ContentView: View {
                 .animation(.easeInOut(duration: 0.2))
                 .toolbar { ToolbarItem{
                     ExtractedToolBarView(){
-                        document.toggleDisplayMode(simple: env_settings.simpleMode, undoManager)}}
+                        document.toggleDisplayMode(displayMode: env_settings.displayMode, undoManager)}}
                 }
                 
                 
                 ExtractedBottomButtonGroupView()
-                    .offset(y: env_settings.simpleMode ? screen.height : 0)
+                    .offset(y: env_settings.simpleMode || env_settings.isEditingMode ? 100 : 0)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.5))
             }
             .saturation(env_settings.editTaskInfoPresented ? 0.2 : 1)
             .blur(radius: env_settings.editTaskInfoPresented ? 2 : 0)
@@ -310,25 +311,29 @@ struct ExtractedTopMenuView: View {
 
 // MARK: 🔧工具条
 struct ExtractedToolBarView: View {
+    @EnvironmentObject var document : XPlanerDocument
     @EnvironmentObject var env_settings : EnvironmentSettings
     @Environment(\.undoManager) var undoManager
     
-    var onChange : () -> Void
+    var onClick : () -> Void
     
     var body: some View {
         HStack{
-            
-            Button(action: {
-                undoManager?.undo()
-            }){
-                Image(systemName: "arrow.uturn.backward.circle")
+            if undoManager?.canUndo ?? false {
+                Button(action: {
+                    undoManager?.undo()
+                }){
+                    Image(systemName: "arrow.uturn.backward.circle")
+                }
             }
-            .opacity(undoManager?.canUndo ?? false ? 1 : 0)
-//            Button(action: {
-//                undoManager?.redo()
-//            }){
-//                Image(systemName: "arrow.uturn.forward.circle")
-//            }
+            if undoManager?.canRedo ?? false {
+                Button(action: {
+                    undoManager?.redo()
+                }){
+                    Image(systemName: "arrow.uturn.forward.circle")
+                }
+            }
+            
             Spacer()
             if !env_settings.simpleMode {
                 Button(action: {
@@ -338,14 +343,18 @@ struct ExtractedToolBarView: View {
                 }
             }
             Toggle(isOn: $env_settings.simpleMode) {
-            }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"))
-                .onChange(of: env_settings.simpleMode, perform: { value in
+            }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"){
+                env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
+                env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+                onClick()
+            }
+            )
+                .onChange(of: document.plannerData.fileInformations.displayMode, perform: { value in
+                    env_settings.simpleMode = value == .SimpleProcessBarMode
                     env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
                     env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
-                    onChange()
                 })
                 .disabled(env_settings.isEditingMode)
-            
         }
     }
 }

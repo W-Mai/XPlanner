@@ -13,6 +13,7 @@ struct ImageToggleStyle: ToggleStyle {
     
     var onImageName: String
     var offImageName: String
+    var onClick : (()->Void)?
     
     func makeBody(configuration: Configuration) -> some View {
         HStack {
@@ -30,7 +31,10 @@ struct ImageToggleStyle: ToggleStyle {
                         .offset(x: configuration.isOn ? 11 : -11, y: 0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.5))
                 ).cornerRadius(20)
-                .onTapGesture { configuration.isOn.toggle() }
+                .onTapGesture {
+                    configuration.isOn.toggle()
+                    onClick?()
+                }
                 .animation(.spring(response: 0.3, dampingFraction: 0.5))
         }
         

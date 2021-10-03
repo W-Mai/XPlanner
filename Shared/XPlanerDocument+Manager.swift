@@ -9,15 +9,25 @@ import Foundation
 import SwiftUI
 
 extension XPlanerDocument {
-    func addGroup(nameIs grpName : String , _ undoManager : UndoManager?) {
-        plannerData.projectGroups.append(
-            ProjectGroupInfo(
-                name: grpName,
-                projects: [ProjectInfo]()
-            ))
+    func replaceTheWholeFile(with file : [ProjectGroupInfo], _ undoManager : UndoManager?){
+        let old = plannerData.projectGroups
+        
+        plannerData.projectGroups = file
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups.removeLast()
+            doc.replaceTheWholeFile(with: old, undoManager)
+        })
+    }
+    
+    func addGroup(nameIs grpName : String , _ undoManager : UndoManager?) {
+        let res = ProjectGroupInfo(
+            name: grpName,
+            projects: [ProjectInfo]()
+        )
+        plannerData.projectGroups.append(res)
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.removeGroup(idIs: res.id, undoManager)
         })
     }
     
@@ -26,12 +36,12 @@ extension XPlanerDocument {
             grp.id == grpId
         }) else { return }
         
-        let old_data = plannerData.projectGroups[index]
-        
+        let old_data = plannerData.projectGroups
+        print(old_data.count)
         plannerData.projectGroups.remove(at: index)
-        
+        print(old_data.count)
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups.insert(old_data, at: index)
+            doc.replaceTheWholeFile(with: old_data, undoManager)
         })
     }
     
@@ -45,7 +55,7 @@ extension XPlanerDocument {
         plannerData.projectGroups[index].name = name
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups[index].name = old_data
+            doc.updateGroup(to: old_data, idIs: grpId, undoManager)
         })
     }
     
@@ -53,10 +63,12 @@ extension XPlanerDocument {
         guard let index = plannerData.projectGroups.firstIndex (where: { grp in
             grp.id == grpId
         }) else { return }
-        plannerData.projectGroups[index].projects.append(ProjectInfo(name: prjName, tasks: [TaskInfo]()))
+        
+        let res = ProjectInfo(name: prjName, tasks: [TaskInfo]())
+        plannerData.projectGroups[index].projects.append(res)
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups[index].projects.removeLast()
+            doc.removeProject(idIs: res.id, from: grpId, undoManager)
         })
         
     }
@@ -70,12 +82,12 @@ extension XPlanerDocument {
             prj.id == prjId
         }) else { return }
         
-        let old_data = plannerData.projectGroups[index].projects[indexPrj]
+        let old_data = plannerData.projectGroups
         
         plannerData.projectGroups[index].projects.remove(at: indexPrj)
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups[index].projects.insert(old_data, at: index)
+            doc.replaceTheWholeFile(with: old_data, undoManager)
         })
     }
     
@@ -93,7 +105,7 @@ extension XPlanerDocument {
         plannerData.projectGroups[index].projects[indexPrj].name = prjName
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups[index].projects[indexPrj].name = old_data
+            doc.updateProject(to: old_data, idIs: prjId, from: grpId, undoManager)
         })
     }
     
@@ -110,7 +122,7 @@ extension XPlanerDocument {
         plannerData.projectGroups[index].projects[indexPrj].tasks.append(res)
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups[index].projects[indexPrj].tasks.removeLast()
+            doc.removeTask(idIs: res.id, from: prjId, in: grpId, undoManager)
         })
         
         return res
@@ -119,12 +131,10 @@ extension XPlanerDocument {
     func removeTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID , _ undoManager : UndoManager?){
         guard let index = indexOfTask(idIs: tskId, from: prjId, in: grpId) else { return }
         
-        let old_data = plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex]
-        
+        let old_data = plannerData.projectGroups
         plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks.remove(at: index.tskIndex)
-        
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks.insert(old_data, at: index.tskIndex)
+            doc.replaceTheWholeFile(with: old_data, undoManager)
         })
     }
     
@@ -136,7 +146,7 @@ extension XPlanerDocument {
         plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex].status = tskStatus
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex].status = old_status
+            doc.updateTaskStatus(tskStatus: old_status, idIs: tskId, from: prjId, in: grpId, undoManager)
         })
     }
     
@@ -146,7 +156,7 @@ extension XPlanerDocument {
         plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex] = tsk
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex] = old_tsk
+            doc.updateTaskInfo(tsk: old_tsk, for: index, undoManager)
         })
     }
     
@@ -205,11 +215,12 @@ extension XPlanerDocument {
         })
     }
     
-    func toggleDisplayMode(simple: Bool ,_ undoManager : UndoManager?){
-        plannerData.fileInformations.displayMode = simple ? .SimpleProcessBarMode : .FullSquareMode
+    func toggleDisplayMode(displayMode: DisplayMode ,_ undoManager : UndoManager?){
+        let old_val = plannerData.fileInformations.displayMode
+        plannerData.fileInformations.displayMode = displayMode
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
-            doc.toggleDisplayMode(simple: !simple, undoManager)
+            doc.toggleDisplayMode(displayMode: old_val, undoManager)
         })
     }
 }
