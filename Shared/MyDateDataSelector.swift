@@ -18,9 +18,9 @@ class MyCell: UICollectionViewCell {
     var date : Date = Date()
     
     var fnshAndHourGroup : UIView!
-    var fnshLabel : HomePaddingLabel!
-    var hourLabel : HomePaddingLabel!
-    var dateLabel : HomePaddingLabel!
+    var fnshLabel : PaddingLabel!
+    var hourLabel : PaddingLabel!
+    var dateLabel : PaddingLabel!
     var statusDot : UIView!
     
     override init(frame: CGRect) {
@@ -36,9 +36,9 @@ class MyCell: UICollectionViewCell {
     
     func initView(){
         fnshAndHourGroup = UIView(frame: CGRect(x: frame.width * 0.1, y: frame.width * 0.1, width: frame.width * 0.8, height: frame.width * 0.8))
-        fnshLabel = HomePaddingLabel(frame: CGRect(x: 0, y: 0, width: fnshAndHourGroup.frame.width, height: fnshAndHourGroup.frame.height * 0.6))
-        hourLabel = HomePaddingLabel(frame: CGRect(x: 0, y: fnshLabel.frame.height * 0.9, width: fnshLabel.frame.width, height: fnshAndHourGroup.frame.height * 0.4))
-        dateLabel = HomePaddingLabel(frame: CGRect(x: 0, y: frame.height / 4 * 3, width: frame.width, height: frame.height / 4))
+        fnshLabel = PaddingLabel(frame: CGRect(x: 0, y: 0, width: fnshAndHourGroup.frame.width, height: fnshAndHourGroup.frame.height * 0.6))
+        hourLabel = PaddingLabel(frame: CGRect(x: 0, y: fnshLabel.frame.height * 0.9, width: fnshLabel.frame.width, height: fnshAndHourGroup.frame.height * 0.4))
+        dateLabel = PaddingLabel(frame: CGRect(x: 0, y: frame.height / 4 * 3, width: frame.width, height: frame.height / 4))
         statusDot = UIView(frame: CGRect(x: frame.width * 0.45, y: (fnshAndHourGroup.frame.maxY + dateLabel.frame.minY) / 2 - frame.width*0.05, width: frame.width*0.1, height: frame.width*0.1))
         
         fnshLabel.font = UIFont.systemFont(ofSize: 16, weight: .heavy)
