@@ -101,6 +101,8 @@ class MyCell: UICollectionViewCell {
 class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICardScaleFlowLayoutDelegate {
     var scrollingAction: ((Int)->())?
     
+    var source: [DateDataDayInfo]!
+    
     var preIndex : NSInteger = -1
     
     func scrolledToTheCurrentItemAtIndex(itemIndex: NSInteger) {
@@ -114,14 +116,36 @@ class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource
         }
     }
     
+    func findInfo(of date: Date) -> DateDataDayInfo? {
+        let res = source.first { item in
+            let itemDate = Calendar.current.dateComponents([.year, .month, .day], from: item.date)
+            let targetDate = Calendar.current.dateComponents([.year, .month, .day], from: date)
+            return itemDate == targetDate
+        }
+        return res
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        let current = Date()
+        let f = DateFormatter()
+        f.dateFormat = "YYYYMMdd"
+        let fromDate = f.date(from: "20201123")!
+    
+        return Calendar.current.dateComponents([.day], from: fromDate, to: current).day ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! MyCell
         
-        cell.setInfos(finishedTimes: Int.random(in: 0..<10), hours: Double.random(in: 0..<6), date: Date().addingTimeInterval(TimeInterval(indexPath.row * 3600 * 3)))
+        let date = Date()
+        let targetDate = Calendar.current.date(byAdding: Calendar.Component.day, value: -indexPath.row, to: date)!
+        if let info = findInfo(of: targetDate) {
+            cell.setInfos(finishedTimes: info.finishedNumber, hours: info.spentHours, date: info.date)
+        } else {
+            cell.setInfos(finishedTimes: 0, hours: 0, date: targetDate)
+        }
+        
+        
         //        cell.titleLabel?.text = "\(indexPath.row)"
         print("OK", indexPath)
         return cell
@@ -251,6 +275,7 @@ struct MyDateDataSelector: UIViewRepresentable {
     var scrollingAction: ((Int, @escaping (Int)->())->())?
     
     @Binding var currentIndex : Int
+    var datasource : [DateDataDayInfo]
     
     func makeUIView(context: Context) -> UIViewType {
         var mainCollection: UICollectionView!
@@ -258,6 +283,7 @@ struct MyDateDataSelector: UIViewRepresentable {
         var collectionDataSource : MyDataSource!
         
         collectionDataSource = MyDataSource()
+        collectionDataSource.source = datasource
         collectionDataSource.scrollingAction = updateScrollIndexAction(_:)
         
         mainCollectionLayout = UICardScaleFlowLayout()
@@ -341,7 +367,7 @@ struct OK: View {
                 Text("Add")
             })
             
-            MyDateDataSelector(currentIndex: $num)
+            MyDateDataSelector(currentIndex: $num, datasource: [DateDataDayInfo](arrayLiteral: DateDataDayInfo(finishedNumber: 3, spentHours: 1.2, date: Date())))
         }
     }
 }

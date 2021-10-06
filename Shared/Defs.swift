@@ -36,6 +36,12 @@ struct TaskIndexPath : Equatable {
     var tskIndex : Int
 }
 
+struct DateDataDayInfo {
+    var finishedNumber: Int
+    var spentHours: Double
+    var date: Date
+}
+
 // MARK: - 🏞 环境配置
 
 class EnvironmentSettings: ObservableObject {
@@ -188,6 +194,18 @@ extension TaskStatusChangeRecord: Equatable{
             lhs.extra == rhs.extra
     }
 }
+
+extension DateDataDayInfo: Equatable{
+    static func == (lhs: DateDataDayInfo, rhs: DateDataDayInfo) -> Bool {
+        return lhs.finishedNumber == rhs.finishedNumber &&
+            lhs.spentHours == rhs.spentHours &&
+            lhs.date == rhs.date
+    }
+}
+
+//MARK: - 🔧功能拓展
+
+
 
 // MARK: - 💆🏼 文件初始化内容
 
