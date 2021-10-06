@@ -123,7 +123,9 @@ struct ExtractedBottomButtonGroupView: View {
                 Group {
                     Picker("",selection: $env_settings.pickerSelected){
                         Image(systemName: "tray").tag(DisplayCatagory.All)
-                        Image(systemName: "calendar").tag(DisplayCatagory.Todos)
+                        if !env_settings.viewHistoryMode {
+                            Image(systemName: "calendar").tag(DisplayCatagory.Todos)
+                        }
                     }.frame(width: 80, height: 30)
                     .onChange(of: env_settings.pickerSelected) { v in
                         document.updateDisplayCategory(to: env_settings.pickerSelected, undoManager)
@@ -278,7 +280,7 @@ struct ExtractedTopMenuView: View {
             HStack(alignment: .bottom, spacing: 10){
                 Spacer()
                 HStack(spacing: 20){
-                    if env_settings.displayMode == .FullSquareMode && env_settings.pickerSelected == .All {
+                    if env_settings.displayMode == .FullSquareMode && env_settings.pickerSelected == .All && !env_settings.viewHistoryMode {
                         Button(action: {env_settings.isEditingMode.toggle()}){
                             Text(env_settings.isEditingMode ? "BUTTON.DONE" : "BUTTON.EDIT")
                         }
@@ -329,43 +331,45 @@ struct ExtractedToolBarView: View {
     var onClick : () -> Void
     
     var body: some View {
-        HStack{
-            if undoManager?.canUndo ?? false {
-                Button(action: {
-                    undoManager?.undo()
-                }){
-                    Image(systemName: "arrow.uturn.backward.circle")
+        if !env_settings.viewHistoryMode {
+            HStack{
+                if undoManager?.canUndo ?? false {
+                    Button(action: {
+                        undoManager?.undo()
+                    }){
+                        Image(systemName: "arrow.uturn.backward.circle")
+                    }
                 }
-            }
-            if undoManager?.canRedo ?? false {
-                Button(action: {
-                    undoManager?.redo()
-                }){
-                    Image(systemName: "arrow.uturn.forward.circle")
+                if undoManager?.canRedo ?? false {
+                    Button(action: {
+                        undoManager?.redo()
+                    }){
+                        Image(systemName: "arrow.uturn.forward.circle")
+                    }
                 }
-            }
-            
-            Spacer()
-            if !env_settings.simpleMode {
-                Button(action: {
-                    env_settings.goToFirstTodoTask.toggle()
-                }){
-                    Image(systemName: "rays")
+                
+                Spacer()
+                if !env_settings.simpleMode {
+                    Button(action: {
+                        env_settings.goToFirstTodoTask.toggle()
+                    }){
+                        Image(systemName: "rays")
+                    }
                 }
+                Toggle(isOn: $env_settings.simpleMode) {
+                }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"){
+                    env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
+                    env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+                    onClick()
+                }
+                )
+                .onChange(of: document.plannerData.fileInformations.displayMode, perform: { value in
+                    env_settings.simpleMode = value == .SimpleProcessBarMode
+                    env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
+                    env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+                })
+                .disabled(env_settings.isEditingMode)
             }
-            Toggle(isOn: $env_settings.simpleMode) {
-            }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"){
-                env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
-                env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
-                onClick()
-            }
-            )
-            .onChange(of: document.plannerData.fileInformations.displayMode, perform: { value in
-                env_settings.simpleMode = value == .SimpleProcessBarMode
-                env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
-                env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
-            })
-            .disabled(env_settings.isEditingMode)
         }
     }
 }
@@ -474,6 +478,7 @@ struct ExtractedTaskEditViewView: View {
 struct ExtractedHistorySwitchView: View {
     @EnvironmentObject var env_settings : EnvironmentSettings
     
+    @State var setting_backup = EnvironmentSettings(simpleMode: false, displayCategory: .All)
     
     var body: some View {
         VStack{
@@ -483,6 +488,18 @@ struct ExtractedHistorySwitchView: View {
                 VStack{
                     Button(action: {
                         env_settings.viewHistoryMode.toggle()
+                        env_settings.isEditingMode = false
+                        
+                        if env_settings.viewHistoryMode {
+                            setting_backup.displayMode = env_settings.displayMode
+                            setting_backup.simpleMode = env_settings.simpleMode
+                            
+                            env_settings.displayMode = .FullSquareMode
+                            env_settings.simpleMode = false
+                        } else {
+                            env_settings.displayMode = setting_backup.displayMode
+                            env_settings.simpleMode = setting_backup.simpleMode
+                        }
                     }, label: {
                         Image(systemName: "clock.arrow.circlepath")
                     })

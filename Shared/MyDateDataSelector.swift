@@ -353,7 +353,6 @@ struct MyDateDataSelector: UIViewRepresentable {
 
 func extractDateDataInfos(from pln: XPlanerDocument) -> [Date: DateDataDayInfo] {
     var dateTasksMap:[Date:[TaskInfo]] = [:]
-    print(pln.plannerData.taskStatusChanges)
     
     for item in pln.plannerData.taskStatusChanges {
         if item.operate != .finished {
