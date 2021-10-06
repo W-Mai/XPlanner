@@ -55,6 +55,8 @@ class EnvironmentSettings: ObservableObject {
     @Published var editTaskInfoPresented = false
     @Published var goToFirstTodoTask = false
     @Published var viewHistoryMode = false
+    @Published var currentHistoryIndex : Int = 0
+    @Published var filtedTasks : PlannerFileStruct = PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]())
     
     init(simpleMode : Bool, displayCategory: DisplayCatagory) {
         self.simpleMode = simpleMode

@@ -101,6 +101,8 @@ class MyCell: UICollectionViewCell {
 class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICardScaleFlowLayoutDelegate {
     var scrollingAction: ((Int)->())?
     
+    var itemNumber = 0
+    
     var source: [Date : DateDataDayInfo]!
     
     var preIndex : NSInteger = -1
@@ -110,14 +112,14 @@ class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource
         if preIndex != itemIndex {
             MyFeedBack()
             
-            scrollingAction?(xlimit(itemIndex, min: 0, max: 9))
+            scrollingAction?(xlimit(itemIndex, min: 0, max: itemNumber))
             
             preIndex = itemIndex
         }
     }
     
     func findInfo(of date: Date) -> DateDataDayInfo? {
-        let targetDate = Calendar.current.dateComponents([.year, .month, .day, .calendar], from: date).date!
+        let targetDate = formatDateOnlyYMD(date: date)
         return source[targetDate]
     }
     
@@ -127,22 +129,20 @@ class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource
         f.dateFormat = "YYYYMMdd"
         let fromDate = f.date(from: "20201123")!
     
-        return Calendar.current.dateComponents([.day], from: fromDate, to: current).day ?? 0
+        itemNumber = Calendar.current.dateComponents([.day], from: fromDate, to: current).day ?? 0
+        return itemNumber
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! MyCell
         
-        let date = Date()
-        let targetDate = Calendar.current.date(byAdding: Calendar.Component.day, value: -indexPath.row, to: date)!
+        let targetDate = index2date(index: indexPath.row)
         if let info = findInfo(of: targetDate) {
             cell.setInfos(finishedTimes: info.finishedNumber, hours: info.spentHours, date: info.date)
         } else {
             cell.setInfos(finishedTimes: 0, hours: 0, date: targetDate)
         }
         
-        
-        //        cell.titleLabel?.text = "\(indexPath.row)"
         print("OK", indexPath)
         return cell
     }
@@ -378,12 +378,52 @@ func extractDateDataInfos(from pln: XPlanerDocument) -> [Date: DateDataDayInfo] 
         var times: Int = 0
         var hours: Double = 0.0
         
-        for tsk in item.value {
+        for _ in item.value {
             times += 1
             hours += 1
         }
         
         result[item.key] = DateDataDayInfo(finishedNumber: times, spentHours: hours, date: item.key)
+    }
+    
+    return result
+}
+
+func index2date(index: Int) -> Date {
+    let date = Date()
+    let targetDate = Calendar.current.date(byAdding: Calendar.Component.day, value: -index, to: date)!
+    return targetDate
+}
+
+func formatDateOnlyYMD(date: Date) -> Date {
+    return Calendar.current.dateComponents([.year, .month, .day, .calendar], from: date).date!
+}
+
+func filterTasks(pln: XPlanerDocument , on date: Date) -> PlannerFileStruct {
+    var result: PlannerFileStruct = PlannerFileStruct(
+        fileInformations: pln.plannerData.fileInformations,
+        projectGroups: [ProjectGroupInfo](
+            arrayLiteral: ProjectGroupInfo(
+                name: L("TEMPLATE.PROJECTGROUP.NAME"),
+                projects: [ProjectInfo](
+                    arrayLiteral: ProjectInfo(name: L("TASK.STATUS.FINISHED"), tasks: [TaskInfo]())
+                ))),
+        taskStatusChanges: [TaskStatusChangeRecord]())
+    
+    for item in pln.plannerData.taskStatusChanges {
+        let targetDate = formatDateOnlyYMD(date: date)
+        let compatedDate = formatDateOnlyYMD(date: item.changeDate)
+        
+        if targetDate != compatedDate || item.operate != .finished {
+            continue
+        }
+        
+        guard let index = pln.indexOfTask(idIs: item.taskId, from: item.projectId, in: item.groupId)
+        else { continue }
+        
+        result.projectGroups[0].projects[0].tasks.append(
+            pln.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex]
+        )
     }
     
     return result

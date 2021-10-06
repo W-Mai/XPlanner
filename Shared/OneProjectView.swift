@@ -288,10 +288,11 @@ struct ProjectDifferentModeView: View {
                                         env_settings.editTaskInfoPresented = true
                                     }
                                 )
-                                    .padding()
-                                    .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 2, y: 2)
-                                    .drawingGroup()
-                                    .animation(.spring(response: 0.3, dampingFraction: 0.7))
+                                .padding()
+                                .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 2, y: 2)
+                                .drawingGroup()
+                                .animation(.spring(response: 0.3, dampingFraction: 0.7))
+                                .disabled(env_settings.viewHistoryMode)
                             }
                         }.frame(maxWidth: .infinity).frame(height: 120)
                         if env_settings.isEditingMode {

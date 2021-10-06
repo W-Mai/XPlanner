@@ -36,7 +36,7 @@ struct ContentView: View {
                         ScrollViewReader() {proxy in
                             // MARK: 总渲染
                             ExtractedMainViewView(
-                                data: $document.plannerData
+                                data: env_settings.viewHistoryMode ? $env_settings.filtedTasks : $document.plannerData
                             ){ prjGrp in
                                 // MARK: 项目组渲染
                                 ExtractedMainlyContentView(
@@ -79,12 +79,9 @@ struct ContentView: View {
                 .rotation3DEffect(Angle(degrees: env_settings.editTaskInfoPresented ? 30 : 0), axis: (-1, 0, 0))
                 .animation(.spring(response: 0.2))
                 .disabled(env_settings.editTaskInfoPresented)
-                //            .sheet(isPresented: .constant(true)) {
-                //                MyTextFiled(title: "Fuck?", text: .constant("yes"), tilt: Color.blue)
-                //            }
                 
                 ExtractedTopMenuView(
-                    projectGroups: document.plannerData.projectGroups
+                    projectGroups: env_settings.viewHistoryMode ? env_settings.filtedTasks.projectGroups : document.plannerData.projectGroups
                 ).offset(x: env_settings.editTaskInfoPresented ? screen.width : 0)
                 .animation(.spring(response: 0.2))
                 
@@ -96,10 +93,12 @@ struct ContentView: View {
             // TODO: 插入时间调整装置
             
             if env_settings.viewHistoryMode {
-                MyDateDataSelector(currentIndex: .constant(1), datasource: extractDateDataInfos(from: document)).frame(height: 95)
+                MyDateDataSelector(currentIndex: $env_settings.currentHistoryIndex, datasource: extractDateDataInfos(from: document)).frame(height: 95)
                     .transition(.slide)
-                    //                    .offset(y: env_settings.viewHistoryMode ? 0 : -100)
                     .animation(.spring(response: 0.3))
+                    .onChange(of: env_settings.currentHistoryIndex, perform: { value in
+                        env_settings.filtedTasks = filterTasks(pln: document, on: index2date(index: value))
+                    })
             }
         }
     }
@@ -297,11 +296,13 @@ struct ExtractedTopMenuView: View {
                                 })
                             }
                             Divider()
-                            Button(action:{
-                                document.addGroup(nameIs: L("NEW.PROJECTGROUP.NAME"), undoManager)
-                            }){
-                                Text("MENU.ADDGROUP")
-                                Image(systemName: "plus.app.fill")
+                            if !env_settings.viewHistoryMode {
+                                Button(action:{
+                                    document.addGroup(nameIs: L("NEW.PROJECTGROUP.NAME"), undoManager)
+                                }){
+                                    Text("MENU.ADDGROUP")
+                                    Image(systemName: "plus.app.fill")
+                                }
                             }
                         } label: {
                             Image(systemName: "list.bullet.rectangle")
@@ -476,6 +477,7 @@ struct ExtractedTaskEditViewView: View {
 //MARK: - 📅底部历史记录按钮
 
 struct ExtractedHistorySwitchView: View {
+    @EnvironmentObject var document : XPlanerDocument
     @EnvironmentObject var env_settings : EnvironmentSettings
     
     @State var setting_backup = EnvironmentSettings(simpleMode: false, displayCategory: .All)
@@ -493,6 +495,8 @@ struct ExtractedHistorySwitchView: View {
                         if env_settings.viewHistoryMode {
                             setting_backup.displayMode = env_settings.displayMode
                             setting_backup.simpleMode = env_settings.simpleMode
+                            
+                            env_settings.filtedTasks = filterTasks(pln: document, on: index2date(index: 0))
                             
                             env_settings.displayMode = .FullSquareMode
                             env_settings.simpleMode = false
