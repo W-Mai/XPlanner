@@ -29,67 +29,69 @@ struct ContentView: View {
     @State var scrollProxy : ScrollViewProxy? = nil
     
     var body: some View {
-        ZStack {
-            ZStack{
-                ScrollView(.vertical){
-                    ScrollViewReader() {proxy in
-                        // MARK: 总渲染
-                        ExtractedMainViewView(
-                            data: $document.plannerData
-                        ){ prjGrp in
-                            // MARK: 项目组渲染
-                            ExtractedMainlyContentView(
-                                projectGroup: prjGrp
-                            ){ prj in
-                                // MARK: 项目渲染
-                                OneProjectView(
-                                    project : prj,
-                                    prjGrpId: prjGrp.id,
-                                    isEditingMode: $env_settings.isEditingMode,
-                                    displayMode: env_settings.displayMode,
-                                    isSelected: $env_settings.isSelected)
+        VStack {
+            ZStack {
+                ZStack{
+                    ScrollView(.vertical){
+                        ScrollViewReader() {proxy in
+                            // MARK: 总渲染
+                            ExtractedMainViewView(
+                                data: $document.plannerData
+                            ){ prjGrp in
+                                // MARK: 项目组渲染
+                                ExtractedMainlyContentView(
+                                    projectGroup: prjGrp
+                                ){ prj in
+                                    // MARK: 项目渲染
+                                    OneProjectView(
+                                        project : prj,
+                                        prjGrpId: prjGrp.id,
+                                        isEditingMode: $env_settings.isEditingMode,
+                                        displayMode: env_settings.displayMode,
+                                        isSelected: $env_settings.isSelected)
+                                }
+                            }
+                            .onAppear(){
+                                env_settings.scrollProxy = proxy
                             }
                         }
-                        .onAppear(){
-                            env_settings.scrollProxy = proxy
-                        }
+                        
+                        VStack{}.frame(height: 100)
+                    }
+                    .frame(maxHeight: .infinity)
+                    .foregroundColor(.accentColor)
+                    //            .background(LinearGradient(colors: [.white, .gray], startPoint: .top, endPoint: .bottom))
+                    .animation(.easeInOut(duration: 0.2))
+                    .toolbar { ToolbarItem{
+                        ExtractedToolBarView(){
+                            document.toggleDisplayMode(displayMode: env_settings.displayMode, undoManager)}}
                     }
                     
-                    VStack{}.frame(height: 100)
+                    
+                    ExtractedBottomButtonGroupView()
+                        .offset(y: env_settings.simpleMode || env_settings.isEditingMode ? 100 : 0)
+                        .animation(.spring(response: 0.4, dampingFraction: 0.5))
                 }
-                .frame(maxHeight: .infinity)
-                .foregroundColor(.accentColor)
-                //            .background(LinearGradient(colors: [.white, .gray], startPoint: .top, endPoint: .bottom))
-                .animation(.easeInOut(duration: 0.2))
-                .toolbar { ToolbarItem{
-                    ExtractedToolBarView(){
-                        document.toggleDisplayMode(displayMode: env_settings.displayMode, undoManager)}}
-                }
-                
-                
-                ExtractedBottomButtonGroupView()
-                    .offset(y: env_settings.simpleMode || env_settings.isEditingMode ? 100 : 0)
-                    .animation(.spring(response: 0.4, dampingFraction: 0.5))
-            }
-            .saturation(env_settings.editTaskInfoPresented ? 0.2 : 1)
-            .blur(radius: env_settings.editTaskInfoPresented ? 2 : 0)
-            .scaleEffect(env_settings.editTaskInfoPresented ? 0.5 : 1)
-            .offset(y: env_settings.editTaskInfoPresented ? -screen.height / 4 : 0)
-            .rotation3DEffect(Angle(degrees: env_settings.editTaskInfoPresented ? 30 : 0), axis: (-1, 0, 0))
-            .animation(.spring(response: 0.2))
-            .disabled(env_settings.editTaskInfoPresented)
-            //            .sheet(isPresented: .constant(true)) {
-            //                MyTextFiled(title: "Fuck?", text: .constant("yes"), tilt: Color.blue)
-            //            }
-            
-            ExtractedTopMenuView(
-                projectGroups: document.plannerData.projectGroups
-            ).offset(x: env_settings.editTaskInfoPresented ? screen.width : 0)
+                .saturation(env_settings.editTaskInfoPresented ? 0.2 : 1)
+                .blur(radius: env_settings.editTaskInfoPresented ? 2 : 0)
+                .scaleEffect(env_settings.editTaskInfoPresented ? 0.5 : 1)
+                .offset(y: env_settings.editTaskInfoPresented ? -screen.height / 4 : 0)
+                .rotation3DEffect(Angle(degrees: env_settings.editTaskInfoPresented ? 30 : 0), axis: (-1, 0, 0))
                 .animation(.spring(response: 0.2))
+                .disabled(env_settings.editTaskInfoPresented)
+                //            .sheet(isPresented: .constant(true)) {
+                //                MyTextFiled(title: "Fuck?", text: .constant("yes"), tilt: Color.blue)
+                //            }
+                
+                ExtractedTopMenuView(
+                    projectGroups: document.plannerData.projectGroups
+                ).offset(x: env_settings.editTaskInfoPresented ? screen.width : 0)
+                    .animation(.spring(response: 0.2))
+                
+                ExtractedTaskEditViewView()
+            }
             
-            ExtractedTaskEditViewView()
-            
-            
+            // TODO: 插入时间调整装置
         }
     }
 }
@@ -392,7 +394,7 @@ struct ExtractedTaskEditViewView: View {
                     }.padding([.vertical], 40)
                         .padding(.horizontal, 30)
                 }.frame(height: 200)
-                    .background(LinearGradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")], startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
+                .background(LinearGradient(gradient: Gradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")]), startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
                     .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
                     .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
                 
@@ -415,7 +417,7 @@ struct ExtractedTaskEditViewView: View {
             
             .offset(x: dragOffset.width * 2, y: dragOffset.height * 2)
             .rotation3DEffect(Angle(degrees: Double(dragOffset.height) / 2), axis: (-1, 0, 0))
-            .brightness(-dragOffset.height / 200)
+            .brightness(-Double(dragOffset.height) / 200)
             
             .opacity(env_settings.editTaskInfoPresented ? 1 : 0)
             .scaleEffect(env_settings.editTaskInfoPresented ? 1 : 0.2)
