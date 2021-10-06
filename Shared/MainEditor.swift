@@ -96,7 +96,7 @@ struct ContentView: View {
             // TODO: 插入时间调整装置
             
             if env_settings.viewHistoryMode {
-                MyDateDataSelector().frame(height: 95)
+                MyDateDataSelector(currentIndex: .constant(1)).frame(height: 95)
                     .transition(.slide)
                     //                    .offset(y: env_settings.viewHistoryMode ? 0 : -100)
                     .animation(.spring(response: 0.3))

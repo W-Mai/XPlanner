@@ -99,14 +99,19 @@ class MyCell: UICollectionViewCell {
 }
 
 class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICardScaleFlowLayoutDelegate {
+    var scrollingAction: ((Int)->())?
+    
     var preIndex : NSInteger = -1
+    
     func scrolledToTheCurrentItemAtIndex(itemIndex: NSInteger) {
+        
         if preIndex != itemIndex {
             MyFeedBack()
             
+            scrollingAction?(xlimit(itemIndex, min: 0, max: 9))
+            
             preIndex = itemIndex
         }
-        print("???", itemIndex)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -115,9 +120,9 @@ class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! MyCell
-
+        
         cell.setInfos(finishedTimes: Int.random(in: 0..<10), hours: Double.random(in: 0..<6), date: Date().addingTimeInterval(TimeInterval(indexPath.row * 3600 * 3)))
-//        cell.titleLabel?.text = "\(indexPath.row)"
+        //        cell.titleLabel?.text = "\(indexPath.row)"
         print("OK", indexPath)
         return cell
     }
@@ -138,8 +143,8 @@ class UICardScaleFlowLayout: UICollectionViewLayout {
     var sectionEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     var scale:CGFloat = 0.80
     var currentItemIndex = CGFloat(0.0)
-    var delegate:UICardScaleFlowLayoutDelegate?
-
+    var delegate: UICardScaleFlowLayoutDelegate?
+    
     override func prepare() {
         super.prepare()
         itemCount = self.collectionView?.numberOfItems(inSection: 0) ?? 0
@@ -164,7 +169,7 @@ class UICardScaleFlowLayout: UICollectionViewLayout {
             + itemSize.height
         return CGSize(width: contentWidth , height: contentHeight)
     }
-
+    
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         
         let attr = UICollectionViewLayoutAttributes.init(forCellWith: indexPath)
@@ -182,11 +187,11 @@ class UICardScaleFlowLayout: UICollectionViewLayout {
         var attributes:[UICollectionViewLayoutAttributes] = []
         
         let componentWidth: CGFloat = (self.collectionView?.frame.width)!
-
+        
         let centerX = self.collectionView!.contentOffset.x + componentWidth / 2
         
-        let itemIndex = floor(CGFloat(self.collectionView!.contentOffset.x / (itemSize.width + internalItemSpacing)) + 0.5)
-        delegate?.scrolledToTheCurrentItemAtIndex(itemIndex: NSInteger(itemIndex))
+        let itemIndex: NSInteger = NSInteger(floor(CGFloat(self.collectionView!.contentOffset.x / (itemSize.width + internalItemSpacing)) + 0.5))
+        delegate?.scrolledToTheCurrentItemAtIndex(itemIndex: itemIndex)
         
         for i in 0..<itemCount {
             let indexPath = IndexPath.init(row: i, section: 0)
@@ -220,30 +225,43 @@ class UICardScaleFlowLayout: UICollectionViewLayout {
     }
     
     override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint,
-                             withScrollingVelocity velocity: CGPoint) -> CGPoint {
+                                      withScrollingVelocity velocity: CGPoint) -> CGPoint {
         let itemIndex = CGFloat(self.collectionView!.contentOffset.x / (itemSize.width + internalItemSpacing))
         currentItemIndex = CGFloat(floor(Double(itemIndex + 3 * velocity.x) + 0.5))
         let xOffset = currentItemIndex * (internalItemSpacing + itemSize.width)
         return CGPoint(x: xOffset, y: 0)
     }
-
+    
 }
 
+struct MyDateDataSelectorReader: View {
+    var view : MyDateDataSelector
+    var function: ()->()
+    
+    var body: some View {
+        function()
+        
+        return view
+    }
+}
 
 struct MyDateDataSelector: UIViewRepresentable {
     typealias UIViewType = UICollectionView
+    
+    var scrollingAction: ((Int, @escaping (Int)->())->())?
+    
+    @Binding var currentIndex : Int
     
     func makeUIView(context: Context) -> UIViewType {
         var mainCollection: UICollectionView!
         var mainCollectionLayout : UICardScaleFlowLayout!
         var collectionDataSource : MyDataSource!
         
-        
         collectionDataSource = MyDataSource()
+        collectionDataSource.scrollingAction = updateScrollIndexAction(_:)
         
         mainCollectionLayout = UICardScaleFlowLayout()
         mainCollectionLayout.itemSize = CGSize(width: 50, height: 75)
-        
         mainCollectionLayout.delegate = collectionDataSource
         
         mainCollection = UIViewType(frame: .zero, collectionViewLayout: mainCollectionLayout)
@@ -261,41 +279,77 @@ struct MyDateDataSelector: UIViewRepresentable {
     
     func updateUIView(_ uiView: UIViewType, context: Context) {
         
+        //        if targetIndex != -1{
+        //        uiView.scrollToItem(at: IndexPath(row: context.coordinator.index.wrappedValue, section: 0), at: .centeredHorizontally, animated: true)
+        //            targetIndex = -1
+        //        }
     }
     
     static func dismantleUIView(_ uiView: UIViewType, coordinator: Coordinator) {
         
     }
     
-    class Coordinator: NSObject {
+    func updateScrollIndexAction(_ index: Int) {
+        currentIndex = index
         
+        scrollingAction?(index, scrollTo(index:))
+    }
+    
+    func scrollTo(index: Int) {
+        //        targetIndex = index
+    }
+    
+    class Coordinator: NSObject {
+        var index : Binding<Int>
+        
+        var lastTargetIndex : Int = 0
+        var targetIndex : Int = 0
+        
+        init(index : Binding<Int>) {
+            self.index = index
+        }
     }
     
     func makeCoordinator() -> Coordinator {
-        return Coordinator()
+        return Coordinator(index: $currentIndex)
     }
     
-//    func _identifiedViewTree(in uiView: UIViewType) -> _IdentifiedViewTree {
-//
-//    }
-//
-//    func _overrideSizeThatFits(_ size: inout CGSize, in proposedSize: _ProposedSize, uiView: UIViewType) {
-//
-//    }
-//
-//    func _overrideLayoutTraits(_ layoutTraits: inout _LayoutTraits, for uiView: UIViewType) {
-//
-//    }
+    //    func _identifiedViewTree(in uiView: UIViewType) -> _IdentifiedViewTree {
+    //
+    //    }
+    //
+    //    func _overrideSizeThatFits(_ size: inout CGSize, in proposedSize: _ProposedSize, uiView: UIViewType) {
+    //
+    //    }
+    //
+    //    func _overrideLayoutTraits(_ layoutTraits: inout _LayoutTraits, for uiView: UIViewType) {
+    //
+    //    }
+}
+
+struct OK: View {
+    @State var num : Int = 0
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+    @State var scrollToFunc : ((Int)->())? = nil
+    
+    var body: some View{
+        VStack{
+            Text("\(num)")
+            Button(action: {
+                num += 1
+            }, label: {
+                Text("Add")
+            })
+            
+            MyDateDataSelector(currentIndex: $num)
+        }
     }
 }
 
 struct MyDateDataSelector_Previews: PreviewProvider {
+    
+    
     static var previews: some View {
-        ZStack{
-            MyDateDataSelector()
-        }
+        OK()
     }
 }

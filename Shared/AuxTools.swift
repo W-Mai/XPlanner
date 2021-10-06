@@ -30,3 +30,7 @@ extension UIView {
         self.layer.masksToBounds = false
     }
 }
+
+func xlimit<T>(_ num: T, min a: T, max b: T) -> T where T:Comparable {
+    return num < a ? a : num > b ? b : num
+}
