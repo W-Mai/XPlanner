@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct MyTextFiled: View {
     var title : String
@@ -25,6 +26,28 @@ struct MyTextFiled: View {
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .frame(height: 40)
     }
+}
+
+class HomePaddingLabel: UILabel {
+    
+    var textInsets: UIEdgeInsets = .zero
+    
+    override func drawText(in rect: CGRect) {
+        super.drawText(in: rect.inset(by: textInsets))
+    }
+    
+    override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        let insets = textInsets
+        var rect = super.textRect(forBounds: bounds.inset(by: insets),
+                                  limitedToNumberOfLines: numberOfLines)
+        
+        rect.origin.x -= insets.left
+        rect.origin.y -= insets.top
+        rect.size.width += (insets.left + insets.right)
+        rect.size.height += (insets.top + insets.bottom)
+        return rect
+    }
+    
 }
 
 struct MyDateScroller : View {
