@@ -46,6 +46,10 @@ class XPlanerDocument: ReferenceFileDocument, ObservableObject {
     
     init() {
         plannerData = Snapshot.init_doc
+        
+        var tsk = plannerData.projectGroups[0].projects[0].tasks[0]
+        tsk.status = .finished
+        updateTaskInfo(tsk: tsk, for: TaskIndexPath(prjGrpIndex: 0, prjIndex: 0, tskIndex: 0), nil)
     }
     
     required init(configuration: ReadConfiguration) throws {
