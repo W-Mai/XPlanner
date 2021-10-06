@@ -125,7 +125,7 @@ struct ExtractedBottomButtonGroupView: View {
                         if !env_settings.viewHistoryMode {
                             Image(systemName: "calendar").tag(DisplayCatagory.Todos)
                         }
-                    }.frame(width: 80, height: 30)
+                    }.frame(width: env_settings.viewHistoryMode ? 40 : 80, height: 30)
                     .onChange(of: env_settings.pickerSelected) { v in
                         document.updateDisplayCategory(to: env_settings.pickerSelected, undoManager)
                     }
@@ -495,14 +495,17 @@ struct ExtractedHistorySwitchView: View {
                         if env_settings.viewHistoryMode {
                             setting_backup.displayMode = env_settings.displayMode
                             setting_backup.simpleMode = env_settings.simpleMode
+                            setting_backup.pickerSelected = env_settings.pickerSelected
                             
                             env_settings.filtedTasks = filterTasks(pln: document, on: index2date(index: 0))
                             
                             env_settings.displayMode = .FullSquareMode
                             env_settings.simpleMode = false
+                            env_settings.pickerSelected = .All
                         } else {
                             env_settings.displayMode = setting_backup.displayMode
                             env_settings.simpleMode = setting_backup.simpleMode
+                            env_settings.pickerSelected = setting_backup.pickerSelected
                         }
                     }, label: {
                         Image(systemName: "clock.arrow.circlepath")
