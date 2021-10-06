@@ -29,67 +29,78 @@ struct ContentView: View {
     @State var scrollProxy : ScrollViewProxy? = nil
     
     var body: some View {
-        ZStack {
-            ZStack{
-                ScrollView(.vertical){
-                    ScrollViewReader() {proxy in
-                        // MARK: 总渲染
-                        ExtractedMainViewView(
-                            data: $document.plannerData
-                        ){ prjGrp in
-                            // MARK: 项目组渲染
-                            ExtractedMainlyContentView(
-                                projectGroup: prjGrp
-                            ){ prj in
-                                // MARK: 项目渲染
-                                OneProjectView(
-                                    project : prj,
-                                    prjGrpId: prjGrp.id,
-                                    isEditingMode: $env_settings.isEditingMode,
-                                    displayMode: env_settings.displayMode,
-                                    isSelected: $env_settings.isSelected)
+        VStack(spacing: 0) {
+            ZStack {
+                ZStack{
+                    ScrollView(.vertical){
+                        ScrollViewReader() {proxy in
+                            // MARK: 总渲染
+                            ExtractedMainViewView(
+                                data: $document.plannerData
+                            ){ prjGrp in
+                                // MARK: 项目组渲染
+                                ExtractedMainlyContentView(
+                                    projectGroup: prjGrp
+                                ){ prj in
+                                    // MARK: 项目渲染
+                                    OneProjectView(
+                                        project : prj,
+                                        prjGrpId: prjGrp.id,
+                                        isEditingMode: $env_settings.isEditingMode,
+                                        displayMode: env_settings.displayMode,
+                                        isSelected: $env_settings.isSelected)
+                                }
+                            }
+                            .onAppear(){
+                                env_settings.scrollProxy = proxy
                             }
                         }
-                        .onAppear(){
-                            env_settings.scrollProxy = proxy
-                        }
+                        
+                        VStack{}.frame(height: 100)
+                    }
+                    .frame(maxHeight: .infinity)
+                    .foregroundColor(.accentColor)
+                    //            .background(LinearGradient(colors: [.white, .gray], startPoint: .top, endPoint: .bottom))
+                    .animation(.easeInOut(duration: 0.2))
+                    .toolbar { ToolbarItem{
+                        ExtractedToolBarView(){
+                            document.toggleDisplayMode(displayMode: env_settings.displayMode, undoManager)}}
                     }
                     
-                    VStack{}.frame(height: 100)
+                    
+                    ExtractedBottomButtonGroupView()
+                        .offset(y: env_settings.simpleMode || env_settings.isEditingMode ? 100 : 0)
+                        .animation(.spring(response: 0.4, dampingFraction: 0.5))
                 }
-                .frame(maxHeight: .infinity)
-                .foregroundColor(.accentColor)
-                //            .background(LinearGradient(colors: [.white, .gray], startPoint: .top, endPoint: .bottom))
-                .animation(.easeInOut(duration: 0.2))
-                .toolbar { ToolbarItem{
-                    ExtractedToolBarView(){
-                        document.toggleDisplayMode(displayMode: env_settings.displayMode, undoManager)}}
-                }
-                
-                
-                ExtractedBottomButtonGroupView()
-                    .offset(y: env_settings.simpleMode || env_settings.isEditingMode ? 100 : 0)
-                    .animation(.spring(response: 0.4, dampingFraction: 0.5))
-            }
-            .saturation(env_settings.editTaskInfoPresented ? 0.2 : 1)
-            .blur(radius: env_settings.editTaskInfoPresented ? 2 : 0)
-            .scaleEffect(env_settings.editTaskInfoPresented ? 0.5 : 1)
-            .offset(y: env_settings.editTaskInfoPresented ? -screen.height / 4 : 0)
-            .rotation3DEffect(Angle(degrees: env_settings.editTaskInfoPresented ? 30 : 0), axis: (-1, 0, 0))
-            .animation(.spring(response: 0.2))
-            .disabled(env_settings.editTaskInfoPresented)
-            //            .sheet(isPresented: .constant(true)) {
-            //                MyTextFiled(title: "Fuck?", text: .constant("yes"), tilt: Color.blue)
-            //            }
-            
-            ExtractedTopMenuView(
-                projectGroups: document.plannerData.projectGroups
-            ).offset(x: env_settings.editTaskInfoPresented ? screen.width : 0)
+                .saturation(env_settings.editTaskInfoPresented ? 0.2 : 1)
+                .blur(radius: env_settings.editTaskInfoPresented ? 2 : 0)
+                .scaleEffect(env_settings.editTaskInfoPresented ? 0.5 : 1)
+                .offset(y: env_settings.editTaskInfoPresented ? -screen.height / 4 : 0)
+                .rotation3DEffect(Angle(degrees: env_settings.editTaskInfoPresented ? 30 : 0), axis: (-1, 0, 0))
                 .animation(.spring(response: 0.2))
+                .disabled(env_settings.editTaskInfoPresented)
+                //            .sheet(isPresented: .constant(true)) {
+                //                MyTextFiled(title: "Fuck?", text: .constant("yes"), tilt: Color.blue)
+                //            }
+                
+                ExtractedTopMenuView(
+                    projectGroups: document.plannerData.projectGroups
+                ).offset(x: env_settings.editTaskInfoPresented ? screen.width : 0)
+                .animation(.spring(response: 0.2))
+                
+                ExtractedTaskEditViewView()
+                
+                ExtractedHistorySwitchView()
+            }
             
-            ExtractedTaskEditViewView()
+            // TODO: 插入时间调整装置
             
-            
+            if env_settings.viewHistoryMode {
+                MyDateDataSelector().frame(height: 95)
+                    .transition(.slide)
+                    //                    .offset(y: env_settings.viewHistoryMode ? 0 : -100)
+                    .animation(.spring(response: 0.3))
+            }
         }
     }
 }
@@ -114,10 +125,10 @@ struct ExtractedBottomButtonGroupView: View {
                         Image(systemName: "tray").tag(DisplayCatagory.All)
                         Image(systemName: "calendar").tag(DisplayCatagory.Todos)
                     }.frame(width: 80, height: 30)
-                        .onChange(of: env_settings.pickerSelected) { v in
-                            document.updateDisplayCategory(to: env_settings.pickerSelected, undoManager)
-                        }
-                        
+                    .onChange(of: env_settings.pickerSelected) { v in
+                        document.updateDisplayCategory(to: env_settings.pickerSelected, undoManager)
+                    }
+                    
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(10)
@@ -167,7 +178,7 @@ struct ExtractedMainViewView<Content: View>: View {
                         Text("MENU.ADDGROUP").font(.title)
                             .fontWeight(.bold)
                     }.frame(height: 30)
-                        .padding([.leading, .bottom], 20)
+                    .padding([.leading, .bottom], 20)
                 }
             }
         }
@@ -294,7 +305,7 @@ struct ExtractedTopMenuView: View {
                             Image(systemName: "list.bullet.rectangle")
                                 .font(.system(size: 20, weight: .bold))
                         }.frame(maxWidth: 30)
-                            .menuStyle(BorderlessButtonMenuStyle())
+                        .menuStyle(BorderlessButtonMenuStyle())
                     }
                 }
                 .padding()
@@ -349,12 +360,12 @@ struct ExtractedToolBarView: View {
                 onClick()
             }
             )
-                .onChange(of: document.plannerData.fileInformations.displayMode, perform: { value in
-                    env_settings.simpleMode = value == .SimpleProcessBarMode
-                    env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
-                    env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
-                })
-                .disabled(env_settings.isEditingMode)
+            .onChange(of: document.plannerData.fileInformations.displayMode, perform: { value in
+                env_settings.simpleMode = value == .SimpleProcessBarMode
+                env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
+                env_settings.displayMode = env_settings.simpleMode ? .SimpleProcessBarMode : .FullSquareMode
+            })
+            .disabled(env_settings.isEditingMode)
         }
     }
 }
@@ -390,11 +401,11 @@ struct ExtractedTaskEditViewView: View {
                             Text("TASK.STATUS.FINISHED").tag(TaskStatus.finished)
                         }.pickerStyle(SegmentedPickerStyle())
                     }.padding([.vertical], 40)
-                        .padding(.horizontal, 30)
+                    .padding(.horizontal, 30)
                 }.frame(height: 200)
-                    .background(LinearGradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")], startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
-                    .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
-                    .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
+                .background(LinearGradient(gradient: Gradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")]), startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
+                .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
                 
                 VStack{
                     Spacer()
@@ -415,7 +426,7 @@ struct ExtractedTaskEditViewView: View {
             
             .offset(x: dragOffset.width * 2, y: dragOffset.height * 2)
             .rotation3DEffect(Angle(degrees: Double(dragOffset.height) / 2), axis: (-1, 0, 0))
-            .brightness(-dragOffset.height / 200)
+            .brightness(-Double(dragOffset.height) / 200)
             
             .opacity(env_settings.editTaskInfoPresented ? 1 : 0)
             .scaleEffect(env_settings.editTaskInfoPresented ? 1 : 0.2)
@@ -453,11 +464,56 @@ struct ExtractedTaskEditViewView: View {
                     }
             )
         }.opacity(env_settings.editTaskInfoPresented ? 1 : 0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7))
+        .animation(.spring(response: 0.3, dampingFraction: 0.7))
         
     }
 }
 
+//MARK: - 📅底部历史记录按钮
+
+struct ExtractedHistorySwitchView: View {
+    @EnvironmentObject var env_settings : EnvironmentSettings
+    
+    
+    var body: some View {
+        VStack{
+            Spacer()
+            HStack {
+                Spacer()
+                VStack{
+                    Button(action: {
+                        env_settings.viewHistoryMode.toggle()
+                    }, label: {
+                        Image(systemName: "clock.arrow.circlepath")
+                    })
+                }.padding(5)
+                .frame(width: 30, height: 30, alignment: .center)
+                .background(Path { path in
+                    let w = 30, h = 30
+                    let tr = min(min(15, h/2), w/2)
+                    let tl = min(min(15, h/2), w/2)
+                    let bl = min(min(0, h/2), w/2)
+                    let br = min(min(0, h/2), w/2)
+                    
+                    path.move(to: CGPoint(x: w / Int(2.0), y: 0))
+                    path.addLine(to: CGPoint(x: w - tr, y: 0))
+                    path.addArc(center: CGPoint(x: w - tr, y: tr), radius: CGFloat(tr), startAngle: Angle(degrees: -90), endAngle: Angle(degrees: 0), clockwise: false)
+                    path.addLine(to: CGPoint(x: w, y: h - br))
+                    path.addArc(center: CGPoint(x: w - br, y: h - br), radius: CGFloat(br), startAngle: Angle(degrees: 0), endAngle: Angle(degrees: 90), clockwise: false)
+                    path.addLine(to: CGPoint(x: bl, y: h))
+                    path.addArc(center: CGPoint(x: bl, y: h - bl), radius: CGFloat(bl), startAngle: Angle(degrees: 90), endAngle: Angle(degrees: 180), clockwise: false)
+                    path.addLine(to: CGPoint(x: 0, y: tl))
+                    path.addArc(center: CGPoint(x: tl, y: tl), radius: CGFloat(tl), startAngle: Angle(degrees: 180), endAngle: Angle(degrees: 270), clockwise: false)
+                    
+                }.fill(Color("BarsBackgroundColor")))
+                .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 0, y: 0)
+            }.padding(.trailing, 10)
+        }
+    }
+}
+
+
 //MARK: - ☹️一些全局常量
 
 let screen = UIScreen.main.bounds
+

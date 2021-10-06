@@ -128,7 +128,7 @@ struct OneTaskView: View {
         //        .blur(radius: task.status == .finished ? 10 : 0)
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(LinearGradient(colors: [Color("FavoriteColor5").opacity(0.3), Color("FavoriteColor6")], startPoint: .leading, endPoint: .bottom), lineWidth: lineWidthMap[task.status]!)
+                .stroke(LinearGradient(gradient: Gradient(colors: [Color("FavoriteColor5").opacity(0.3), Color("FavoriteColor6")]), startPoint: .leading, endPoint: .bottom), lineWidth: CGFloat(lineWidthMap[task.status]!))
         )
         .overlay(
             Text(getStatusText())
