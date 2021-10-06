@@ -77,8 +77,10 @@ struct FileFormatVersion : Codable, Comparable{
 /// 任务状态改变记录，记录任务状态改变情况，方便查看每日完成情况
 struct TaskStatusChangeRecord : Codable {
     var taskId : UUID
+    var projectId : UUID
+    var groupId : UUID
     var changeDate : Date
-    var operate : TaskInfo
+    var operate : TaskStatus
     
     var extra : String?
 }

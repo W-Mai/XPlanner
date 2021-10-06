@@ -9,10 +9,12 @@ import Foundation
 import SwiftUI
 
 extension XPlanerDocument {
-    func replaceTheWholeFile(with file : [ProjectGroupInfo], _ undoManager : UndoManager?){
-        let old = plannerData.projectGroups
+    func replaceTheWholeFile(with file : PlannerFileStruct, _ undoManager : UndoManager?){
+        let old = plannerData
         
-        plannerData.projectGroups = file
+        plannerData.fileInformations = file.fileInformations
+        plannerData.projectGroups = file.projectGroups
+        plannerData.taskStatusChanges = file.taskStatusChanges
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.replaceTheWholeFile(with: old, undoManager)
@@ -36,10 +38,8 @@ extension XPlanerDocument {
             grp.id == grpId
         }) else { return }
         
-        let old_data = plannerData.projectGroups
-        print(old_data.count)
+        let old_data = plannerData
         plannerData.projectGroups.remove(at: index)
-        print(old_data.count)
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.replaceTheWholeFile(with: old_data, undoManager)
         })
@@ -82,7 +82,7 @@ extension XPlanerDocument {
             prj.id == prjId
         }) else { return }
         
-        let old_data = plannerData.projectGroups
+        let old_data = plannerData
         
         plannerData.projectGroups[index].projects.remove(at: indexPrj)
         
@@ -131,7 +131,7 @@ extension XPlanerDocument {
     func removeTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID , _ undoManager : UndoManager?){
         guard let index = indexOfTask(idIs: tskId, from: prjId, in: grpId) else { return }
         
-        let old_data = plannerData.projectGroups
+        let old_data = plannerData
         plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks.remove(at: index.tskIndex)
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.replaceTheWholeFile(with: old_data, undoManager)
@@ -145,6 +145,9 @@ extension XPlanerDocument {
         
         plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex].status = tskStatus
         
+        //FIXME: - 撤销无法删除记录
+        _ = addTaskChangeRecord(tskIndex: index, at: Date(), statusIs: tskStatus)
+        
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.updateTaskStatus(tskStatus: old_status, idIs: tskId, from: prjId, in: grpId, undoManager)
         })
@@ -155,9 +158,38 @@ extension XPlanerDocument {
         
         plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex] = tsk
         
+        //FIXME: - 撤销无法删除记录
+        _ = addTaskChangeRecord(tskIndex: index, at: Date(), statusIs: tsk.status)
+        
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.updateTaskInfo(tsk: old_tsk, for: index, undoManager)
         })
+    }
+    
+    func addTaskChangeRecord(tskIndex: TaskIndexPath, at date: Date, statusIs status: TaskStatus) -> TaskStatusChangeRecord? {
+        let prjGrp = plannerData.projectGroups[tskIndex.prjGrpIndex]
+        let prj = prjGrp.projects[tskIndex.prjIndex]
+        let tsk = prj.tasks[tskIndex.tskIndex]
+        
+        let index = plannerData.taskStatusChanges.firstIndex{ item in
+            item.taskId == tsk.id
+        }
+        
+        let record = TaskStatusChangeRecord(taskId: tsk.id, projectId: prj.id, groupId: prjGrp.id, changeDate: date, operate: status)
+        if index == nil {
+            plannerData.taskStatusChanges.append(record)
+        } else {
+            plannerData.taskStatusChanges[index!] = record
+        }
+        
+        return record
+    }
+    
+    func removeTaskChangeRecord(record: TaskStatusChangeRecord) {
+        guard let index = plannerData.taskStatusChanges.firstIndex(of: record) else {
+            return
+        }
+        plannerData.taskStatusChanges.remove(at: index)
     }
     
     func getLastAddedTask(from prjId : UUID, in grpId : UUID) -> TaskInfo {

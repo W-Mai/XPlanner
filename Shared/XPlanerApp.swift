@@ -17,6 +17,7 @@ struct XPlanerApp: App {
             ContentView().environmentObject(runtime_config).onAppear(){
                 runtime_config.pickerSelected = file.document.plannerData.fileInformations.displayCatagory
                 runtime_config.simpleMode = file.document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode
+                runtime_config.viewHistoryMode = false
             }
         }
     }

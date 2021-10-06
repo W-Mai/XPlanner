@@ -101,7 +101,7 @@ class MyCell: UICollectionViewCell {
 class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICardScaleFlowLayoutDelegate {
     var scrollingAction: ((Int)->())?
     
-    var source: [DateDataDayInfo]!
+    var source: [Date : DateDataDayInfo]!
     
     var preIndex : NSInteger = -1
     
@@ -117,12 +117,8 @@ class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource
     }
     
     func findInfo(of date: Date) -> DateDataDayInfo? {
-        let res = source.first { item in
-            let itemDate = Calendar.current.dateComponents([.year, .month, .day], from: item.date)
-            let targetDate = Calendar.current.dateComponents([.year, .month, .day], from: date)
-            return itemDate == targetDate
-        }
-        return res
+        let targetDate = Calendar.current.dateComponents([.year, .month, .day, .calendar], from: date).date!
+        return source[targetDate]
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -275,7 +271,7 @@ struct MyDateDataSelector: UIViewRepresentable {
     var scrollingAction: ((Int, @escaping (Int)->())->())?
     
     @Binding var currentIndex : Int
-    var datasource : [DateDataDayInfo]
+    @State var datasource : [Date: DateDataDayInfo]
     
     func makeUIView(context: Context) -> UIViewType {
         var mainCollection: UICollectionView!
@@ -283,7 +279,7 @@ struct MyDateDataSelector: UIViewRepresentable {
         var collectionDataSource : MyDataSource!
         
         collectionDataSource = MyDataSource()
-        collectionDataSource.source = datasource
+        collectionDataSource.source = context.coordinator.source.wrappedValue
         collectionDataSource.scrollingAction = updateScrollIndexAction(_:)
         
         mainCollectionLayout = UICardScaleFlowLayout()
@@ -304,7 +300,7 @@ struct MyDateDataSelector: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UIViewType, context: Context) {
-        
+        (uiView.dataSource as! MyDataSource).source = context.coordinator.source.wrappedValue
         //        if targetIndex != -1{
         //        uiView.scrollToItem(at: IndexPath(row: context.coordinator.index.wrappedValue, section: 0), at: .centeredHorizontally, animated: true)
         //            targetIndex = -1
@@ -327,17 +323,19 @@ struct MyDateDataSelector: UIViewRepresentable {
     
     class Coordinator: NSObject {
         var index : Binding<Int>
+        var source : Binding<[Date: DateDataDayInfo]>
         
         var lastTargetIndex : Int = 0
         var targetIndex : Int = 0
         
-        init(index : Binding<Int>) {
+        init(index : Binding<Int>, source: Binding<[Date: DateDataDayInfo]>) {
             self.index = index
+            self.source = source
         }
     }
     
     func makeCoordinator() -> Coordinator {
-        return Coordinator(index: $currentIndex)
+        return Coordinator(index: $currentIndex, source: $datasource)
     }
     
     //    func _identifiedViewTree(in uiView: UIViewType) -> _IdentifiedViewTree {
@@ -353,10 +351,52 @@ struct MyDateDataSelector: UIViewRepresentable {
     //    }
 }
 
+func extractDateDataInfos(from pln: XPlanerDocument) -> [Date: DateDataDayInfo] {
+    var dateTasksMap:[Date:[TaskInfo]] = [:]
+    print(pln.plannerData.taskStatusChanges)
+    
+    for item in pln.plannerData.taskStatusChanges {
+        if item.operate != .finished {
+            continue
+        }
+        
+        guard let index = pln.indexOfTask(idIs: item.taskId, from: item.projectId, in: item.groupId) else {
+            pln.removeTaskChangeRecord(record: item)
+            continue
+        }
+        
+        let tsk = pln.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex]
+        
+        let targetDate = Calendar.current.dateComponents([.year, .month, .day, .calendar], from: item.changeDate).date!
+        
+        dateTasksMap[targetDate] = dateTasksMap[targetDate] ?? []
+        dateTasksMap[targetDate]!.append(tsk)
+    }
+    
+    var result: [Date: DateDataDayInfo] = [:]
+    
+    for item in dateTasksMap {
+        var times: Int = 0
+        var hours: Double = 0.0
+        
+        for tsk in item.value {
+            times += 1
+            hours += 1
+        }
+        
+        result[item.key] = DateDataDayInfo(finishedNumber: times, spentHours: hours, date: item.key)
+    }
+    
+    return result
+}
+
 struct OK: View {
     @State var num : Int = 0
     
     @State var scrollToFunc : ((Int)->())? = nil
+    
+    
+    var source:[Date: DateDataDayInfo] = [Calendar.current.dateComponents([.year, .month, .day, .calendar], from: Date()).date!: DateDataDayInfo(finishedNumber: 1, spentHours: 1, date: Date())]
     
     var body: some View{
         VStack{
@@ -367,7 +407,7 @@ struct OK: View {
                 Text("Add")
             })
             
-            MyDateDataSelector(currentIndex: $num, datasource: [DateDataDayInfo](arrayLiteral: DateDataDayInfo(finishedNumber: 3, spentHours: 1.2, date: Date())))
+            MyDateDataSelector(currentIndex: $num, datasource: source)
         }
     }
 }

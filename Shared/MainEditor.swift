@@ -96,7 +96,7 @@ struct ContentView: View {
             // TODO: 插入时间调整装置
             
             if env_settings.viewHistoryMode {
-                MyDateDataSelector(currentIndex: .constant(1), datasource: [DateDataDayInfo](arrayLiteral: DateDataDayInfo(finishedNumber: 1, spentHours: 1, date: Date()))).frame(height: 95)
+                MyDateDataSelector(currentIndex: .constant(1), datasource: extractDateDataInfos(from: document)).frame(height: 95)
                     .transition(.slide)
                     //                    .offset(y: env_settings.viewHistoryMode ? 0 : -100)
                     .animation(.spring(response: 0.3))
