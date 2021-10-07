@@ -335,35 +335,58 @@ struct newTest : View {
     //以最小宽度160斤可能在一行放入grid
     let columns = [GridItem(.flexible(), alignment: .top), GridItem(.flexible(), alignment: .top), GridItem(.flexible(), alignment: .top)]
     
+    @State var show = false
+    
     var body: some View {
-        ScrollView{
-            Section(header: Text("最小160")){
-                LazyVGrid(columns: [GridItem(.flexible(), alignment: .top)], spacing: 20, pinnedViews: [.sectionHeaders]){
-                    ForEach(text, id: \.self){ item in
-                        Section(header:
-                                    Text("fuck\(item)")
-                        ) {
-                            LazyVGrid(columns: columns, spacing: 20, pinnedViews: [.sectionHeaders]){
-                                ForEach(0..<2){i in
-                                    Section(header:
-                                                VStack{
-                                                    Text("okkkk\(i)")
-                                                }.padding([.top], 30)
-                                    ) {
-                                        ForEach(0..<5){j in
-                                            Text(item)
-                                                .frame(width: CGFloat.random(in: 20..<100), height: CGFloat.random(in: 20..<100))
-                                                .foregroundColor(.white)
-                                                .background(Color.blue)
-                                        }
-                                    }
-                                }
-                            }
+        ZStack{
+        HStack{
+            Button(action: {show = true}, label: {
+                Text("Button")
+            })
+        }
+            if(show){
+                VStack{
+                    Picker("Duration", selection: .constant(1)) {
+                        ForEach(0..<20){ s in
+                            Text("s \(s)")
                         }
-                    }
+                    }.pickerStyle(DefaultPickerStyle())
                 }
+                .padding()
+                .background(Color.blue)
+                .clipShape(RoundedRectangle(cornerRadius: 25.0, style: .continuous))
             }
         }
+        
+        
+//        ScrollView{
+//            Section(header: Text("最小160")){
+//                LazyVGrid(columns: [GridItem(.flexible(), alignment: .top)], spacing: 20, pinnedViews: [.sectionHeaders]){
+//                    ForEach(text, id: \.self){ item in
+//                        Section(header:
+//                                    Text("fuck\(item)")
+//                        ) {
+//                            LazyVGrid(columns: columns, spacing: 20, pinnedViews: [.sectionHeaders]){
+//                                ForEach(0..<2){i in
+//                                    Section(header:
+//                                                VStack{
+//                                                    Text("okkkk\(i)")
+//                                                }.padding([.top], 30)
+//                                    ) {
+//                                        ForEach(0..<5){j in
+//                                            Text(item)
+//                                                .frame(width: CGFloat.random(in: 20..<100), height: CGFloat.random(in: 20..<100))
+//                                                .foregroundColor(.white)
+//                                                .background(Color.blue)
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
     
 }

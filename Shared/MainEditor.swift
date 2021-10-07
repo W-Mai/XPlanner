@@ -409,7 +409,17 @@ struct ExtractedTaskEditViewView: View {
     @State var dragOffset : CGSize = .zero
     @State var willCloseFlag = false
     @State var tmpTask : TaskInfo = TaskInfo(name: "", content: "", status: .original, createDate: Date())
-    //    @State var pickerSelection = 1
+    @State var duration: Date = Calendar.current.date(from: DateComponents(hour: 1, minute: 0, second: 0))!
+    
+    let dateRange: ClosedRange<Date> = {
+        let calendar = Calendar.current
+        let startComponents = DateComponents(hour: 0, minute: 0)
+        let endComponents = DateComponents(hour: 8, minute: 0, second: 0)
+        return calendar.date(from:startComponents)!
+            ...
+            calendar.date(from:endComponents)!
+    }()
+
     
     var body: some View {
         ZStack {
@@ -429,24 +439,32 @@ struct ExtractedTaskEditViewView: View {
                             Text("TASK.STATUS.TODO").tag(TaskStatus.todo)
                             Text("TASK.STATUS.FINISHED").tag(TaskStatus.finished)
                         }.pickerStyle(SegmentedPickerStyle())
+                        DatePicker("Duration", selection: $duration,in: dateRange ,displayedComponents: [.hourAndMinute])
+                            .datePickerStyle(CompactDatePickerStyle())
+                            .environment(\.locale, Locale(identifier: "zh_GB"))
+                            .padding(5)
+                            .padding([.horizontal], 10)
+                            .foregroundColor(Color("FavoriteColor7"))
+                            .background(Color("BarsBackgroundColor").opacity(0.3))
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     }.padding([.vertical], 40)
                     .padding(.horizontal, 30)
-                }.frame(height: 200)
+                }
                 .background(LinearGradient(gradient: Gradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")]), startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
                 .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
                 .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
                 
                 VStack{
-                    Spacer()
+//                    Spacer()
                     Button(action: {
                         env_settings.editTaskInfoPresented = false
                     }){
                         Text("EDITTASK.CANCEL")
                     }
-                    Spacer()
-                }
+//                    Spacer()
+                }.padding()
             }
-            .frame(width: 256, height: 256)
+            .frame(width: 256)
             .padding([.top, .leading, .trailing], 16)
             .background(Color("BarsBackgroundColor"))
             .clipShape(RoundedRectangle(cornerRadius: 56, style: .continuous))
