@@ -34,3 +34,11 @@ extension UIView {
 func xlimit<T>(_ num: T, min a: T, max b: T) -> T where T:Comparable {
     return num < a ? a : num > b ? b : num
 }
+
+func OptBinding<T>(_ params: Binding<T?>, _ `default` : T) -> Binding<T> {
+    return Binding<T> {
+        params.wrappedValue ?? `default`
+    } set: { res in
+        params.wrappedValue = res
+    }
+}
