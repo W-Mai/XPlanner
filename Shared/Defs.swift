@@ -68,6 +68,7 @@ class EnvironmentSettings: ObservableObject {
     @Published var viewHistoryMode = false
     @Published var currentHistoryIndex : Int = 0
     @Published var filtedTasks : PlannerFileStruct = PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]())
+    @Published var localSettings : AppLocalSettings = AppLocalSettings(hideFinishedTasks: false, collectionWaterFlowMode: false)
     
     init(simpleMode : Bool, displayCategory: DisplayCatagory) {
         self.simpleMode = simpleMode
@@ -219,6 +220,13 @@ extension DateDataDayInfo: Equatable{
         return lhs.finishedNumber == rhs.finishedNumber &&
             lhs.spentHours == rhs.spentHours &&
             lhs.date == rhs.date
+    }
+}
+
+extension AppLocalSettings: Equatable {
+    static func == (lhs: AppLocalSettings, rhs: AppLocalSettings) -> Bool {
+        return lhs.hideFinishedTasks == rhs.hideFinishedTasks &&
+            lhs.collectionWaterFlowMode == rhs.collectionWaterFlowMode
     }
 }
 

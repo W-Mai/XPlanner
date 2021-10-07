@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-class LocalSettingManager: NSObject {
+class LocalSettingManager: NSObject, ObservableObject {
     var container : NSPersistentContainer!
     
     init(container : NSPersistentContainer) {
