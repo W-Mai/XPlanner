@@ -28,6 +28,11 @@ enum DisplayCatagory: String, Codable {
     case All    /// 显示所有任务
     case Todos  /// 只显示待办事项
 }
+
+enum SettingBoolString: String, Codable {
+    case OK, NOOK
+}
+
 // MARK: - 🦀️ 辅助结构
 
 struct TaskIndexPath : Equatable {
@@ -43,6 +48,11 @@ struct DateDataDayInfo {
 }
 
 // MARK: - 🏞 环境配置
+
+struct AppLocalSettings {
+    var hideFinishedTasks : Bool
+    var collectionWaterFlowMode : Bool
+}
 
 class EnvironmentSettings: ObservableObject {
     @Published var scrollProxy : ScrollViewProxy? = nil
