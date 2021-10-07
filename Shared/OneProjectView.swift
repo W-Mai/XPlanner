@@ -267,7 +267,11 @@ struct ProjectDifferentModeView: View {
         switch env_settings.displayMode{
         case .FullSquareMode :
             let projects = project.tasks.filter({ ele in
-                env_settings.pickerSelected == .Todos ? ele.status == .todo : true
+                let standard_condition = env_settings.pickerSelected == .Todos ? ele.status == .todo : true
+                if env_settings.localSettings.hideFinishedTasks {
+                    return ele.status == .finished ? false : standard_condition
+                }
+                return standard_condition
             })
             ScrollViewReader { proxy in
                 ScrollView(env_settings.localSettings.collectionWaterFlowMode ? .vertical : .horizontal, showsIndicators: false) {
