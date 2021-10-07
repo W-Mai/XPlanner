@@ -261,40 +261,48 @@ struct ProjectDifferentModeView: View {
     @EnvironmentObject var env_settings: EnvironmentSettings
     @Environment(\.undoManager) var undoManager
     
+    @State var varas = true
+    
     var body: some View {
         switch env_settings.displayMode{
         case .FullSquareMode :
-            ScrollView(.horizontal, showsIndicators: false) {
-                ScrollViewReader { proxy in
-                    HStack(spacing: 90) {
-                        ForEach(project.tasks.filter({ ele in
-                            env_settings.pickerSelected == .Todos ? ele.status == .todo : true
-                        })) { tsk in
-                            GeometryReader { geoTask in
-                                OneTaskView(
-                                    task: tsk,
-                                    index: project.tasks.firstIndex(of: tsk)! + 1,
-                                    isEditingMode: $env_settings.isEditingMode,
-                                    seleted: $env_settings.isSelected,
-                                    
-                                    action: { selected in
-                                        if env_settings.isEditingMode {
-                                            document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
-                                        }
-                                        document.updateTaskStatus(tskStatus: StatusNextMapper[tsk.status]!, idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
-                                    },
-                                    longAction : {
-                                        env_settings.currentTaskPath = document.indexOfTask(idIs: tsk.id, from: project.id, in: prjGrpId)
-                                        env_settings.editTaskInfoPresented = true
+            let projects = project.tasks.filter({ ele in
+                let standard_condition = env_settings.pickerSelected == .Todos ? ele.status == .todo : true
+                if env_settings.localSettings.hideFinishedTasks {
+                    return ele.status == .finished ? false : standard_condition
+                }
+                return standard_condition
+            })
+            ScrollViewReader { proxy in
+                ScrollView(env_settings.localSettings.collectionWaterFlowMode ? .vertical : .horizontal, showsIndicators: false) {
+                    LazyVGrid(columns: env_settings.localSettings.collectionWaterFlowMode ? [GridItem(.adaptive(minimum: 80))]
+                                : Array(repeating: GridItem(.flexible(minimum: 90)), count: projects.count + 1)
+                    ) {
+                        ForEach(projects) { tsk in
+                            OneTaskView(
+                                task: tsk,
+                                index: project.tasks.firstIndex(of: tsk)! + 1,
+                                isEditingMode: $env_settings.isEditingMode,
+                                seleted: $env_settings.isSelected,
+                                
+                                action: { selected in
+                                    if env_settings.isEditingMode {
+                                        document.removeTask(idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
                                     }
-                                )
-                                .padding()
-                                .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 2, y: 2)
-                                .drawingGroup()
-                                .animation(.spring(response: 0.3, dampingFraction: 0.7))
-                                .disabled(env_settings.viewHistoryMode)
-                            }
-                        }.frame(maxWidth: .infinity).frame(height: 120)
+                                    document.updateTaskStatus(tskStatus: StatusNextMapper[tsk.status]!, idIs: tsk.id, from: project.id, in: prjGrpId, undoManager)
+                                },
+                                longAction : {
+                                    env_settings.currentTaskPath = document.indexOfTask(idIs: tsk.id, from: project.id, in: prjGrpId)
+                                    env_settings.editTaskInfoPresented = true
+                                }
+                            )
+                            .padding()
+                            .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 2, y: 2)
+                            .drawingGroup()
+                            .animation(.spring(response: 0.3, dampingFraction: 0.7))
+                            .disabled(env_settings.viewHistoryMode)
+                            .id(tsk.id)
+                        }
                         if env_settings.isEditingMode {
                             Button(action: {
                                 let lst_tsk = document.getLastAddedTask(from: project.id, in: prjGrpId)
@@ -305,26 +313,27 @@ struct ProjectDifferentModeView: View {
                                 env_settings.currentTaskPath = document.indexOfTask(idIs: new_tsk.id, from: project.id, in: prjGrpId)
                                 env_settings.editTaskInfoPresented = true
                                 
-                                proxy.scrollTo(lst_tsk.id, anchor: .leading)
+                                proxy.scrollTo(lst_tsk.id, anchor: .trailing)
                             }, label: {
                                 VStack {
                                     Image(systemName: "plus.square").resizable().foregroundColor(Color("AccentColor"))
                                 }.padding(20)
-                                    .frame(width: 80, height: 80, alignment: .center)
-                                    .cornerRadius(16)
-                                    .shadow(color: Color(hue: 0.8, saturation: 0.0, brightness: 0.718, opacity: 0.5), radius: 6, x: 5, y: 5)
+                                .frame(width: 80, height: 80, alignment: .center)
+                                .cornerRadius(16)
+                                .shadow(color: Color(hue: 0.8, saturation: 0.0, brightness: 0.718, opacity: 0.5), radius: 6, x: 5, y: 5)
                             })
                         }
-                    }.padding([.trailing], 120)
-                        .onChange(of: env_settings.goToFirstTodoTask) { v in
-                            let lst_tsk = document.getFirstTask(where:{ tsk in
-                                tsk.status == .todo
-                            }, from: project.id, in: prjGrpId)
-                            
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                proxy.scrollTo(lst_tsk.id, anchor: .topLeading)
-                            }
+                    }
+                    .padding([.leading, .trailing], env_settings.localSettings.collectionWaterFlowMode ? 30 : 0)
+                    .onChange(of: env_settings.goToFirstTodoTask) { v in
+                        let lst_tsk = document.getFirstTask(where:{ tsk in
+                            tsk.status == .todo
+                        }, from: project.id, in: prjGrpId)
+                        
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            proxy.scrollTo(lst_tsk.id, anchor: .topLeading)
                         }
+                    }
                 }
             }
             

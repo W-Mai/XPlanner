@@ -159,7 +159,7 @@ struct ExtractedMainViewView<Content: View>: View {
     var content : (_ item : ProjectGroupInfo) -> Content
     
     var body: some View {
-        VStack(alignment: .leading){
+        LazyVGrid(columns: [GridItem(.flexible())], alignment: .leading, pinnedViews: [.sectionHeaders]){
             if data.projectGroups.count > 0{
                 ForEach(data.projectGroups, content: {i in
                     content(i).id(i.id)
@@ -228,6 +228,9 @@ struct ExtractedMainlyContentView<Content: View>: View {
                     .font(env_settings.displayMode == .FullSquareMode ? .title : .title2)
                     .fontWeight(.bold)
                     .padding([.leading, .trailing])
+                    .padding([.vertical], 10)
+                    .background(Color("BarsBackgroundColor").blur(radius: 10))
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                     .contextMenu{
                         Button(action: {
                             document.removeGroup(idIs: projectGroup.id, undoManager)
@@ -235,10 +238,11 @@ struct ExtractedMainlyContentView<Content: View>: View {
                             Text("MENU.DELGROUP \(projectGroup.name)")
                             Image(systemName: "trash")
                         })
-                    }.animation(.easeInOut)
+                    }
             }
             Spacer()
         }.padding([.top, .bottom], 1)
+        .animation(.none)
         ){
             if projectGroup.projects.count > 0 {
                 ForEach(projectGroup.projects){item in
