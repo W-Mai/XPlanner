@@ -28,6 +28,11 @@ enum DisplayCatagory: String, Codable {
     case All    /// 显示所有任务
     case Todos  /// 只显示待办事项
 }
+
+enum SettingBoolString: String, Codable {
+    case OK, NOOK
+}
+
 // MARK: - 🦀️ 辅助结构
 
 struct TaskIndexPath : Equatable {
@@ -44,6 +49,11 @@ struct DateDataDayInfo {
 
 // MARK: - 🏞 环境配置
 
+struct AppLocalSettings {
+    var hideFinishedTasks : Bool
+    var collectionWaterFlowMode : Bool
+}
+
 class EnvironmentSettings: ObservableObject {
     @Published var scrollProxy : ScrollViewProxy? = nil
     @Published var isEditingMode = false
@@ -58,6 +68,7 @@ class EnvironmentSettings: ObservableObject {
     @Published var viewHistoryMode = false
     @Published var currentHistoryIndex : Int = 0
     @Published var filtedTasks : PlannerFileStruct = PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]())
+    @Published var localSettings : AppLocalSettings = AppLocalSettings(hideFinishedTasks: false, collectionWaterFlowMode: false)
     
     init(simpleMode : Bool, displayCategory: DisplayCatagory) {
         self.simpleMode = simpleMode
@@ -209,6 +220,13 @@ extension DateDataDayInfo: Equatable{
         return lhs.finishedNumber == rhs.finishedNumber &&
             lhs.spentHours == rhs.spentHours &&
             lhs.date == rhs.date
+    }
+}
+
+extension AppLocalSettings: Equatable {
+    static func == (lhs: AppLocalSettings, rhs: AppLocalSettings) -> Bool {
+        return lhs.hideFinishedTasks == rhs.hideFinishedTasks &&
+            lhs.collectionWaterFlowMode == rhs.collectionWaterFlowMode
     }
 }
 

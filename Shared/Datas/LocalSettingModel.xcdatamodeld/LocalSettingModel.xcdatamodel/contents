@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AppSettings" representedClassName="AppSettings" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+    </entity>
+    <fetchRequest name="AppsettingFetchRequest" entity="AppSettings" predicateString="name == &quot;HideFinishedTasks&quot;"/>
+    <elements>
+        <element name="AppSettings" positionX="-6781.92578125" positionY="-604.07421875" width="163.3671875" height="73"/>
+    </elements>
+</model>

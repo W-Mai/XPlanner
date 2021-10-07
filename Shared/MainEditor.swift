@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct ContentView_Previews: PreviewProvider {
     @State static var document = XPlanerDocument()
@@ -91,6 +92,7 @@ struct ContentView: View {
             }.popover(isPresented: $env_settings.showSettings, content: {
                 ExtractedSettingsView(undoManager: undoManager)
                     .environmentObject(document)
+                    .environmentObject(env_settings)
             })
             
             // TODO: 插入时间调整装置
@@ -559,11 +561,13 @@ struct ExtractedHistorySwitchView: View {
 struct ExtractedSettingsView: View {
     @EnvironmentObject var document : XPlanerDocument
     @EnvironmentObject var env_settings : EnvironmentSettings
+    @EnvironmentObject var localSettingManager : LocalSettingManager
     var undoManager : UndoManager?
     
     @State var showAlert: Bool = false
     
     @State var backInfo: FileInfos = FileInfos(documentVersion: CurrentFileFormatVerison, topic: "", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All)
+    @State var backLocalSettings : AppLocalSettings = AppLocalSettings(hideFinishedTasks: false, collectionWaterFlowMode: false)
     
     var body: some View {
         NavigationView{
@@ -626,13 +630,13 @@ struct ExtractedSettingsView: View {
                     Section(header: Text("系统设置")) {
                         HStack{
                             Image(systemName: "eye.slash").frame(width: 30)
-                            Toggle(isOn: .constant(false), label: {
+                            Toggle(isOn: $backLocalSettings.hideFinishedTasks, label: {
                                 Text("隐藏已完成任务")
                             })
                         }
                         HStack{
                             Image(systemName: "square.grid.3x1.below.line.grid.1x2").frame(width: 30)
-                            Toggle(isOn: .constant(false), label: {
+                            Toggle(isOn: $backLocalSettings.collectionWaterFlowMode, label: {
                                 Text("瀑布流布局")
                             })
                         }
@@ -668,14 +672,21 @@ struct ExtractedSettingsView: View {
             })
         }.onAppear(perform: {
             backInfo = document.plannerData.fileInformations
+            backLocalSettings = env_settings.localSettings
         })
         .onDisappear(perform: {
-            if backInfo == document.plannerData.fileInformations { return }
-            undoManager?.beginUndoGrouping()
-            document.updateTopic(backInfo.topic, undoManager)
-            document.updateAuthor(backInfo.author, undoManager)
-            document.updateFileExtra(backInfo.extra, undoManager)
-            undoManager?.endUndoGrouping()
+            if backInfo != document.plannerData.fileInformations {
+                undoManager?.beginUndoGrouping()
+                document.updateTopic(backInfo.topic, undoManager)
+                document.updateAuthor(backInfo.author, undoManager)
+                document.updateFileExtra(backInfo.extra, undoManager)
+                undoManager?.endUndoGrouping()
+            }
+            
+            if env_settings.localSettings != backLocalSettings {
+                env_settings.localSettings = backLocalSettings
+                localSettingsManager.writeSettings(appsettings: backLocalSettings)
+            }
         })
     }
 }
