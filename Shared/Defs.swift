@@ -14,7 +14,8 @@ let CurrentFileFormatVerison = FileFormatVersion(a: 0, b: 0, c: 1)
 enum TaskStatus: String, Codable {
     case finished,
          original,
-         todo
+         todo,
+         show
 }
 
 /// 显示模式

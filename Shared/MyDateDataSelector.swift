@@ -389,16 +389,6 @@ func extractDateDataInfos(from pln: XPlanerDocument) -> [Date: DateDataDayInfo] 
     return result
 }
 
-func index2date(index: Int) -> Date {
-    let date = Date()
-    let targetDate = Calendar.current.date(byAdding: Calendar.Component.day, value: -index, to: date)!
-    return targetDate
-}
-
-func formatDateOnlyYMD(date: Date) -> Date {
-    return Calendar.current.dateComponents([.year, .month, .day, .calendar], from: date).date!
-}
-
 func filterTasks(pln: XPlanerDocument , on date: Date) -> PlannerFileStruct {
     var result: PlannerFileStruct = PlannerFileStruct(
         fileInformations: pln.plannerData.fileInformations,
@@ -421,9 +411,11 @@ func filterTasks(pln: XPlanerDocument , on date: Date) -> PlannerFileStruct {
         guard let index = pln.indexOfTask(idIs: item.taskId, from: item.projectId, in: item.groupId)
         else { continue }
         
-        result.projectGroups[0].projects[0].tasks.append(
-            pln.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex]
-        )
+        var tsk = pln.plannerData.projectGroups[index.prjGrpIndex].projects[index.prjIndex].tasks[index.tskIndex]
+        let finishedTime = formatDateOnlyHMS(date: item.changeDate)
+        tsk.status = .show
+        tsk.extra = "\(finishedTime.hour!):\(finishedTime.minute!)"
+        result.projectGroups[0].projects[0].tasks.append(tsk)
     }
     
     return result

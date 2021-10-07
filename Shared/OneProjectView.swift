@@ -62,20 +62,18 @@ struct OneTaskView: View {
     @State var completedLongPress = false
     @State var currentState = false
     
-    //    let longPress =
-    
-    
-    
     let shadowOpacityMap: [TaskStatus: Double] = [
         .finished: 0,
         .todo: 1,
-        .original: 0
+        .original: 0,
+        .show: 1
     ]
     
     let lineWidthMap: [TaskStatus: Double] = [
         .finished: 0,
         .todo: 3,
-        .original: 0
+        .original: 0,
+        .show: 2
     ]
     
     var body: some View {
@@ -183,6 +181,8 @@ struct OneTaskView: View {
             return L("TASK.COMPONENT.STATUS.SUBTITLE.FINISHED")
         case .todo:
             return L("TASK.COMPONENT.STATUS.SUBTITLE.TODO")
+        case .show:
+            return task.extra! + " " + L("TASK.COMPONENT.STATUS.SUBTITLE.FINISHED")
         case .original:
             fallthrough
         default:
