@@ -53,6 +53,7 @@ class EnvironmentSettings: ObservableObject {
     @Published var isSelected = false
     @Published var currentTaskPath : TaskIndexPath? = nil
     @Published var editTaskInfoPresented = false
+    @Published var showSettings = false
     @Published var goToFirstTodoTask = false
     @Published var viewHistoryMode = false
     @Published var currentHistoryIndex : Int = 0
@@ -73,6 +74,10 @@ struct FileFormatVersion : Codable, Comparable{
     
     static func < (lhs: FileFormatVersion, rhs: FileFormatVersion) -> Bool {
         return lhs.a < rhs.a && lhs.b < rhs.b && lhs.c < rhs.c
+    }
+    
+    func str() -> String {
+        return "doc-ver: \(a).\(b).\(c)"
     }
 }
 

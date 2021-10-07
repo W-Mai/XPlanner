@@ -222,6 +222,36 @@ extension XPlanerDocument {
         return plannerData.projectGroups[index].projects[indexPrj].tasks[tsk]
     }
     
+    func updateAuthor(_ author: String, _ undoManager : UndoManager?) {
+        let old_data = plannerData.fileInformations.author
+        
+        plannerData.fileInformations.author = author
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.updateAuthor(old_data, undoManager)
+        })
+    }
+    
+    func updateTopic(_ topic: String, _ undoManager : UndoManager?) {
+        let old_data = plannerData.fileInformations.topic
+        
+        plannerData.fileInformations.topic = topic
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.updateTopic(old_data, undoManager)
+        })
+    }
+    
+    func updateFileExtra(_ extra: String?, _ undoManager : UndoManager?) {
+        let old_data: Optional<String> = plannerData.fileInformations.extra
+        
+        plannerData.fileInformations.extra = extra
+        
+        undoManager?.registerUndo(withTarget: self, handler: { doc in
+            doc.updateFileExtra(old_data, undoManager)
+        })
+    }
+    
     func indexOfTask(idIs tskId : UUID, from prjId : UUID, in grpId : UUID) -> TaskIndexPath?{
         guard let index = plannerData.projectGroups.firstIndex (where: { grp in
             grp.id == grpId

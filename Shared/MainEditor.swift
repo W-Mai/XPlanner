@@ -88,7 +88,10 @@ struct ContentView: View {
                 ExtractedTaskEditViewView()
                 
                 ExtractedHistorySwitchView()
-            }
+            }.popover(isPresented: $env_settings.showSettings, content: {
+                ExtractedSettingsView(undoManager: undoManager)
+                    .environmentObject(document)
+            })
             
             // TODO: 插入时间调整装置
             
@@ -334,28 +337,43 @@ struct ExtractedToolBarView: View {
     var body: some View {
         if !env_settings.viewHistoryMode {
             HStack{
-                if undoManager?.canUndo ?? false {
+                HStack{
                     Button(action: {
-                        undoManager?.undo()
-                    }){
-                        Image(systemName: "arrow.uturn.backward.circle")
+                        env_settings.showSettings = true
+                    }, label: {
+                        Image(systemName: "gear")
+                    })} .padding(5)
+                    .background(Color("BarsBackgroundColor")).clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                
+                HStack{
+                    if undoManager?.canUndo ?? false {
+                        Button(action: {
+                            undoManager?.undo()
+                        }){
+                            Image(systemName: "arrow.uturn.backward.circle")
+                        }
+                    }
+                    if undoManager?.canRedo ?? false {
+                        Button(action: {
+                            undoManager?.redo()
+                        }){
+                            Image(systemName: "arrow.uturn.forward.circle")
+                        }
                     }
                 }
-                if undoManager?.canRedo ?? false {
-                    Button(action: {
-                        undoManager?.redo()
-                    }){
-                        Image(systemName: "arrow.uturn.forward.circle")
-                    }
-                }
+                .padding(5)
+                .background(Color("BarsBackgroundColor")).clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 
                 Spacer()
                 if !env_settings.simpleMode {
-                    Button(action: {
-                        env_settings.goToFirstTodoTask.toggle()
-                    }){
-                        Image(systemName: "rays")
-                    }
+                    HStack{
+                        Button(action: {
+                            env_settings.goToFirstTodoTask.toggle()
+                        }){
+                            Image(systemName: "rays")
+                        }
+                    }.padding(5)
+                    .background(Color("BarsBackgroundColor")).clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 Toggle(isOn: $env_settings.simpleMode) {
                 }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"){
@@ -536,8 +554,135 @@ struct ExtractedHistorySwitchView: View {
     }
 }
 
+//MARK: - ⚙️设置页面
+
+struct ExtractedSettingsView: View {
+    @EnvironmentObject var document : XPlanerDocument
+    @EnvironmentObject var env_settings : EnvironmentSettings
+    var undoManager : UndoManager?
+    
+    @State var showAlert: Bool = false
+    
+    @State var backInfo: FileInfos = FileInfos(documentVersion: CurrentFileFormatVerison, topic: "", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All)
+    
+    var body: some View {
+        NavigationView{
+            VStack{
+                Form{
+                    Section(header: Text("文档设置")) {
+                        HStack{
+                            Text(Image(systemName: "square.and.pencil")).frame(width: 30)
+                            Text("主题")
+                            TextField("主题", text: $backInfo.topic)
+                                .multilineTextAlignment(.center)
+                        }
+                        HStack{
+                            Text(Image(systemName: "person.fill.questionmark")).frame(width: 30)
+                            Text("作者")
+                            TextField("作者", text: $backInfo.author)
+                                .multilineTextAlignment(.center)
+                        }
+                        HStack{
+                            Text(Image(systemName: "calendar")).frame(width: 30)
+                            Text("创建日期")
+                            DatePicker("", selection: $backInfo.createDate)
+                                .datePickerStyle(CompactDatePickerStyle())
+                                .disabled(true)
+                        }
+                        HStack{
+                            Text(Image(systemName: "display")).frame(width: 30)
+                            Text("显示模式")
+                            HStack{
+                                Image(systemName: backInfo.displayMode == .SimpleProcessBarMode ? "list.bullet" :  "rectangle.split.3x3")
+                                Text(backInfo.displayMode == .SimpleProcessBarMode ? "简约线条" : "完整模式")
+                            }.frame(maxWidth: .infinity)
+                            .padding(5).background(Color("BarsBackgroundColor"))
+                            .cornerRadius(10)
+                        }
+                        HStack{
+                            Text(Image(systemName: "tray.full")).frame(width: 30)
+                            Text("显示类别")
+                            HStack{
+                                Image(systemName: backInfo.displayCatagory == .All ? "tray" :  "calendar")
+                                Text(backInfo.displayCatagory == .All ? "所有任务" : "今日任务")
+                            }.frame(maxWidth: .infinity)
+                            .padding(5).background(Color("BarsBackgroundColor"))
+                            .cornerRadius(10)
+                        }
+                        HStack{
+                            Text(Image(systemName: "number")).frame(width: 30)
+                            Text("文档版本")
+                            HStack{
+                                Text("\(backInfo.documentVersion.str())")
+                                    .foregroundColor(.secondary)
+                            }.frame(maxWidth: .infinity)
+                        }
+                    }
+                    
+                    Section(header: Text("备注")) {
+                        TextEditor(text: OptBinding($backInfo.extra, "")).frame(height: 200)
+                    }
+                    
+                    Section(header: Text("系统设置")) {
+                        HStack{
+                            Image(systemName: "eye.slash").frame(width: 30)
+                            Toggle(isOn: .constant(false), label: {
+                                Text("隐藏已完成任务")
+                            })
+                        }
+                        HStack{
+                            Image(systemName: "square.grid.3x1.below.line.grid.1x2").frame(width: 30)
+                            Toggle(isOn: .constant(false), label: {
+                                Text("瀑布流布局")
+                            })
+                        }
+                    }
+                    Section(header: Text("关于")) {
+                        let info = Bundle.main.infoDictionary!
+                        let name = info["CFBundleDisplayName"] as! String
+                        let version = "Verison \(info["CFBundleShortVersionString"]!) build \(info["CFBundleVersion"]!)"
+                        VStack(alignment: .center, spacing: 20){
+                            Image("AppIcon-UsedForShowing").resizable().frame(width: 100, height: 100, alignment: .center)
+                            Text("\(name)")
+                            Text(version)
+                            HStack{
+                                Image(systemName: "42.square")
+                                Text("作者")
+                                Text("W-Mai").foregroundColor(.secondary)
+                            }
+                            HStack{
+                                Image(systemName: "house")
+                                Text("工作室")
+                                Text("XCLZ STUDIO").foregroundColor(.secondary)
+                            }
+                        }.frame(maxWidth: .infinity)
+                    }.padding()
+                }
+            }
+            .navigationTitle("设置")
+            .navigationBarItems(trailing: Button(action: {
+                showAlert = true
+            }, label: {Text("🔘")}))
+            .alert(isPresented: $showAlert, content: {
+                Alert(title: Text("(๑•̀ㅂ•́)و✧") , dismissButton: .cancel(Text("Yeahヽ(✿ﾟ▽ﾟ)ノ")))
+            })
+        }.onAppear(perform: {
+            backInfo = document.plannerData.fileInformations
+        })
+        .onDisappear(perform: {
+            if backInfo == document.plannerData.fileInformations { return }
+            undoManager?.beginUndoGrouping()
+            document.updateTopic(backInfo.topic, undoManager)
+            document.updateAuthor(backInfo.author, undoManager)
+            document.updateFileExtra(backInfo.extra, undoManager)
+            undoManager?.endUndoGrouping()
+        })
+    }
+}
+
 
 //MARK: - ☹️一些全局常量
 
 let screen = UIScreen.main.bounds
+
 

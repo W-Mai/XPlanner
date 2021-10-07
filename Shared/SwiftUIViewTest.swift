@@ -330,12 +330,51 @@ struct docuitest : View {
     }
 }
 
+struct newTest : View {
+    let text = (1...30).map{"Hello\($0)"}
+    //以最小宽度160斤可能在一行放入grid
+    let columns = [GridItem(.flexible(), alignment: .top), GridItem(.flexible(), alignment: .top), GridItem(.flexible(), alignment: .top)]
+    
+    var body: some View {
+        ScrollView{
+            Section(header: Text("最小160")){
+                LazyVGrid(columns: [GridItem(.flexible(), alignment: .top)], spacing: 20, pinnedViews: [.sectionHeaders]){
+                    ForEach(text, id: \.self){ item in
+                        Section(header:
+                                    Text("fuck\(item)")
+                        ) {
+                            LazyVGrid(columns: columns, spacing: 20, pinnedViews: [.sectionHeaders]){
+                                ForEach(0..<2){i in
+                                    Section(header:
+                                                VStack{
+                                                    Text("okkkk\(i)")
+                                                }.padding([.top], 30)
+                                    ) {
+                                        ForEach(0..<5){j in
+                                            Text(item)
+                                                .frame(width: CGFloat.random(in: 20..<100), height: CGFloat.random(in: 20..<100))
+                                                .foregroundColor(.white)
+                                                .background(Color.blue)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+}
+
 struct SwiftUIViewTest_Previews: PreviewProvider {
     static var previews: some View {
         //        SwiftUIViewTest()
         //        ContentView2()
         //        SwiftUIViewTest()
-        docuitest1()
+        //        docuitest1()
+        newTest()
             .previewLayout(.sizeThatFits)
     }
 }
