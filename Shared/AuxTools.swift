@@ -31,6 +31,20 @@ extension UIView {
     }
 }
 
+func index2date(index: Int) -> Date {
+    let date = Date()
+    let targetDate = Calendar.current.date(byAdding: Calendar.Component.day, value: -index, to: date)!
+    return targetDate
+}
+
+func formatDateOnlyYMD(date: Date) -> Date {
+    return Calendar.current.dateComponents([.year, .month, .day, .calendar], from: date).date!
+}
+
+func formatDateOnlyHMS(date: Date) -> DateComponents {
+    return Calendar.current.dateComponents([.hour, .minute, .second], from: date)
+}
+
 func xlimit<T>(_ num: T, min a: T, max b: T) -> T where T:Comparable {
     return num < a ? a : num > b ? b : num
 }
