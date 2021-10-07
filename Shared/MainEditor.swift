@@ -89,7 +89,7 @@ struct ContentView: View {
                 ExtractedTaskEditViewView()
                 
                 ExtractedHistorySwitchView()
-            }.popover(isPresented: $env_settings.showSettings, content: {
+            }.sheet(isPresented: $env_settings.showSettings, content: {
                 ExtractedSettingsView(undoManager: undoManager)
                     .environmentObject(document)
                     .environmentObject(env_settings)
