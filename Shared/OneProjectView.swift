@@ -79,16 +79,6 @@ struct OneTaskView: View {
     var body: some View {
         VStack() {
             HStack {
-                ZStack{
-                    Color(red: 0.95, green: 0.8, blue: 0.5)
-                        .clipShape(Circle())
-                    Text("\(index)")
-                        .minimumScaleFactor(0.2)
-                        .font(.footnote)
-                        .lineLimit(1)
-                        .foregroundColor(.white)
-                }.frame(width: 24, height: 24, alignment: .center)
-                
                 VStack() {
                     Text(task.name)
                         .font(.subheadline)
@@ -129,6 +119,28 @@ struct OneTaskView: View {
                 .stroke(LinearGradient(gradient: Gradient(colors: [Color("FavoriteColor5").opacity(0.3), Color("FavoriteColor6")]), startPoint: .leading, endPoint: .bottom), lineWidth: CGFloat(lineWidthMap[task.status]!))
         )
         .overlay(
+            HStack{
+                VStack{
+                    ZStack{
+                        Color(red: 0.95, green: 0.8, blue: 0.5)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        Text( String(format: "%.1fh", task.duration / 3600) )
+                            .fontWeight(.semibold)
+                            .font(.footnote)
+                            .minimumScaleFactor(0.2)
+                            .lineLimit(1)
+                            .foregroundColor(.white)
+                            .padding(2)
+                    }
+                    .hueRotation(Angle(degrees: 10 * task.duration / 3600))
+                    .rotationEffect(.degrees(-10))
+                    .frame(width: 24, height: 16, alignment: .center)
+                    Spacer()
+                }
+                Spacer()
+            }.offset(x: -4, y: -6)
+        )
+        .overlay(
             Text(getStatusText())
                 .font(.largeTitle)
                 .fontWeight(.heavy)
@@ -158,18 +170,20 @@ struct OneTaskView: View {
         .animation(.easeInOut(duration: 0.2))
         .onTapGesture {
             action?(seleted)
-        }.onLongPressGesture(minimumDuration: 0.1) { v in
+        }.onLongPressGesture(minimumDuration: 0.1, pressing: { v in
             currentState = v
-        } perform: {
+        }, perform: {
             MyFeedBack()
             longAction?()
-        }
+        })
     }
     
     func getStatusText() -> String {
         switch self.task.status {
         case .finished:
             return L("TASK.COMPONENT.STATUS.FINISHED")
+        case .show:
+            return String(format: "%.1f h", task.duration / 3600)
         default:
             return ""
         }
