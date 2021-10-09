@@ -330,12 +330,21 @@ struct docuitest : View {
     }
 }
 
+struct MyStruct: Codable, Identifiable {
+    var duration: TimeInterval
+    
+    var id = UUID()
+}
+
 struct newTest : View {
     let text = (1...30).map{"Hello\($0)"}
     //以最小宽度160斤可能在一行放入grid
     let columns = [GridItem(.flexible(), alignment: .top), GridItem(.flexible(), alignment: .top), GridItem(.flexible(), alignment: .top)]
     
-    @State var show = false
+    @State var show = true
+    @State var task = MyStruct(duration: 3600)
+    @State var task1 = TaskInfo(name: "", content: "", status: .finished, duration: 3600, createDate: Date())
+    @State var time = TimeInterval(3600)
     
     var body: some View {
         ZStack{
@@ -346,15 +355,21 @@ struct newTest : View {
         }
             if(show){
                 VStack{
-                    Picker("Duration", selection: .constant(1)) {
-                        ForEach(0..<20){ s in
-                            Text("s \(s)")
-                        }
-                    }.pickerStyle(DefaultPickerStyle())
+                    Button(action: {
+                        task.duration += 1000
+                        task1.duration -= 100
+                        print(task.duration)
+                    }, label: {
+                        Text("\(task.duration)")
+                        Text("\(task1.duration)")
+                    })
+//                    MyCountDownPicker(val: $time)
                 }
                 .padding()
-                .background(Color.blue)
-                .clipShape(RoundedRectangle(cornerRadius: 25.0, style: .continuous))
+//                .frame(width: 100, height: 30, alignment: .center)
+                .background(Color.white)
+                
+//                .clipShape(RoundedRectangle(cornerRadius: 25.0, style: .continuous))
             }
         }
         
@@ -398,6 +413,7 @@ struct SwiftUIViewTest_Previews: PreviewProvider {
         //        SwiftUIViewTest()
         //        docuitest1()
         newTest()
+//            .preferredColorScheme(.dark)
             .previewLayout(.sizeThatFits)
     }
 }

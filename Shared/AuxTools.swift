@@ -56,3 +56,20 @@ func OptBinding<T>(_ params: Binding<T?>, _ `default` : T) -> Binding<T> {
         params.wrappedValue = res
     }
 }
+
+func intervalToTimeStr(_ interval: TimeInterval, forFun: Bool) -> String {
+    let hour: Int = xlimit(Int(interval / 3600), min: 0, max: 23)
+    let minute: Int = xlimit(Int(fmod(interval, 3600) / 60), min: 0, max: 45)
+    
+    if forFun {
+        let funClock = ["🕛", "🕐","🕑","🕒","🕓","🕔","🕕","🕖","🕗","🕘","🕙","🕚"]
+        let funMinite = ["0⃣️0⃣️", "1️⃣5⃣️", "3⃣️0⃣️", "4⃣️5⃣️"]
+        if minute == 0 {
+            return "\(funClock[ hour % 12 ])"
+        } else {
+            return "\(funClock[ hour % 12 ]) \(funMinite[ Int(minute / 15) ])"
+        }
+    } else {
+        return String(format: "%d h %d min", arguments: [hour, minute])
+    }
+}

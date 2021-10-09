@@ -88,7 +88,9 @@ struct ContentView: View {
                 
                 ExtractedTaskEditViewView()
                 
-                ExtractedHistorySwitchView()
+                if !env_settings.editTaskInfoPresented {
+                    ExtractedHistorySwitchView()
+                }
             }.sheet(isPresented: $env_settings.showSettings, content: {
                 ExtractedSettingsView(undoManager: undoManager)
                     .environmentObject(document)
@@ -408,18 +410,9 @@ struct ExtractedTaskEditViewView: View {
     @GestureState var draging : Bool = false
     @State var dragOffset : CGSize = .zero
     @State var willCloseFlag = false
-    @State var tmpTask : TaskInfo = TaskInfo(name: "", content: "", status: .original, createDate: Date())
-    @State var duration: Date = Calendar.current.date(from: DateComponents(hour: 1, minute: 0, second: 0))!
-    
-    let dateRange: ClosedRange<Date> = {
-        let calendar = Calendar.current
-        let startComponents = DateComponents(hour: 0, minute: 0)
-        let endComponents = DateComponents(hour: 8, minute: 0, second: 0)
-        return calendar.date(from:startComponents)!
-            ...
-            calendar.date(from:endComponents)!
-    }()
+    @State var tmpTask : TaskInfo = TaskTemplate()
 
+    @State var showTimePicker : Bool = false
     
     var body: some View {
         ZStack {
@@ -439,14 +432,17 @@ struct ExtractedTaskEditViewView: View {
                             Text("TASK.STATUS.TODO").tag(TaskStatus.todo)
                             Text("TASK.STATUS.FINISHED").tag(TaskStatus.finished)
                         }.pickerStyle(SegmentedPickerStyle())
-                        DatePicker("Duration", selection: $duration,in: dateRange ,displayedComponents: [.hourAndMinute])
-                            .datePickerStyle(CompactDatePickerStyle())
-                            .environment(\.locale, Locale(identifier: "zh_GB"))
-                            .padding(5)
-                            .padding([.horizontal], 10)
-                            .foregroundColor(Color("FavoriteColor7"))
-                            .background(Color("BarsBackgroundColor").opacity(0.3))
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        HStack{
+                            Text("Duration is")
+                            Spacer()
+                            Button(action: {showTimePicker = true}, label: {
+                                Text(intervalToTimeStr(tmpTask.duration, forFun: true))
+                            })
+                        }.padding(5)
+                        .padding([.horizontal], 10)
+                        .foregroundColor(Color("FavoriteColor7"))
+                        .background(Color("BarsBackgroundColor").opacity(0.5))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     }.padding([.vertical], 40)
                     .padding(.horizontal, 30)
                 }
@@ -455,13 +451,11 @@ struct ExtractedTaskEditViewView: View {
                 .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
                 
                 VStack{
-//                    Spacer()
                     Button(action: {
                         env_settings.editTaskInfoPresented = false
                     }){
                         Text("EDITTASK.CANCEL")
                     }
-//                    Spacer()
                 }.padding()
             }
             .frame(width: 256)
@@ -480,7 +474,7 @@ struct ExtractedTaskEditViewView: View {
             
             .onChange(of: env_settings.editTaskInfoPresented, perform: { V in
                 let indexes = env_settings.currentTaskPath
-                let task = indexes != nil ? document.plannerData.projectGroups[indexes!.prjGrpIndex].projects[indexes!.prjIndex].tasks[indexes!.tskIndex] : (TaskInfo(name: "", content: "", status: .original, createDate: Date()))
+                let task = indexes != nil ? document.plannerData.projectGroups[indexes!.prjGrpIndex].projects[indexes!.prjIndex].tasks[indexes!.tskIndex] : TaskTemplate()
                 
                 if env_settings.editTaskInfoPresented {
                     tmpTask = task
@@ -504,14 +498,27 @@ struct ExtractedTaskEditViewView: View {
                         
                         guard self.willCloseFlag else { return }
                         
+                        document.updateTaskInfo(tsk: tmpTask, for: env_settings.currentTaskPath!, undoManager)
+                        
                         self.willCloseFlag = false;
                         env_settings.editTaskInfoPresented = false
-                        
-                        document.updateTaskInfo(tsk: tmpTask, for: env_settings.currentTaskPath!, undoManager)
                     }
             )
+            .blur(radius: showTimePicker ? 10 : 0)
+            
+            if showTimePicker{
+                ZStack {
+                    Color.black.opacity(0.1).onTapGesture {
+                        showTimePicker = false
+                    }
+                    VStack{
+                        MyCountDownPicker(val: $tmpTask.duration)
+                    }.clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+            }
         }.opacity(env_settings.editTaskInfoPresented ? 1 : 0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7))
+        .edgesIgnoringSafeArea(.all)
         
     }
 }

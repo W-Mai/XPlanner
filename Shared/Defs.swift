@@ -9,6 +9,7 @@ import SwiftUI
 // MARK: - 🔢 枚举和常量
 
 let CurrentFileFormatVerison = FileFormatVersion(a: 0, b: 0, c: 1)
+let DefalutTaskDuration: TimeInterval = 3600.0
 
 /// 任务状态
 enum TaskStatus: String, Codable {
@@ -109,6 +110,7 @@ struct TaskInfo: Codable, Identifiable {
     var name: String        /// 任务名
     var content : String    /// 内容
     var status: TaskStatus  /// 任务状态
+    var duration : Double     /// 持续时间
     var createDate : Date   /// 创建日期
     
     var id = UUID()
@@ -202,6 +204,7 @@ extension TaskInfo: Equatable {
             lhs.content == rhs.content &&
             lhs.status == rhs.status &&
             lhs.createDate == rhs.createDate &&
+            lhs.duration == rhs.duration &&
             lhs.id == rhs.id &&
             lhs.extra == rhs.extra
     }
@@ -234,6 +237,23 @@ extension AppLocalSettings: Equatable {
 //MARK: - 🔧功能拓展
 
 
+//MARK: - 🍮修补拓展
+extension TaskInfo {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.name = try! container.decode(type(of: self.name), forKey: .name)
+        self.content = try! container.decode(type(of: self.content), forKey: .content)
+        self.status = try! container.decode(type(of: self.status), forKey: .status)
+        self.createDate = try! container.decode(type(of: self.createDate), forKey: .createDate)
+        self.duration = xlimit((try? container.decodeIfPresent(TimeInterval.self, forKey: .duration)) ?? DefalutTaskDuration, min: 0, max: 24 * 3600)
+        
+        self.id = try! container.decode(type(of: self.id), forKey: .id)
+        self.extra = try? container.decode(type(of: self.extra), forKey: .extra)
+    }
+}
+
+
 
 // MARK: - 💆🏼 文件初始化内容
 
@@ -254,9 +274,9 @@ extension PlannerFileStruct {
                     arrayLiteral:ProjectInfo(
                         name: L("TEMPLATE.PROJECT.NAME"),
                         tasks: [TaskInfo](
-                            arrayLiteral:TaskInfo(name: L("TEMPLATE.TASK.NAME") + "1",content: L("TEMPLATE.TASK.CONTENT") + "1",status: .finished,createDate: Date(), id: UUID()),
-                            TaskInfo(name: L("TEMPLATE.TASK.NAME") + "2",content: L("TEMPLATE.TASK.CONTENT") + "2",status: .todo,createDate: Date(), id: UUID()),
-                            TaskInfo(name: L("TEMPLATE.TASK.NAME") + "3",content: L("TEMPLATE.TASK.CONTENT") + "3",status: .original,createDate: Date(), id: UUID())
+                            arrayLiteral:TaskInfo(name: L("TEMPLATE.TASK.NAME") + "1",content: L("TEMPLATE.TASK.CONTENT") + "1",status: .finished,duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+                            TaskInfo(name: L("TEMPLATE.TASK.NAME") + "2",content: L("TEMPLATE.TASK.CONTENT") + "2",status: .todo,duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+                            TaskInfo(name: L("TEMPLATE.TASK.NAME") + "3",content: L("TEMPLATE.TASK.CONTENT") + "3",status: .original,duration: DefalutTaskDuration, createDate: Date(), id: UUID())
                         ),
                         id: UUID()),
                     ProjectInfo(
@@ -272,7 +292,7 @@ extension PlannerFileStruct {
 }
 
 func TaskTemplate() -> TaskInfo {
-    return TaskInfo(name: L("NEW.TASK.NAME"), content: L("NEW.TASK.CONTENT"), status: .original, createDate: Date())
+    return TaskInfo(name: L("NEW.TASK.NAME"), content: L("NEW.TASK.CONTENT"), status: .original, duration: DefalutTaskDuration, createDate: Date())
 }
 
 func L(_ localStr: String) -> String{

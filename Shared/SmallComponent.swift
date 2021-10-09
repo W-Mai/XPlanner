@@ -50,6 +50,44 @@ class PaddingLabel: UILabel {
     
 }
 
+struct MyCountDownPicker: UIViewRepresentable {
+    typealias UIViewType = UIDatePicker
+    
+    @Binding var val: TimeInterval
+    
+    func makeUIView(context: Context) -> UIViewType {
+        let picker = UIViewType(frame: .zero)
+        
+        picker.datePickerMode = .countDownTimer
+        picker.minuteInterval = 15
+        picker.countDownDuration = 3600
+        picker.backgroundColor = UIColor(named: "BarsBackgroundColor")
+        
+        picker.addTarget(context.coordinator, action: #selector(context.coordinator.doSomething(sender:forEvent:)), for: .valueChanged)
+        return picker
+    }
+    
+    func updateUIView(_ uiView: UIViewType, context: Context) {
+        uiView.countDownDuration = val
+    }
+
+    class Coordinator: NSObject {
+        var interval: Binding<TimeInterval>
+        
+        init(interval: Binding<TimeInterval>) {
+            self.interval = interval
+        }
+        
+        @objc func doSomething(sender: UIDatePicker, forEvent event: UIEvent){
+            interval.wrappedValue = sender.countDownDuration
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(interval: $val)
+    }
+}
+
 struct SmallComponent_Previews: PreviewProvider {
     static var previews: some View {
         Group{

@@ -16,13 +16,13 @@ struct OneProjectView_Previews: PreviewProvider {
         name: "ProjectName",
         tasks: [TaskInfo](
             arrayLiteral:
-                TaskInfo(name: "任务1", content: "任务内容1", status: .finished, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务3", content: "任务内容3", status: .original, createDate: Date(), id: UUID())
+                TaskInfo(name: "任务1", content: "任务内容1", status: .finished, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务3", content: "任务内容3", status: .original, duration: DefalutTaskDuration, createDate: Date(), id: UUID())
         ))
     
     @State static var status1 = TaskStatus.finished
@@ -37,10 +37,10 @@ struct OneProjectView_Previews: PreviewProvider {
         
             .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: (DisplayCatagory.All)))
         HStack {
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: .constant(true))
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, duration: DefalutTaskDuration, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, duration: DefalutTaskDuration, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, duration: DefalutTaskDuration, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, duration: DefalutTaskDuration, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: .constant(true))
             
             
         }.previewLayout(.sizeThatFits).padding()
@@ -307,7 +307,7 @@ struct ProjectDifferentModeView: View {
                             Button(action: {
                                 let lst_tsk = document.getLastAddedTask(from: project.id, in: prjGrpId)
                                 
-                                guard let new_tsk = document.addTask(nameIs: lst_tsk.name, contentIs: lst_tsk.content, for: project.id, in: prjGrpId, undoManager)
+                                guard let new_tsk = document.addTask(nameIs: lst_tsk.name, contentIs: lst_tsk.content, duration: lst_tsk.duration, for: project.id, in: prjGrpId, undoManager)
                                 else { return }
                                 
                                 env_settings.currentTaskPath = document.indexOfTask(idIs: new_tsk.id, from: project.id, in: prjGrpId)

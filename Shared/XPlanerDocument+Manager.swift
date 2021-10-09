@@ -109,7 +109,7 @@ extension XPlanerDocument {
         })
     }
     
-    func addTask(nameIs tskName : String, contentIs taskContent : String, for prjId : UUID,in grpId : UUID ,_ undoManager : UndoManager?) -> TaskInfo?{
+    func addTask(nameIs tskName : String, contentIs taskContent : String, duration : TimeInterval, for prjId : UUID,in grpId : UUID ,_ undoManager : UndoManager?) -> TaskInfo?{
         guard let index = plannerData.projectGroups.firstIndex (where: { grp in
             grp.id == grpId
         }) else { return nil }
@@ -118,7 +118,7 @@ extension XPlanerDocument {
             prj.id == prjId
         }) else { return nil }
         
-        let res = TaskInfo(name: tskName, content: taskContent, status: .original, createDate: Date())
+        let res = TaskInfo(name: tskName, content: taskContent, status: .original, duration: duration, createDate: Date())
         plannerData.projectGroups[index].projects[indexPrj].tasks.append(res)
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
@@ -261,6 +261,7 @@ extension XPlanerDocument {
             prj.id == prjId
         }) else { return nil }
         
+        print(plannerData.projectGroups[index].projects[indexPrj].tasks)
         guard let indexTsk = plannerData.projectGroups[index].projects[indexPrj].tasks.firstIndex (where: { tsk in
             tsk.id == tskId
         }) else { return nil }
