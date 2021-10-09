@@ -436,7 +436,7 @@ struct ExtractedTaskEditViewView: View {
                             Text("TASK.STATUS.FINISHED").tag(TaskStatus.finished)
                         }.pickerStyle(SegmentedPickerStyle())
                         HStack{
-                            Text("Duration is")
+                            Text("EDITTASK.DURATION")
                             Spacer()
                             Button(action: {showTimePicker = true}, label: {
                                 Text(intervalToTimeStr(tmpTask.duration, forFun: true))
@@ -605,49 +605,50 @@ struct ExtractedSettingsView: View {
         NavigationView{
             VStack{
                 Form{
-                    Section(header: Text("文档设置")) {
+                    Section(header: Text("SETTINGS.DOCSETTINGS")) {
                         HStack{
                             Text(Image(systemName: "square.and.pencil")).frame(width: 30)
-                            Text("主题")
-                            TextField("主题", text: $backInfo.topic)
+                            Text("SETTINGS.THEME")
+                            TextField("SETTINGS.THEME", text: $backInfo.topic)
                                 .multilineTextAlignment(.center)
                         }
                         HStack{
                             Text(Image(systemName: "person.fill.questionmark")).frame(width: 30)
-                            Text("作者")
-                            TextField("作者", text: $backInfo.author)
+                            Text("SETTINGS.AUTHOR")
+                            TextField("SETTINGS.AUTHOR", text: $backInfo.author)
                                 .multilineTextAlignment(.center)
                         }
                         HStack{
                             Text(Image(systemName: "calendar")).frame(width: 30)
-                            Text("创建日期")
-                            DatePicker("", selection: $backInfo.createDate)
-                                .datePickerStyle(CompactDatePickerStyle())
-                                .disabled(true)
+                            Text("SETTINGS.CREATEDATE")
+                            HStack{
+                                Text(backInfo.createDate, style: .date).lineLimit(1).minimumScaleFactor(0.3)
+                                Text(backInfo.createDate, style: .time).lineLimit(1).minimumScaleFactor(0.3)
+                            }
                         }
                         HStack{
                             Text(Image(systemName: "display")).frame(width: 30)
-                            Text("显示模式")
+                            Text("SETTINGS.DISPLAYMODE")
                             HStack{
                                 Image(systemName: backInfo.displayMode == .SimpleProcessBarMode ? "list.bullet" :  "rectangle.split.3x3")
-                                Text(backInfo.displayMode == .SimpleProcessBarMode ? "简约线条" : "完整模式")
+                                Text(backInfo.displayMode == .SimpleProcessBarMode ? "SETTINGS.DISPLAYMODE.ELEGANTLINES" : "SETTINGS.DISPLAYMODE.FULL")
                             }.frame(maxWidth: .infinity)
                             .padding(5).background(Color("BarsBackgroundColor"))
                             .cornerRadius(10)
                         }
                         HStack{
                             Text(Image(systemName: "tray.full")).frame(width: 30)
-                            Text("显示类别")
+                            Text("SETTINGS.DISPLAYCAT")
                             HStack{
                                 Image(systemName: backInfo.displayCategory == .All ? "tray" :  "calendar")
-                                Text(backInfo.displayCategory == .All ? "所有任务" : "今日任务")
+                                Text(backInfo.displayCategory == .All ? "SETTINGS.DISPLAYCAT.ALL" : "SETTINGS.DISPLAYCAT.TODOS")
                             }.frame(maxWidth: .infinity)
                             .padding(5).background(Color("BarsBackgroundColor"))
                             .cornerRadius(10)
                         }
                         HStack{
                             Text(Image(systemName: "number")).frame(width: 30)
-                            Text("文档版本")
+                            Text("SETTINGS.DOCVER")
                             HStack{
                                 Text("\(backInfo.documentVersion.str())")
                                     .foregroundColor(.secondary)
@@ -655,25 +656,25 @@ struct ExtractedSettingsView: View {
                         }
                     }
                     
-                    Section(header: Text("备注")) {
+                    Section(header: Text("SETTINGS.REMARK")) {
                         TextEditor(text: OptBinding($backInfo.extra, "")).frame(height: 200)
                     }
                     
-                    Section(header: Text("系统设置")) {
+                    Section(header: Text("SETTINGS.SYSSETTINGS")) {
                         HStack{
                             Image(systemName: "eye.slash").frame(width: 30)
                             Toggle(isOn: $backLocalSettings.hideFinishedTasks, label: {
-                                Text("隐藏已完成任务")
+                                Text("SETTINGS.HIDEFINISHEDTASKS")
                             })
                         }
                         HStack{
                             Image(systemName: "square.grid.3x1.below.line.grid.1x2").frame(width: 30)
                             Toggle(isOn: $backLocalSettings.collectionWaterFlowMode, label: {
-                                Text("瀑布流布局")
+                                Text("SETTINGS.WATERFLOWLAYOUT")
                             })
                         }
                     }
-                    Section(header: Text("关于")) {
+                    Section(header: Text("SETTINGS.ABOUT")) {
                         let info = Bundle.main.infoDictionary!
                         let name = info["CFBundleDisplayName"] as! String
                         let version = "Verison \(info["CFBundleShortVersionString"]!) build \(info["CFBundleVersion"]!)"
@@ -683,19 +684,19 @@ struct ExtractedSettingsView: View {
                             Text(version)
                             HStack{
                                 Image(systemName: "42.square")
-                                Text("作者")
+                                Text("SETTINGS.ABOUT.AUTHOR")
                                 Text("W-Mai").foregroundColor(.secondary)
                             }
                             HStack{
                                 Image(systemName: "house")
-                                Text("工作室")
+                                Text("SETTINGS.ABOUT.STUDIO")
                                 Text("XCLZ STUDIO").foregroundColor(.secondary)
                             }
                         }.frame(maxWidth: .infinity)
                     }.padding()
                 }
             }
-            .navigationTitle("设置")
+            .navigationTitle("SETTINGS.NAVIGATIONTITLE")
             .navigationBarItems(trailing: Button(action: {
                 showAlert = true
             }, label: {Text("🔘")}))
