@@ -35,7 +35,7 @@ struct XPlanerApp: App {
                 .environmentObject(runtime_config)
                 .environmentObject(localSettingsManager)
                 .onAppear(){
-                    runtime_config.pickerSelected = file.document.plannerData.fileInformations.displayCatagory
+                    runtime_config.pickerSelected = file.document.plannerData.fileInformations.displayCategory
                     runtime_config.simpleMode = file.document.plannerData.fileInformations.displayMode == .SimpleProcessBarMode
                     runtime_config.displayMode = file.document.plannerData.fileInformations.displayMode
                     

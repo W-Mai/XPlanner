@@ -16,7 +16,7 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
             .preferredColorScheme(.light)
             .environmentObject(document)
-            .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: DisplayCatagory.All))
+            .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: DisplayCategory.All))
     }
 }
 
@@ -128,9 +128,9 @@ struct ExtractedBottomButtonGroupView: View {
                 Spacer()
                 Group {
                     Picker("",selection: $env_settings.pickerSelected){
-                        Image(systemName: "tray").tag(DisplayCatagory.All)
+                        Image(systemName: "tray").tag(DisplayCategory.All)
                         if !env_settings.viewHistoryMode {
-                            Image(systemName: "calendar").tag(DisplayCatagory.Todos)
+                            Image(systemName: "calendar").tag(DisplayCategory.Todos)
                         }
                     }.frame(width: env_settings.viewHistoryMode ? 40 : 80, height: 30)
                     .onChange(of: env_settings.pickerSelected) { v in
@@ -598,7 +598,7 @@ struct ExtractedSettingsView: View {
     
     @State var showAlert: Bool = false
     
-    @State var backInfo: FileInfos = FileInfos(documentVersion: CurrentFileFormatVerison, topic: "", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All)
+    @State var backInfo: FileInfos = FileInfos(documentVersion: CurrentFileFormatVerison, topic: "", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCategory: .All)
     @State var backLocalSettings : AppLocalSettings = AppLocalSettings(hideFinishedTasks: false, collectionWaterFlowMode: false)
     
     var body: some View {
@@ -639,8 +639,8 @@ struct ExtractedSettingsView: View {
                             Text(Image(systemName: "tray.full")).frame(width: 30)
                             Text("显示类别")
                             HStack{
-                                Image(systemName: backInfo.displayCatagory == .All ? "tray" :  "calendar")
-                                Text(backInfo.displayCatagory == .All ? "所有任务" : "今日任务")
+                                Image(systemName: backInfo.displayCategory == .All ? "tray" :  "calendar")
+                                Text(backInfo.displayCategory == .All ? "所有任务" : "今日任务")
                             }.frame(maxWidth: .infinity)
                             .padding(5).background(Color("BarsBackgroundColor"))
                             .cornerRadius(10)

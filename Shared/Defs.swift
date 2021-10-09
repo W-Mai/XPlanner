@@ -26,7 +26,7 @@ enum DisplayMode: String, Codable {
 }
 
 /// 显示类别
-enum DisplayCatagory: String, Codable {
+enum DisplayCategory: String, Codable {
     case All    /// 显示所有任务
     case Todos  /// 只显示待办事项
 }
@@ -59,7 +59,7 @@ struct AppLocalSettings {
 class EnvironmentSettings: ObservableObject {
     @Published var scrollProxy : ScrollViewProxy? = nil
     @Published var isEditingMode = false
-    @Published var pickerSelected = DisplayCatagory.All
+    @Published var pickerSelected = DisplayCategory.All
     @Published var displayMode : DisplayMode = .FullSquareMode
     @Published var simpleMode = false
     @Published var isSelected = false
@@ -69,10 +69,10 @@ class EnvironmentSettings: ObservableObject {
     @Published var goToFirstTodoTask = false
     @Published var viewHistoryMode = false
     @Published var currentHistoryIndex : Int = 0
-    @Published var filtedTasks : PlannerFileStruct = PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCatagory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]())
+    @Published var filtedTasks : PlannerFileStruct = PlannerFileStruct(fileInformations: FileInfos(documentVersion: CurrentFileFormatVerison, topic: "", createDate: Date(), author: "", displayMode: .FullSquareMode, displayCategory: .All), projectGroups: [ProjectGroupInfo](), taskStatusChanges: [TaskStatusChangeRecord]())
     @Published var localSettings : AppLocalSettings = AppLocalSettings(hideFinishedTasks: false, collectionWaterFlowMode: false)
     
-    init(simpleMode : Bool, displayCategory: DisplayCatagory) {
+    init(simpleMode : Bool, displayCategory: DisplayCategory) {
         self.simpleMode = simpleMode
         self.displayMode = simpleMode ? .SimpleProcessBarMode : .FullSquareMode
         self.pickerSelected = displayCategory
@@ -143,7 +143,7 @@ struct FileInfos : Codable {
     var createDate: Date                    /// 文件创建日期
     var author : String                     /// 作者
     var displayMode : DisplayMode           /// 显示模式
-    var displayCatagory : DisplayCatagory   /// 显示类别
+    var displayCategory : DisplayCategory   /// 显示类别
     
     var extra : String?
 }
@@ -175,7 +175,7 @@ extension FileInfos: Equatable{
             lhs.createDate == rhs.createDate &&
             lhs.author == rhs.author &&
             lhs.displayMode == rhs.displayMode &&
-            lhs.displayCatagory == rhs.displayCatagory &&
+            lhs.displayCategory == rhs.displayCategory &&
             lhs.extra == rhs.extra
     }
 }
@@ -266,7 +266,7 @@ extension PlannerFileStruct {
             createDate: Date(),
             author: "XPlanner",
             displayMode: .FullSquareMode,
-            displayCatagory: .All),
+            displayCategory: .All),
         projectGroups: [ProjectGroupInfo](
             arrayLiteral:ProjectGroupInfo(
                 name: L("TEMPLATE.PROJECTGROUP.NAME"),

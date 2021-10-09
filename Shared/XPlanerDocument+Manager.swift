@@ -269,9 +269,9 @@ extension XPlanerDocument {
         return TaskIndexPath(prjGrpIndex: index, prjIndex: indexPrj, tskIndex: indexTsk)
     }
     
-    func updateDisplayCategory(to category: DisplayCatagory ,_ undoManager : UndoManager?){
-        let old_category = plannerData.fileInformations.displayCatagory
-        plannerData.fileInformations.displayCatagory = category
+    func updateDisplayCategory(to category: DisplayCategory ,_ undoManager : UndoManager?){
+        let old_category = plannerData.fileInformations.displayCategory
+        plannerData.fileInformations.displayCategory = category
         
         undoManager?.registerUndo(withTarget: self, handler: { doc in
             doc.updateDisplayCategory(to: old_category, undoManager)

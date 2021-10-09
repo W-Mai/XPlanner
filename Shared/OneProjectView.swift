@@ -35,7 +35,7 @@ struct OneProjectView_Previews: PreviewProvider {
             .preferredColorScheme(.light)
             .frame(width: 1000)
         
-            .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: (DisplayCatagory.All)))
+            .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: (DisplayCategory.All)))
         HStack {
             OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, duration: DefalutTaskDuration, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
             OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, duration: DefalutTaskDuration, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
