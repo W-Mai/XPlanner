@@ -88,7 +88,9 @@ struct ContentView: View {
                 
                 ExtractedTaskEditViewView()
                 
-                ExtractedHistorySwitchView()
+                if !env_settings.editTaskInfoPresented {
+                    ExtractedHistorySwitchView()
+                }
             }.sheet(isPresented: $env_settings.showSettings, content: {
                 ExtractedSettingsView(undoManager: undoManager)
                     .environmentObject(document)
@@ -228,9 +230,12 @@ struct ExtractedMainlyContentView<Content: View>: View {
                     .font(env_settings.displayMode == .FullSquareMode ? .title : .title2)
                     .fontWeight(.bold)
                     .padding([.leading, .trailing])
-                    .padding([.vertical], 10)
-                    .background(Color("BarsBackgroundColor").blur(radius: 10))
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .padding([.vertical], 2)
+                    .background(
+                        Color("BarsBackgroundColor")
+                            .scaleEffect(CGSize(width: 1.0, height: 0.6))
+                            .offset(x: -35, y: 10)
+                    )
                     .contextMenu{
                         Button(action: {
                             document.removeGroup(idIs: projectGroup.id, undoManager)
@@ -287,7 +292,7 @@ struct ExtractedTopMenuView: View {
         VStack(alignment: .trailing){
             HStack(alignment: .bottom, spacing: 10){
                 Spacer()
-                HStack(spacing: 20){
+                HStack(spacing: 10){
                     if env_settings.displayMode == .FullSquareMode && env_settings.pickerSelected == .All && !env_settings.viewHistoryMode {
                         Button(action: {env_settings.isEditingMode.toggle()}){
                             Text(env_settings.isEditingMode ? "BUTTON.DONE" : "BUTTON.EDIT")
@@ -315,17 +320,17 @@ struct ExtractedTopMenuView: View {
                             }
                         } label: {
                             Image(systemName: "list.bullet.rectangle")
-                                .font(.system(size: 20, weight: .bold))
+                                .font(.system(size: 18, weight: .bold))
                         }.frame(maxWidth: 30)
                         .menuStyle(BorderlessButtonMenuStyle())
                     }
                 }
                 .padding()
                 .background(Color("BarsBackgroundColor"))
-                .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+                .frame(height: 40)
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .padding()
                 .shadow(color: Color("ShallowShadowColor"), radius: 15, x: 0.0, y: 0.0)
-                
             }
             Spacer()
         }.frame(maxWidth: .infinity)
@@ -408,8 +413,9 @@ struct ExtractedTaskEditViewView: View {
     @GestureState var draging : Bool = false
     @State var dragOffset : CGSize = .zero
     @State var willCloseFlag = false
-    @State var tmpTask : TaskInfo = TaskInfo(name: "", content: "", status: .original, createDate: Date())
-    //    @State var pickerSelection = 1
+    @State var tmpTask : TaskInfo = TaskTemplate()
+
+    @State var showTimePicker : Bool = false
     
     var body: some View {
         ZStack {
@@ -429,24 +435,33 @@ struct ExtractedTaskEditViewView: View {
                             Text("TASK.STATUS.TODO").tag(TaskStatus.todo)
                             Text("TASK.STATUS.FINISHED").tag(TaskStatus.finished)
                         }.pickerStyle(SegmentedPickerStyle())
+                        HStack{
+                            Text("Duration is")
+                            Spacer()
+                            Button(action: {showTimePicker = true}, label: {
+                                Text(intervalToTimeStr(tmpTask.duration, forFun: true))
+                            })
+                        }.padding(5)
+                        .padding([.horizontal], 10)
+                        .foregroundColor(Color("FavoriteColor7"))
+                        .background(Color("BarsBackgroundColor").opacity(0.5))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     }.padding([.vertical], 40)
                     .padding(.horizontal, 30)
-                }.frame(height: 200)
+                }
                 .background(LinearGradient(gradient: Gradient(colors: [Color("FavoriteColor7"), Color("FavoriteColor3")]), startPoint: .topLeading, endPoint: .bottomTrailing).brightness(0.2))
                 .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
                 .shadow(color: Color.gray.opacity(0.3), radius: dragOffset.height / 30 * 10, x: dragOffset.width, y: dragOffset.height)
                 
                 VStack{
-                    Spacer()
                     Button(action: {
                         env_settings.editTaskInfoPresented = false
                     }){
                         Text("EDITTASK.CANCEL")
                     }
-                    Spacer()
-                }
+                }.padding()
             }
-            .frame(width: 256, height: 256)
+            .frame(width: 256)
             .padding([.top, .leading, .trailing], 16)
             .background(Color("BarsBackgroundColor"))
             .clipShape(RoundedRectangle(cornerRadius: 56, style: .continuous))
@@ -462,7 +477,7 @@ struct ExtractedTaskEditViewView: View {
             
             .onChange(of: env_settings.editTaskInfoPresented, perform: { V in
                 let indexes = env_settings.currentTaskPath
-                let task = indexes != nil ? document.plannerData.projectGroups[indexes!.prjGrpIndex].projects[indexes!.prjIndex].tasks[indexes!.tskIndex] : (TaskInfo(name: "", content: "", status: .original, createDate: Date()))
+                let task = indexes != nil ? document.plannerData.projectGroups[indexes!.prjGrpIndex].projects[indexes!.prjIndex].tasks[indexes!.tskIndex] : TaskTemplate()
                 
                 if env_settings.editTaskInfoPresented {
                     tmpTask = task
@@ -486,14 +501,27 @@ struct ExtractedTaskEditViewView: View {
                         
                         guard self.willCloseFlag else { return }
                         
+                        document.updateTaskInfo(tsk: tmpTask, for: env_settings.currentTaskPath!, undoManager)
+                        
                         self.willCloseFlag = false;
                         env_settings.editTaskInfoPresented = false
-                        
-                        document.updateTaskInfo(tsk: tmpTask, for: env_settings.currentTaskPath!, undoManager)
                     }
             )
+            .blur(radius: showTimePicker ? 10 : 0)
+            
+            if showTimePicker{
+                ZStack {
+                    Color.black.opacity(0.1).onTapGesture {
+                        showTimePicker = false
+                    }
+                    VStack{
+                        MyCountDownPicker(val: $tmpTask.duration)
+                    }.clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+            }
         }.opacity(env_settings.editTaskInfoPresented ? 1 : 0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7))
+        .edgesIgnoringSafeArea(.all)
         
     }
 }

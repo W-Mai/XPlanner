@@ -143,7 +143,7 @@ class MyDataSource: UIView, UICollectionViewDelegate, UICollectionViewDataSource
             cell.setInfos(finishedTimes: 0, hours: 0, date: targetDate)
         }
         
-        print("OK", indexPath)
+//        print("OK", indexPath)
         return cell
     }
     
@@ -378,9 +378,9 @@ func extractDateDataInfos(from pln: XPlanerDocument) -> [Date: DateDataDayInfo] 
         var times: Int = 0
         var hours: Double = 0.0
         
-        for _ in item.value {
+        for tsk in item.value {
             times += 1
-            hours += 1
+            hours += tsk.duration / 3600
         }
         
         result[item.key] = DateDataDayInfo(finishedNumber: times, spentHours: hours, date: item.key)

@@ -16,13 +16,13 @@ struct OneProjectView_Previews: PreviewProvider {
         name: "ProjectName",
         tasks: [TaskInfo](
             arrayLiteral:
-                TaskInfo(name: "任务1", content: "任务内容1", status: .finished, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, createDate: Date(), id: UUID()),
-            TaskInfo(name: "任务3", content: "任务内容3", status: .original, createDate: Date(), id: UUID())
+                TaskInfo(name: "任务1", content: "任务内容1", status: .finished, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务2", content: "任务内容2", status: .todo, duration: DefalutTaskDuration, createDate: Date(), id: UUID()),
+            TaskInfo(name: "任务3", content: "任务内容3", status: .original, duration: DefalutTaskDuration, createDate: Date(), id: UUID())
         ))
     
     @State static var status1 = TaskStatus.finished
@@ -37,10 +37,10 @@ struct OneProjectView_Previews: PreviewProvider {
         
             .environmentObject(EnvironmentSettings(simpleMode: false, displayCategory: (DisplayCatagory.All)))
         HStack {
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: $isSelected)
-            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: .constant(true))
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "Content", status: status1, duration: DefalutTaskDuration, createDate: Date()), index: 1000, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "LongContent1231231231231231231231231231", status: status2, duration: DefalutTaskDuration, createDate: Date()), index: 1, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, duration: DefalutTaskDuration, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: $isSelected)
+            OneTaskView(task: TaskInfo(name: "TaskName", content: "✰🤣", status: status3, duration: DefalutTaskDuration, createDate: Date()), index: 100000, isEditingMode: $isEditing, seleted: .constant(true))
             
             
         }.previewLayout(.sizeThatFits).padding()
@@ -79,16 +79,6 @@ struct OneTaskView: View {
     var body: some View {
         VStack() {
             HStack {
-                ZStack{
-                    Color(red: 0.95, green: 0.8, blue: 0.5)
-                        .clipShape(Circle())
-                    Text("\(index)")
-                        .minimumScaleFactor(0.2)
-                        .font(.footnote)
-                        .lineLimit(1)
-                        .foregroundColor(.white)
-                }.frame(width: 24, height: 24, alignment: .center)
-                
                 VStack() {
                     Text(task.name)
                         .font(.subheadline)
@@ -129,6 +119,28 @@ struct OneTaskView: View {
                 .stroke(LinearGradient(gradient: Gradient(colors: [Color("FavoriteColor5").opacity(0.3), Color("FavoriteColor6")]), startPoint: .leading, endPoint: .bottom), lineWidth: CGFloat(lineWidthMap[task.status]!))
         )
         .overlay(
+            HStack{
+                VStack{
+                    ZStack{
+                        Color(red: 0.95, green: 0.8, blue: 0.5)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        Text( String(format: "%.1fh", task.duration / 3600) )
+                            .fontWeight(.semibold)
+                            .font(.footnote)
+                            .minimumScaleFactor(0.2)
+                            .lineLimit(1)
+                            .foregroundColor(.white)
+                            .padding(2)
+                    }
+                    .hueRotation(Angle(degrees: 10 * task.duration / 3600))
+                    .rotationEffect(.degrees(-10))
+                    .frame(width: 24, height: 16, alignment: .center)
+                    Spacer()
+                }
+                Spacer()
+            }.offset(x: -4, y: -6)
+        )
+        .overlay(
             Text(getStatusText())
                 .font(.largeTitle)
                 .fontWeight(.heavy)
@@ -158,18 +170,20 @@ struct OneTaskView: View {
         .animation(.easeInOut(duration: 0.2))
         .onTapGesture {
             action?(seleted)
-        }.onLongPressGesture(minimumDuration: 0.1) { v in
+        }.onLongPressGesture(minimumDuration: 0.1, pressing: { v in
             currentState = v
-        } perform: {
+        }, perform: {
             MyFeedBack()
             longAction?()
-        }
+        })
     }
     
     func getStatusText() -> String {
         switch self.task.status {
         case .finished:
             return L("TASK.COMPONENT.STATUS.FINISHED")
+        case .show:
+            return String(format: "%.1f h", task.duration / 3600)
         default:
             return ""
         }
@@ -307,7 +321,7 @@ struct ProjectDifferentModeView: View {
                             Button(action: {
                                 let lst_tsk = document.getLastAddedTask(from: project.id, in: prjGrpId)
                                 
-                                guard let new_tsk = document.addTask(nameIs: lst_tsk.name, contentIs: lst_tsk.content, for: project.id, in: prjGrpId, undoManager)
+                                guard let new_tsk = document.addTask(nameIs: lst_tsk.name, contentIs: lst_tsk.content, duration: lst_tsk.duration, for: project.id, in: prjGrpId, undoManager)
                                 else { return }
                                 
                                 env_settings.currentTaskPath = document.indexOfTask(idIs: new_tsk.id, from: project.id, in: prjGrpId)

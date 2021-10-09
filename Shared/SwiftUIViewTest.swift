@@ -330,40 +330,78 @@ struct docuitest : View {
     }
 }
 
+struct MyStruct: Codable, Identifiable {
+    var duration: TimeInterval
+    
+    var id = UUID()
+}
+
 struct newTest : View {
     let text = (1...30).map{"Hello\($0)"}
     //以最小宽度160斤可能在一行放入grid
     let columns = [GridItem(.flexible(), alignment: .top), GridItem(.flexible(), alignment: .top), GridItem(.flexible(), alignment: .top)]
     
+    @State var show = true
+    @State var task = MyStruct(duration: 3600)
+    @State var task1 = TaskInfo(name: "", content: "", status: .finished, duration: 3600, createDate: Date())
+    @State var time = TimeInterval(3600)
+    
     var body: some View {
-        ScrollView{
-            Section(header: Text("最小160")){
-                LazyVGrid(columns: [GridItem(.flexible(), alignment: .top)], spacing: 20, pinnedViews: [.sectionHeaders]){
-                    ForEach(text, id: \.self){ item in
-                        Section(header:
-                                    Text("fuck\(item)")
-                        ) {
-                            LazyVGrid(columns: columns, spacing: 20, pinnedViews: [.sectionHeaders]){
-                                ForEach(0..<2){i in
-                                    Section(header:
-                                                VStack{
-                                                    Text("okkkk\(i)")
-                                                }.padding([.top], 30)
-                                    ) {
-                                        ForEach(0..<5){j in
-                                            Text(item)
-                                                .frame(width: CGFloat.random(in: 20..<100), height: CGFloat.random(in: 20..<100))
-                                                .foregroundColor(.white)
-                                                .background(Color.blue)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+        ZStack{
+        HStack{
+            Button(action: {show = true}, label: {
+                Text("Button")
+            })
+        }
+            if(show){
+                VStack{
+                    Button(action: {
+                        task.duration += 1000
+                        task1.duration -= 100
+                        print(task.duration)
+                    }, label: {
+                        Text("\(task.duration)")
+                        Text("\(task1.duration)")
+                    })
+//                    MyCountDownPicker(val: $time)
                 }
+                .padding()
+//                .frame(width: 100, height: 30, alignment: .center)
+                .background(Color.white)
+                
+//                .clipShape(RoundedRectangle(cornerRadius: 25.0, style: .continuous))
             }
         }
+        
+        
+//        ScrollView{
+//            Section(header: Text("最小160")){
+//                LazyVGrid(columns: [GridItem(.flexible(), alignment: .top)], spacing: 20, pinnedViews: [.sectionHeaders]){
+//                    ForEach(text, id: \.self){ item in
+//                        Section(header:
+//                                    Text("fuck\(item)")
+//                        ) {
+//                            LazyVGrid(columns: columns, spacing: 20, pinnedViews: [.sectionHeaders]){
+//                                ForEach(0..<2){i in
+//                                    Section(header:
+//                                                VStack{
+//                                                    Text("okkkk\(i)")
+//                                                }.padding([.top], 30)
+//                                    ) {
+//                                        ForEach(0..<5){j in
+//                                            Text(item)
+//                                                .frame(width: CGFloat.random(in: 20..<100), height: CGFloat.random(in: 20..<100))
+//                                                .foregroundColor(.white)
+//                                                .background(Color.blue)
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
     
 }
@@ -375,6 +413,7 @@ struct SwiftUIViewTest_Previews: PreviewProvider {
         //        SwiftUIViewTest()
         //        docuitest1()
         newTest()
+//            .preferredColorScheme(.dark)
             .previewLayout(.sizeThatFits)
     }
 }
