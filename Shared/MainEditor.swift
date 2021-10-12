@@ -127,16 +127,20 @@ struct ExtractedBottomButtonGroupView: View {
             HStack{
                 Spacer()
                 Group {
-                    Picker("",selection: $env_settings.pickerSelected){
+                    Picker("",selection: Binding(get: {
+                        env_settings.pickerSelected
+                    }, set: { v in
+                        env_settings.pickerSelected = v
+                        document.updateDisplayCategory(to: env_settings.pickerSelected, undoManager)
+                    })){
                         Image(systemName: "tray").tag(DisplayCategory.All)
                         if !env_settings.viewHistoryMode {
                             Image(systemName: "calendar").tag(DisplayCategory.Todos)
                         }
                     }.frame(width: env_settings.viewHistoryMode ? 40 : 80, height: 30)
-                    .onChange(of: env_settings.pickerSelected) { v in
-                        document.updateDisplayCategory(to: env_settings.pickerSelected, undoManager)
+                    .onChange(of: document.plannerData.fileInformations.displayCategory) { v in
+                        env_settings.pickerSelected = v
                     }
-                    
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(10)
