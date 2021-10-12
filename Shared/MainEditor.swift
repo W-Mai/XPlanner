@@ -679,7 +679,8 @@ struct ExtractedSettingsView: View {
                         let name = info["CFBundleDisplayName"] as! String
                         let version = "Verison \(info["CFBundleShortVersionString"]!) build \(info["CFBundleVersion"]!)"
                         VStack(alignment: .center, spacing: 20){
-                            Image("AppIcon-UsedForShowing").resizable().frame(width: 100, height: 100, alignment: .center)
+                            Image("AppIcon-UsedForShowing").resizable().frame(width: 100, height: 100, alignment: .center).clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                                .shadow(color: Color("ShallowShadowColor"), radius: 10, x: 0.0, y: 0.0)
                             Text("\(name)")
                             Text(version)
                             HStack{
