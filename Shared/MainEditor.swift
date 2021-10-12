@@ -627,8 +627,10 @@ struct ExtractedSettingsView: View {
                             Text(Image(systemName: "calendar")).frame(width: 30)
                             Text("SETTINGS.CREATEDATE")
                             HStack{
+                                Spacer()
                                 Text(backInfo.createDate, style: .date).lineLimit(1).minimumScaleFactor(0.3)
                                 Text(backInfo.createDate, style: .time).lineLimit(1).minimumScaleFactor(0.3)
+                                Spacer()
                             }
                         }
                         HStack{
