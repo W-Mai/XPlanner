@@ -376,16 +376,17 @@ struct ExtractedToolBarView: View {
                 .background(Color("BarsBackgroundColor")).clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 
                 Spacer()
-                if !env_settings.simpleMode {
-                    HStack{
-                        Button(action: {
-                            env_settings.goToFirstTodoTask.toggle()
-                        }){
-                            Image(systemName: "rays")
-                        }
-                    }.padding(5)
-                    .background(Color("BarsBackgroundColor")).clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                }
+                // FIXME: 无法修复跳转功能 暂时关闭该功能
+//                if !env_settings.simpleMode {
+//                    HStack{
+//                        Button(action: {
+//                            env_settings.goToFirstTodoTask.toggle()
+//                        }){
+//                            Image(systemName: "rays")
+//                        }
+//                    }.padding(5)
+//                    .background(Color("BarsBackgroundColor")).clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+//                }
                 Toggle(isOn: $env_settings.simpleMode) {
                 }.toggleStyle(ImageToggleStyle(onImageName: "list.bullet", offImageName: "rectangle.split.3x3"){
                     env_settings.simpleMode = env_settings.isEditingMode ? false : env_settings.simpleMode
