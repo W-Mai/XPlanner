@@ -256,7 +256,7 @@ struct OneProjectView: View {
                 }
             }
             ) {
-                ProjectDifferentModeView(project: project, prjGrpId: prjGrpId)
+                ProjectDifferentModeView(project: project, prjGrpId: prjGrpId).animation(.none)
             }
         })
     }
@@ -339,15 +339,15 @@ struct ProjectDifferentModeView: View {
                         }
                     }
                     .padding([.leading, .trailing], env_settings.localSettings.collectionWaterFlowMode ? 30 : 0)
-                    .onChange(of: env_settings.goToFirstTodoTask) { v in
-                        let lst_tsk = document.getFirstTask(where:{ tsk in
-                            tsk.status == .todo
-                        }, from: project.id, in: prjGrpId)
-                        
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            proxy.scrollTo(lst_tsk.id, anchor: .topLeading)
-                        }
-                    }
+//                    .onChange(of: env_settings.goToFirstTodoTask) { v in
+//                        let lst_tsk = document.getFirstTask(where:{ tsk in
+//                            tsk.status == .todo
+//                        }, from: project.id, in: prjGrpId)
+//
+//                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+//                            proxy.scrollTo(lst_tsk.id, anchor: .top)
+//                        }
+//                    }
                 }
             }
             

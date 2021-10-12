@@ -261,7 +261,6 @@ extension XPlanerDocument {
             prj.id == prjId
         }) else { return nil }
         
-        print(plannerData.projectGroups[index].projects[indexPrj].tasks)
         guard let indexTsk = plannerData.projectGroups[index].projects[indexPrj].tasks.firstIndex (where: { tsk in
             tsk.id == tskId
         }) else { return nil }

@@ -161,7 +161,7 @@ struct ExtractedMainViewView<Content: View>: View {
     var content : (_ item : ProjectGroupInfo) -> Content
     
     var body: some View {
-        LazyVGrid(columns: [GridItem(.flexible())], alignment: .leading, pinnedViews: [.sectionHeaders]){
+        LazyVStack(alignment: .leading, pinnedViews: [.sectionHeaders]) {
             if data.projectGroups.count > 0{
                 ForEach(data.projectGroups, content: {i in
                     content(i).id(i.id)
@@ -189,7 +189,7 @@ struct ExtractedMainViewView<Content: View>: View {
                     .padding([.leading, .bottom], 20)
                 }
             }
-        }
+        }.animation(.none)
     }
 }
 
@@ -247,7 +247,7 @@ struct ExtractedMainlyContentView<Content: View>: View {
             }
             Spacer()
         }.padding([.top, .bottom], 1)
-        .animation(.none)
+        .animation(.easeInOut(duration: 0.2))
         ){
             if projectGroup.projects.count > 0 {
                 ForEach(projectGroup.projects){item in
