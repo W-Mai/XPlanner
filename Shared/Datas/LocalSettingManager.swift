@@ -2,7 +2,7 @@
 //  LocalSettingManager.swift
 //  XPlanner
 //
-//  Created by Esther on 2021/10/7.
+//  Created by W-Mai on 2021/10/7.
 //
 
 import Foundation
